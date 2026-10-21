@@ -1,0 +1,17 @@
+
+
+# macOS
+.DS_Store
+
+# Renamed-aside git metadata from the vendor sample project in docs/Gentex/
+# (kept on disk, not tracked — an embedded repo would commit as a broken gitlink)
+.git.bak/
+
+# Swift Package Manager build artifacts from the local AppDependencies package
+AppDependencies/.build/
+
+# Test results written by scripts/test.sh
+/build/
+
+# Per-user Xcode state (window layout, breakpoints, scheme selection)
+xcuserdata/
