@@ -1,11 +1,13 @@
 //
-//  SettingsRoute.swift
+//  Route.swift
 //  AMP2_App_iOS
 //
 //  Created by Peter Sargent on 10/22/26.
 //
 
-enum SettingsRoute: Hashable {
+enum Route: Hashable {
+    case teams
+    case settings
     case appearance
     case orientation
     case regions
@@ -20,7 +22,7 @@ enum SettingsRoute: Hashable {
     /// Screens popped when the headset disconnects.
     var requiresHeadset: Bool {
         switch self {
-        case .appearance, .orientation:
+        case .appearance, .orientation, .teams, .settings:
             return false
         case .regions, .vadThreshold, .ltcVolume, .txPower:
             return true
@@ -33,7 +35,7 @@ enum SettingsRoute: Hashable {
     }
 }
 
-extension Array where Element == SettingsRoute {
+extension Array where Element == Route {
 
     /// Pops the first headset-only screen and everything above it.
     mutating func popHeadsetOnlyScreens() {

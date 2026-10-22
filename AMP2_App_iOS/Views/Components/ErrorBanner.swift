@@ -71,18 +71,6 @@ struct ErrorBanner: View {
     }
 }
 
-#Preview("With recovery and retry") {
-    ErrorBanner(
-        title: "Couldn't load teams",
-        error: DatabaseError.databaseOpenError(
-            underlying: NSError(domain: "preview", code: 1,
-                                userInfo: [NSLocalizedDescriptionKey: "file is not a database"])
-        ),
-        retry: {}
-    )
-    .padding()
-}
-
 #Preview("Message only") {
     ErrorBanner(title: "Couldn't join team", message: "Connect a headset to join a team.")
         .padding()

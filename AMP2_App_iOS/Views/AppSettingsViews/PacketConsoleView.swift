@@ -240,11 +240,7 @@ struct PacketConsoleView: View {
     }
 
     private var activeTeamText: String {
-        switch sync.confirmed.isCustomTeamActive {
-        case true?: return "custom"
-        case false?: return sync.confirmed.activePredefinedTeam?.displayName ?? "—"
-        case nil: return "—"
-        }
+        sync.confirmed.activePredefinedTeam?.displayName ?? "—"
     }
 
     // MARK: - Isolated Writes

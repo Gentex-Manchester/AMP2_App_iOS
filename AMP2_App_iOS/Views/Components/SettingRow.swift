@@ -11,9 +11,9 @@ import SwiftUI
 
 struct SettingRow: View {
     let title: String
-    var route: SettingsRoute
+    var route: Route
 
-    init(title: String, route: SettingsRoute) {
+    init(title: String, route: Route) {
         self.title = title
         self.route = route
     }

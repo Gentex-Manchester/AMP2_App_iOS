@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct AppSettingsView: View {
-    @Binding private var navigationPath: [SettingsRoute]
-
-    init(navigationPath: Binding<[SettingsRoute]> = .constant([])) {
-        _navigationPath = navigationPath
-    }
+    @State private var navigationPath: [Route] = [Route.settings]
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -21,18 +17,18 @@ struct AppSettingsView: View {
                 
                     SettingRow(
                         title: "Appearance",
-                        route: SettingsRoute.appearance
+                        route: Route.appearance
                     )
 
                     SettingRow(
                         title: "Orientation",
-                        route: SettingsRoute.orientation
+                        route: Route.orientation
                     )
             
                     #if DEBUG
                     SettingRow(
                         title: "DEBUG: Packet Console",
-                        route: SettingsRoute.packetConsole
+                        route: Route.packetConsole
                     )
                     #endif
                 }
@@ -47,8 +43,12 @@ struct AppSettingsView: View {
                         .font(.ibmPlexSans(size: 28, weight: .bold))
                 }
             }
-            .navigationDestination(for: SettingsRoute.self) { route in
+            .navigationDestination(for: Route.self) { route in
                 switch route {
+                case .teams:
+                    TeamsView()
+                case .settings:
+                    AppSettingsView()
                 case .appearance:
                     AppearanceSettingsView()
                 case .orientation:

@@ -101,6 +101,7 @@ struct ConnectedView: View {
 
     private var settingsLinks: some View {
         VStack(spacing: 0) {
+            SettingRow(title: "Teams", route: .teams)
             SettingRow(title: LTCSetting.ltcVolume.displayName, route: .ltcVolume)
             SettingRow(title: LTCSetting.txPower.displayName, route: .txPower)
 
@@ -112,6 +113,8 @@ struct ConnectedView: View {
             if settings.settings.ltcMode == .vad {
                 SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
             }
+            
+            SettingRow(title: "App Settings", route: .settings)
         }
     }
 }

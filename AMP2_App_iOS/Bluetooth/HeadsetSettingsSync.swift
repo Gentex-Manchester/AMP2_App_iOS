@@ -40,16 +40,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
     /// Derived from key, channel, and network ID, not the `predefinedTeam` byte,
     /// which goes stale after a custom team is written.
     var activePredefinedTeam: PredefinedTeam? {
-        guard let securityKey, let rfChannel, let networkId else { return nil }
-        return PredefinedTeam.matching(
-            securityKey: securityKey, rfChannel: rfChannel, networkId: networkId
-        )
-    }
-
-    /// `nil` while the settings are still being read.
-    var isCustomTeamActive: Bool? {
-        guard securityKey != nil, rfChannel != nil, networkId != nil else { return nil }
-        return activePredefinedTeam == nil
+        predefinedTeam
     }
 
     // MARK: Decoding
