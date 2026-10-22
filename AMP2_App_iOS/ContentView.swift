@@ -251,42 +251,13 @@ struct ContentView: View {
     private var selectedContentView: some View {
         Group {
             switch selectedTab {
-            case 0: headsetTab
+            case 0: HeadsetView(headsetNavigationPath: $headsetNavigationPath)
             case 1: TeamsView()
             case 2: AppSettingsView(navigationPath: $settingsNavigationPath)
-            default: headsetTab
+            default: HeadsetView(headsetNavigationPath: $headsetNavigationPath)
             }
         }
     }
-
-    /// Live controls when connected, connection help otherwise.
-    private var headsetTab: some View {
-        NavigationStack(path: $headsetNavigationPath) {
-            Group {
-                if headsetSession.state.isConnected {
-                    HeadsetView()
-                } else {
-                    DisconnectedView()
-                }
-            }
-            .navigationDestination(for: SettingsRoute.self) { route in
-                switch route {
-                case .appearance: AppearanceSettingsView()
-                case .orientation: OrientationSettingsView()
-                case .permissions: PermissionsListView()
-                case .userManuals: UserManualsView()
-                case .regions: RegionsView()
-                case .vadThreshold: VADThresholdView()
-                case .ltcVolume: LTCVolumeView()
-                case .txPower: TxPowerView()
-                #if DEBUG
-                case .packetConsole: PacketConsoleView()
-                #endif
-                }
-            }
-        }
-    }
-    
 }
 
 
