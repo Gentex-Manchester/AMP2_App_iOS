@@ -1,3 +1,5 @@
+**This README and other documentation is currently out-of-date and will not be updated until later stages of development.**
+
 # Gentex AMP 2.0 — iOS Companion App
 
 A companion app for the Gentex AMP 2.0 tactical headset. This app lets users
