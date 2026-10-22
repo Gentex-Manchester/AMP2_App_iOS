@@ -1,6 +1,6 @@
 //
-//  AMP2_App_iOSApp.swift
-//  AMP2_App_iOS
+//  AMP2_iOSApp.swift
+//  AMP2_iOSApp
 //
 //  Created by aaron stockdale on 6/18/26.
 //
