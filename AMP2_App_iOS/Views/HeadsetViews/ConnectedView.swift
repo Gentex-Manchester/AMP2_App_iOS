@@ -19,9 +19,6 @@ struct ConnectedView: View {
                 headerSection
                 ltcModeSection
                 settingsLinks
-                if settings.settings.ltcMode == .vad {
-                    vadThresholdLink
-                }
                 Spacer(minLength: 40)
             }
             .frame(maxWidth: .infinity, alignment: .top)
@@ -104,44 +101,18 @@ struct ConnectedView: View {
 
     private var settingsLinks: some View {
         VStack(spacing: 0) {
-            settingRow(.ltcVolume, route: .ltcVolume)
-            settingRow(.txPower, route: .txPower)
+            SettingRow(title: LTCSetting.ltcVolume.displayName, route: .ltcVolume)
+            SettingRow(title: LTCSetting.txPower.displayName, route: .txPower)
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
-                settingRow(.zone, route: .regions)
+                SettingRow(title: LTCSetting.zone.displayName, route: .regions)
+            }
+            
+            if settings.settings.ltcMode == .vad {
+                SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
             }
         }
-    }
-
-    private var vadThresholdLink: some View {
-        settingRow(.vadThreshold, route: .vadThreshold)
-    }
-
-    private func settingRow(_ setting: LTCSetting, route: SettingsRoute) -> some View {
-        NavigationLink(value: route) {
-            HStack {
-                Text(setting.displayName)
-                    .font(.ibmPlexSans(size: 20))
-
-                Spacer()
-
-                // Dash until the first poll lands, not a fake default.
-                Text(settings.settings.displayValue(for: setting) ?? "—")
-                    .font(.ibmPlexSans(size: 18))
-                    .foregroundColor(.secondary)
-
-                Image(systemName: "chevron.right")
-            }
-            .foregroundColor(.primary)
-            .padding(.vertical, 16)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-            .background(Color(.systemGray4))
-            .cornerRadius(16)
-        }
-        .padding(.horizontal)
-        .padding(.bottom, 10)
     }
 }
 

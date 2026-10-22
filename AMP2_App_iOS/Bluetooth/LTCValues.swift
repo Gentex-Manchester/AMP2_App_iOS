@@ -24,9 +24,9 @@ enum LTCMode: UInt8, CaseIterable, Sendable {
 
     var displayName: String {
         switch self {
-        case .off: return "LTC Off"
-        case .pushToTalk: return "Push-to-talk"
-        case .vad: return "VOX/VAD"
+        case .off: return "Off"
+        case .pushToTalk: return "PTT"
+        case .vad: return "VAD"
         }
     }
 }

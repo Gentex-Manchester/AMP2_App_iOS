@@ -28,8 +28,6 @@ struct HeadsetView: View {
                 switch route {
                 case .appearance: AppearanceSettingsView()
                 case .orientation: OrientationSettingsView()
-                case .permissions: PermissionsListView()
-                case .userManuals: UserManualsView()
                 case .regions: RegionsView()
                 case .vadThreshold: VADThresholdView()
                 case .ltcVolume: LTCVolumeView()
