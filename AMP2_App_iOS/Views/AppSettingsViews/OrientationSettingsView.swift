@@ -31,119 +31,43 @@ enum OrientationMode: String, CaseIterable, Codable {
 
 struct OrientationSettingsView: View {
     @AppStorage("orientationMode") private var orientationMode: OrientationMode = .portrait
-    @AppStorage("sidebarSide") private var sidebarSide: String = "left"
 
     var body: some View {
         ScrollView {
-            VStack {
-                Text("Screen Orientation")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 50)
-                    .padding(.bottom, 10)
-                    .padding(.leading, 22)
+            VStack(spacing: 10) {
+                HStack(spacing: 10){
+                    SelectionButton(
+                        label: "System",
+                        selected: orientationMode == .system,
+                        action: { setOrientation(.system) }
+                    )
+                    
+                    SelectionButton(
+                        label: "Portrait",
+                        selected: orientationMode == .portrait,
+                        action: { setOrientation(.portrait) }
+                    )
+                }
                 
                 HStack(spacing: 10) {
-                    Button(action: { setOrientation(.system) }) {
-                        HStack {
-                            Spacer()
-                            Text("System")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(.white)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(orientationMode == .system ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                        .cornerRadius(16)
-                    }
-                    .padding(.leading)
-                    .padding(.bottom, 10)
+                    SelectionButton(
+                        label: "Landscape",
+                        selected: orientationMode == .landscape,
+                        action: { setOrientation(.landscape) }
+                    )
                     
-                    Button(action: { setOrientation(.portrait) }) {
-                        HStack {
-                            Spacer()
-                            Text("Portrait")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(.white)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(orientationMode == .portrait ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                        .cornerRadius(16)
-                    }
-                    .padding(.trailing)
-                    .padding(.bottom, 10)
-                }
-
-                HStack(spacing: 10) {
-                    Button(action: { setOrientation(.landscape) }) {
-                        HStack {
-                            Spacer()
-                            Text("Landscape")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(.white)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(orientationMode == .landscape ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                        .cornerRadius(16)
-                    }
-                    .padding(.leading)
-
                     Spacer()
                         .frame(maxWidth: .infinity)
                         .padding(.trailing)
                 }
-                .padding(.bottom, 10)
-
-                Text("Landscape Navigation")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 30)
-                    .padding(.bottom, 10)
-                    .padding(.leading, 22)
-                
-                HStack(spacing: 10) {
-                    Button(action: { sidebarSide = "left" }) {
-                        HStack {
-                            Spacer()
-                            Text("Left")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(.white)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(sidebarSide == "left" ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                        .cornerRadius(16)
-                    }
-                    .padding(.leading)
-
-                    Button(action: { sidebarSide = "right" }) {
-                        HStack {
-                            Spacer()
-                            Text("Right")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(.white)
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(sidebarSide == "right" ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                        .cornerRadius(16)
-                    }
-                    .padding(.trailing)
-                }
             }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("Orientation")
         .navigationBarTitleDisplayMode(.inline)
