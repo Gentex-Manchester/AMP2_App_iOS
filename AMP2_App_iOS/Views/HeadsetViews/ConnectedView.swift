@@ -24,6 +24,18 @@ struct ConnectedView: View {
             .frame(maxWidth: .infinity, alignment: .top)
             .padding(.top, 10)
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Route.settings) {
+                    Image("settings")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.opsCoreRed)
+                }
+            }
+        }
     }
 
     // MARK: - Header

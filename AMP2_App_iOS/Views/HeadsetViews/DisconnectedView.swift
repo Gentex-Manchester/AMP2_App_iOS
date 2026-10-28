@@ -70,6 +70,18 @@ struct DisconnectedView: View {
             .disabled(radioFault != nil)
             .opacity(radioFault == nil ? 1 : 0.50)
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Route.settings) {
+                    Image("settings")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.opsCoreRed)
+                }
+            }
+        }
         .fullScreenCover(isPresented: $showTutorial) {
             ConnectionTutorialView()
         }

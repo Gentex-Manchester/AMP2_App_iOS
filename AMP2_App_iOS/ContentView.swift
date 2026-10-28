@@ -14,33 +14,44 @@ struct ContentView: View {
     @Environment(HeadsetSession.self) private var headsetSession
 
     var body: some View {
-        GeometryReader { outer in
-            let landscape = usesLandscapeLayout(for: outer.size)
-
-            // Safe area only
-            GeometryReader { inner in
-                let insets = inner.safeAreaInsets
-
-                // Content keeps one structural position
-                // A VStack/HStack branch would reset state on every rotation
-                // (Gentex lost their place in the pairing flow).
-                HeadsetView(headsetNavigationPath: $headsetNavigationPath)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        NavigationStack(path: $headsetNavigationPath) {
+            Group {
+                if headsetSession.state.isConnected {
+                    ConnectedView()
+                } else {
+                    DisconnectedView()
+                }
             }
-            .onChange(of: headsetSession.state) { previous, current in
-                handleConnectionChange(from: previous, to: current)
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .settings: AppSettingsView()
+                case .appearance: AppearanceSettingsView()
+                case .orientation: OrientationSettingsView()
+                case .regions: RegionsView()
+                case .teams: TeamsView()
+                case .vadThreshold: VADThresholdView()
+                case .ltcVolume: LTCVolumeView()
+                case .txPower: TxPowerView()
+                #if DEBUG
+                case .packetConsole: PacketConsoleView()
+                #endif
+                }
             }
-            .alert("Headset disconnected", isPresented: $showDisconnectedAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(
-                    """
-                    The link to your headset dropped. The app is looking for \
-                    it again and reconnects on its own once the headset is \
-                    back in range.
-                    """
-                )
-            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: headsetSession.state) { previous, current in
+            handleConnectionChange(from: previous, to: current)
+        }
+        .alert("Headset disconnected", isPresented: $showDisconnectedAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(
+                """
+                The link to your headset dropped. The app is looking for \
+                it again and reconnects on its own once the headset is \
+                back in range.
+                """
+            )
         }
     }
 
