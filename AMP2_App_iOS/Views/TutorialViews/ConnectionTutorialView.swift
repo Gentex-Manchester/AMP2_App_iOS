@@ -53,6 +53,7 @@ struct ConnectionTutorialView: View {
         .onAppear {
             startLookingIfPairing()
         }
+        .navigationTitle("Connection Tutorial")
     }
 
     // MARK: - Step Content

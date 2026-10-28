@@ -145,6 +145,7 @@ struct OrientationSettingsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .top)
         }
+        .navigationTitle("Orientation")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

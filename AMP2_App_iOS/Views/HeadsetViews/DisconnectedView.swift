@@ -70,7 +70,13 @@ struct DisconnectedView: View {
             .disabled(radioFault != nil)
             .opacity(radioFault == nil ? 1 : 0.50)
         }
+        .navigationTitle("Home")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Home")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(value: Route.settings) {
                     Image("settings")

@@ -66,6 +66,7 @@ struct VADThresholdView: View {
             }
             .frame(maxWidth: .infinity, alignment: .top)
         }
+        .navigationTitle("VAD Threshold")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

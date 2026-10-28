@@ -87,6 +87,7 @@ struct AppearanceSettingsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .top)
         }
+        .navigationTitle("Appearance")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

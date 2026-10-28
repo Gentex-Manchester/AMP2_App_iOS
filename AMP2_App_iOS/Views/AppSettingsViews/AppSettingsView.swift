@@ -32,6 +32,7 @@ struct AppSettingsView: View {
             .padding(.top, 20)
             .padding(.horizontal, 10)
         }
+        .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

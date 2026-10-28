@@ -51,25 +51,19 @@ struct TeamsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                titleSection
                 builtInTeamsSection
                 Spacer(minLength: 40)
             }
             .padding(.horizontal)
         }
-    }
-    
-    // MARK: - Title
-    
-    private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // No spinner: joins are optimistic, so the Active badge moves on tap.
-            Text("Your Teams")
-                .font(.ibmPlexSans(size: 28, weight: .bold))
+        .navigationTitle("Teams")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Teams")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 10)
-        .padding(.bottom, 8)
     }
     
     // MARK: - Built-in Teams

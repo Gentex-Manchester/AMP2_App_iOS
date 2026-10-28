@@ -66,6 +66,7 @@ struct TxPowerView: View {
             }
             .frame(maxWidth: .infinity, alignment: .top)
         }
+        .navigationTitle("LTC Power")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

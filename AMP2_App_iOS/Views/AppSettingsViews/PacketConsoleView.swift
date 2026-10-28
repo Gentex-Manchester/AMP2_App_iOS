@@ -36,6 +36,7 @@ struct PacketConsoleView: View {
             .padding(.horizontal)
             .padding(.bottom, 40)
         }
+        .navigationTitle("Packet Console")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

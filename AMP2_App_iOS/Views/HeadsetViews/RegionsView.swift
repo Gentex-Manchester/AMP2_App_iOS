@@ -40,6 +40,7 @@ struct RegionsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .top)
         }
+        .navigationTitle("Region")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

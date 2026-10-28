@@ -24,7 +24,13 @@ struct ConnectedView: View {
             .frame(maxWidth: .infinity, alignment: .top)
             .padding(.top, 10)
         }
+        .navigationTitle("My AMP®")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("My AMP®")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(value: Route.settings) {
                     Image("settings")
@@ -125,8 +131,6 @@ struct ConnectedView: View {
             if settings.settings.ltcMode == .vad {
                 SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
             }
-            
-            SettingRow(title: "App Settings", route: .settings)
         }
     }
 }
