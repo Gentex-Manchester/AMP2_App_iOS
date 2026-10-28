@@ -18,9 +18,8 @@ import Foundation
 ///
 /// `0x09` (frequency hopping) is used by Android but not in the Gentex BLE doc, so it is omitted.
 enum LTCSetting: UInt8, CaseIterable, Sendable {
-    case predefinedTeam    = 0x00
+    case team              = 0x00
     case securityKey       = 0x01
-    /// Reserved: "not implemented at this time" in firmware. No UI.
     case customSecurityKey = 0x02
     case rfChannel         = 0x03
     case networkId         = 0x04
@@ -32,14 +31,14 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
 
     /// Heartbeat poll order, per the doc. Skips `customSecurityKey` (not in firmware).
     static let pollSequence: [LTCSetting] = [
-        .predefinedTeam, .securityKey, .rfChannel, .networkId,
+        .team, .securityKey, .rfChannel, .networkId,
         .ltcMode, .vadThreshold, .txPower, .ltcVolume, .zone
     ]
 
     /// On-screen label, matching the Headset screen. Names the setting in failure messages.
     var displayName: String {
         switch self {
-        case .predefinedTeam:    return "Team"
+        case .team:    return "Team"
         case .securityKey:       return "Security Key"
         case .customSecurityKey: return "Custom Security Key"
         case .rfChannel:         return "RF Channel"

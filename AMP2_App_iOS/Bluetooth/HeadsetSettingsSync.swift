@@ -17,7 +17,7 @@ import Observation
 
 /// Last-reported headset config. `nil` means "not read yet", never "off" or zero.
 struct HeadsetSettingsState: Equatable, Sendable {
-    var predefinedTeam: PredefinedTeam?
+    var predefinedTeam: Team?
     var securityKey: SecurityKey?
     var rfChannel: Int?
     var networkId: Int?
@@ -39,7 +39,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
 
     /// Derived from key, channel, and network ID, not the `predefinedTeam` byte,
     /// which goes stale after a custom team is written.
-    var activePredefinedTeam: PredefinedTeam? {
+    var activePredefinedTeam: Team? {
         predefinedTeam
     }
 
@@ -50,8 +50,8 @@ struct HeadsetSettingsState: Equatable, Sendable {
         var recognized = true
 
         switch setting {
-        case .predefinedTeam:
-            predefinedTeam = PredefinedTeam(rawValue: byte)
+        case .team:
+            predefinedTeam = Team(rawValue: byte)
             recognized = predefinedTeam != nil
         case .securityKey:
             securityKey = SecurityKey(ltcByte: byte)
@@ -90,7 +90,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
     /// UI-formatted value, or `nil` if not read yet.
     func displayValue(for setting: LTCSetting) -> String? {
         switch setting {
-        case .predefinedTeam:    return predefinedTeam?.displayName
+        case .team:    return predefinedTeam?.displayName
         case .securityKey:       return securityKey?.rawValue.capitalized
         case .rfChannel:         return rfChannel.map(String.init)
         case .networkId:         return networkId.map(String.init)
@@ -311,35 +311,11 @@ final class HeadsetSettingsSync {
     }
 
     /// A preset goes out as the single team command (`0x00`): the headset then plays its
-    /// spoken confirmation and sets key/channel/network itself. Three separate writes
-    /// regroup silently and leave the team byte stale (Android: `TeamsViewModel.setTeam`).
-    /// Custom teams have no team byte, so they still take three writes.
-    func applyTeam(securityKey: SecurityKey, rfChannel: Int, networkId: Int) throws {
-        guard let channelByte = LTCRFChannel.byte(forChannel: rfChannel) else {
-            throw LTCProtocolError.headsetReportedError(.badValue)
-        }
-        guard let networkByte = LTCNetworkID.byte(for: networkId) else {
-            throw LTCProtocolError.headsetReportedError(.badValue)
-        }
-
-        // Predict all three so the "Active" badge moves on the tap.
-        optimistic[.securityKey] = securityKey.ltcByte
-        optimistic[.rfChannel] = channelByte
-        optimistic[.networkId] = networkByte
+    /// spoken confirmation and sets key/channel/network itself.
+    func applyTeam(preset: Team) throws {
+        optimistic[.team] = preset.rawValue
+        priorityQueue.append(.write(.team, value: preset.rawValue))
         lastFailure = nil
-
-        if let preset = PredefinedTeam.matching(
-            securityKey: securityKey, rfChannel: rfChannel, networkId: networkId
-        ) {
-            optimistic[.predefinedTeam] = preset.rawValue
-            priorityQueue.append(.write(.predefinedTeam, value: preset.rawValue))
-        } else {
-            priorityQueue.append(contentsOf: [
-                .write(.securityKey, value: securityKey.ltcByte),
-                .write(.rfChannel, value: channelByte),
-                .write(.networkId, value: networkByte)
-            ])
-        }
 
         routineQueue.removeAll()
         beginLull()
@@ -356,13 +332,6 @@ final class HeadsetSettingsSync {
     /// and a warning each time reads as an app bug. Recorded in `lastFailure` and the debug log.
     private func revertOptimistic(_ setting: LTCSetting, because reason: WriteFailure.Reason) {
         guard optimistic.removeValue(forKey: setting) != nil else { return }
-
-        // A failed team write takes its three predicted values with it.
-        if setting == .predefinedTeam {
-            optimistic[.securityKey] = nil
-            optimistic[.rfChannel] = nil
-            optimistic[.networkId] = nil
-        }
 
         let failure = WriteFailure(
             setting: setting,

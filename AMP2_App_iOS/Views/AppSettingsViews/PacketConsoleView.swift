@@ -17,7 +17,7 @@ struct PacketConsoleView: View {
     @Environment(HeadsetSettingsSync.self) private var sync
 
     @State private var lastError: String?
-    @State private var selectedSetting: LTCSetting = .predefinedTeam
+    @State private var selectedSetting: LTCSetting = .team
     @State private var zoneWatch: Task<Void, Never>?
 
     var body: some View {
@@ -191,7 +191,7 @@ struct PacketConsoleView: View {
 
             // `confirmed`, not `settings`: show only what the headset reported.
             let settings = sync.confirmed
-            row("Team byte", value(settings.predefinedTeam?.displayName, .predefinedTeam))
+            row("Team byte", value(settings.predefinedTeam?.displayName, .team))
             row("Security key", value(settings.securityKey?.rawValue, .securityKey))
             row("RF channel", value(settings.rfChannel.map(String.init), .rfChannel))
             row("Network ID", value(settings.networkId.map(String.init), .networkId))
