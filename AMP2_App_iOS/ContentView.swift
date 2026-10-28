@@ -32,6 +32,8 @@ struct ContentView: View {
                 case .vadThreshold: VADThresholdView()
                 case .ltcVolume: LTCVolumeView()
                 case .txPower: TxPowerView()
+                case .ltcKey: LTCKeyView()
+                case .customKey: CustomKeyView()
                 #if DEBUG
                 case .packetConsole: PacketConsoleView()
                 #endif

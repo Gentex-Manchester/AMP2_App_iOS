@@ -143,6 +143,7 @@ extension SecurityKey {
         case .TANGO:    return 0x07
         case .UNIFORM:  return 0x08
         case .VICTOR:   return 0x09
+        case .CUSTOM:   return 0x0a
         }
     }
 

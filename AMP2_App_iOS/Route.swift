@@ -14,17 +14,19 @@ enum Route: Hashable {
     case vadThreshold
     case ltcVolume
     case txPower
+    case ltcKey
+    case customKey
     #if DEBUG
     /// Bluetooth bring-up diagnostics. Debug builds only.
     case packetConsole
     #endif
 
-    /// Screens popped when the headset disconnects.
+    /// Screens that should stop working when the headset disconnects.
     var requiresHeadset: Bool {
         switch self {
         case .appearance, .orientation, .teams, .settings:
             return false
-        case .regions, .vadThreshold, .ltcVolume, .txPower:
+        case .regions, .vadThreshold, .ltcVolume, .txPower, .ltcKey, .customKey:
             return true
         #if DEBUG
         // Survives a disconnect; it's where disconnects get diagnosed.

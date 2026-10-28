@@ -33,12 +33,11 @@ struct ConnectedView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(value: Route.settings) {
-                    Image("settings")
+                    Image("settings_24px")
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                        .foregroundColor(.opsCoreRed)
                 }
             }
         }
@@ -119,17 +118,18 @@ struct ConnectedView: View {
 
     private var settingsLinks: some View {
         VStack(spacing: 0) {
-            SettingRow(title: "Teams", route: .teams)
+            if settings.settings.ltcMode == .vad {
+                SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
+            }
+            
+            SettingRow(title: "LTC Team", route: .teams)
+            SettingRow(title: "LTC Key", route: .ltcKey)
             SettingRow(title: LTCSetting.ltcVolume.displayName, route: .ltcVolume)
             SettingRow(title: LTCSetting.txPower.displayName, route: .txPower)
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
                 SettingRow(title: LTCSetting.zone.displayName, route: .regions)
-            }
-            
-            if settings.settings.ltcMode == .vad {
-                SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
             }
         }
     }

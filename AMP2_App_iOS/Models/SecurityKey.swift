@@ -13,6 +13,7 @@ enum SecurityKey: CaseIterable, Codable, Sendable {
     case TANGO
     case UNIFORM
     case VICTOR
+    case CUSTOM
 
     var rawValue: String {
         switch self {
@@ -26,6 +27,7 @@ enum SecurityKey: CaseIterable, Codable, Sendable {
         case .TANGO:    return "TANGO"
         case .UNIFORM:  return "UNIFORM"
         case .VICTOR:   return "VICTOR"
+        case .CUSTOM:   return "CUSTOM"
         }
     }
 

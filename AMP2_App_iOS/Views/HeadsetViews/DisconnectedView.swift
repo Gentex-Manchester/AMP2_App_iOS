@@ -79,12 +79,11 @@ struct DisconnectedView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(value: Route.settings) {
-                    Image("settings")
+                    Image("settings_24px")
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                        .foregroundColor(.opsCoreRed)
                 }
             }
         }
