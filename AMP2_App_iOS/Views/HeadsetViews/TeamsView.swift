@@ -32,29 +32,60 @@ struct TeamsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                if session.state.isConnected {
-                    ForEach(Team.allCases, id: \.self) { preset in
-                        presetRow(preset)
+            if (session.state.isConnected) {
+                let selectedTeam = headsetSettings.settings.activePredefinedTeam
+                
+                VStack(spacing: 10) {
+                    Text("Determines who you can talk to with Local Teams Comms (LTC).")
+                        .font(.ibmPlexSans(size: 18))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 16)
+                        .padding(.bottom, 16)
+                    
+                    HStack(spacing: 10){
+                        SelectionButton(
+                            label: "Alpha",
+                            selected: selectedTeam == Team.alpha,
+                            action: { joinPreset(Team.alpha) }
+                        )
+                        
+                        SelectionButton(
+                            label: "Bravo",
+                            selected: selectedTeam == Team.bravo,
+                            action: { joinPreset(Team.bravo) }
+                        )
                     }
-                } else {
-                    Button(action: {}) {
-                        HStack {
-                            Text("Headset not connected")
-                                .font(.ibmPlexSans(size: 20))
-                            Spacer()
-                        }
-                        .foregroundColor(Color(.systemGray4))
-                        .padding(.vertical, 16)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .background(Color(.gray))
-                        .cornerRadius(16)
+                    
+                    HStack(spacing: 10) {
+                        SelectionButton(
+                            label: "Charlie",
+                            selected: selectedTeam == Team.charlie,
+                            action: { joinPreset(Team.charlie) }
+                        )
+
+                        SelectionButton(
+                            label: "Delta",
+                            selected: selectedTeam == Team.delta,
+                            action: { joinPreset(Team.delta) }
+                        )
                     }
-                    .disabled(true)
+                    
+                    HStack(spacing: 10) {
+                        SelectionButton(
+                            label: "Joint Ops",
+                            selected: selectedTeam == Team.jointOps,
+                            action: { joinPreset(Team.jointOps) }
+                        )
+                    }
                 }
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
             }
-            .padding(.horizontal)
         }
         .navigationTitle("Teams")
         .navigationBarTitleDisplayMode(.inline)
@@ -64,35 +95,6 @@ struct TeamsView: View {
                     .font(.ibmPlexSans(size: 28, weight: .bold))
             }
         }
-    }
-    
-    /// A built-in team. Joining writes the same three settings as a custom team.
-    private func presetRow(_ preset: Team) -> some View {
-        let isActive = headsetSettings.settings.activePredefinedTeam == preset
-        
-        return Button {
-            joinPreset(preset)
-        } label: {
-            HStack {
-                Text(preset.displayName)
-                    .font(.ibmPlexSans(size: 20))
-                
-                Spacer()
-                
-                if isActive {
-                    Text("Active")
-                        .font(.ibmPlexSans(size: 14, weight: .bold))
-                        .foregroundColor(.opsCoreRed)
-                }
-            }
-            .foregroundColor(.primary)
-            .padding(.vertical, 16)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-            .background(Color(.systemGray4))
-            .cornerRadius(16)
-        }
-        .padding(.bottom, 8)
     }
 }
 
