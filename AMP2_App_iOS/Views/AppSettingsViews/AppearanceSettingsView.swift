@@ -18,74 +18,46 @@ struct AppearanceSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
-            Text("Adjusts the colors used in the app's user interface")
-                .font(.ibmPlexSans(size: 18))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 50)
-                .padding(.bottom, 10)
-                .padding(.leading, 22)
-            
-            HStack(spacing: 10){
-                Button(action: { appearanceMode = .system }) {
-                    HStack {
-                        Spacer()
-                        Text("System")
-                            .font(.ibmPlexSans(size: 20))
-                        Spacer()
-                    }
-                    .foregroundColor(.white)
-                    .padding(.vertical, 16)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity)
-                    .background(appearanceMode == .system ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                    .cornerRadius(16)
+            VStack(spacing: 10) {
+                Text("Adjusts the colors used in the app's user interface")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 16)
+                    .padding(.bottom, 16)
+                
+                HStack(spacing: 10){
+                    SelectionButton(
+                        label: "System",
+                        selected: appearanceMode == .system,
+                        action: { appearanceMode = .system }
+                    )
+                    
+                    SelectionButton(
+                        label: "Light Mode",
+                        selected: appearanceMode == .light,
+                        action: { appearanceMode = .light }
+                    )
                 }
-                .padding(.leading)
-                .padding(.bottom, 10)
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Dark Mode",
+                        selected: appearanceMode == .dark,
+                        action: { appearanceMode = .dark }
+                    )
 
-                Button(action: { appearanceMode = .light }) {
-                    HStack {
-                        Spacer()
-                        Text("Light Mode")
-                            .font(.ibmPlexSans(size: 20))
-                        Spacer()
-                    }
-                    .foregroundColor(.white)
-                    .padding(.vertical, 16)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity)
-                    .background(appearanceMode == .light ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                    .cornerRadius(16)
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                        .padding(.trailing)
                 }
-                .padding(.trailing)
-                .padding(.bottom, 10)
             }
-            
-            HStack(spacing: 10) {
-                Button(action: { appearanceMode = .dark }) {
-                    HStack {
-                        Spacer()
-                        Text("Dark Mode")
-                            .font(.ibmPlexSans(size: 20))
-                        Spacer()
-                    }
-                    .foregroundColor(.white)
-                    .padding(.vertical, 16)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity)
-                    .background(appearanceMode == .dark ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                    .cornerRadius(16)
-                }
-                .padding(.leading)
-
-                Spacer()
-                    .frame(maxWidth: .infinity)
-                    .padding(.trailing)
-            }
-
-            }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("Appearance")
         .navigationBarTitleDisplayMode(.inline)
