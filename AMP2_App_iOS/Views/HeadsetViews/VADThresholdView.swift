@@ -23,12 +23,10 @@ struct VADThresholdView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Adjusts the sensitivity of the microphone when LTC is in VAD mode.")
-                    .font(.ibmPlexSans(size: 18, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 50)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
+                Text("Determines the sensitivity of the microphone when VAD mode is enabled.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
 
                 VStack(spacing: 12) {
                     Slider(
@@ -47,7 +45,7 @@ struct VADThresholdView: View {
                         }
                     )
                     .tint(.opsCoreRed)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
 
                     HStack {
                         Text("Low")
@@ -61,10 +59,16 @@ struct VADThresholdView: View {
                             .font(.ibmPlexSans(size: 14))
                             .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("VAD Threshold")
         .navigationBarTitleDisplayMode(.inline)

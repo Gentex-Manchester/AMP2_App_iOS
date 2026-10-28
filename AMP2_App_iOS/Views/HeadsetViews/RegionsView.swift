@@ -14,31 +14,46 @@ struct RegionsView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
     @Environment(HeadsetSession.self) private var session
 
-    @AppStorage("selectedRegion") private var selectedRegionRaw: String = Region.northAmerica.rawValue
+    @AppStorage("selectedRegion") private var selectedRegionRaw: String = Region.americas.rawValue
 
     /// The headset's reported zone wins over the stored preference.
     private var activeRegion: Region {
-        settings.settings.zone ?? Region(rawValue: selectedRegionRaw) ?? .northAmerica
+        settings.settings.zone ?? Region(rawValue: selectedRegionRaw) ?? .americas
     }
 
     var body: some View {
         ScrollView {
-            VStack {
-                Text("The region you're operating in. Determines which teams are available and which settings are available when creating custom teams.")
-                    .font(.ibmPlexSans(size: 18, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 50)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
-
+            if (session.state.isConnected) {
+                let selectedZone = settings.settings.zone
+                
                 VStack(spacing: 10) {
-                    ForEach(Region.allCases, id: \.self) { region in
-                        regionButton(region)
+                    Text("Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
+                        .font(.ibmPlexSans(size: 18))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 16)
+                    
+                    HStack(spacing: 10){
+                        SelectionButton(
+                            label: "Americas",
+                            selected: selectedZone == Region.americas,
+                            action: { settings.write(LTCSetting.zone, value: Region.americas.ltcByte) }
+                        )
+                        
+                        SelectionButton(
+                            label: "Eurasia",
+                            selected: selectedZone == Region.eurasia,
+                            action: { settings.write(LTCSetting.zone, value: Region.eurasia.ltcByte) }
+                        )
                     }
                 }
-                .padding(.horizontal, 20)
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
             }
-            .frame(maxWidth: .infinity, alignment: .top)
         }
         .navigationTitle("Region")
         .navigationBarTitleDisplayMode(.inline)

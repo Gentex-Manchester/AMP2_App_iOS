@@ -22,8 +22,7 @@ struct AppearanceSettingsView: View {
                 Text("Adjusts the colors used in the app's user interface")
                     .font(.ibmPlexSans(size: 18))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 16)
-                    .padding(.bottom, 16)
+                    .padding(.vertical, 16)
                 
                 HStack(spacing: 10){
                     SelectionButton(

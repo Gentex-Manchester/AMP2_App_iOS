@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct TeamsView: View {
-    @AppStorage("selectedRegion") private var selectedRegionRaw: String = Region.northAmerica.rawValue
+    @AppStorage("selectedRegion") private var selectedRegionRaw: String = Region.americas.rawValue
     
     @Environment(HeadsetSession.self) private var session
     @Environment(HeadsetSettingsSync.self) private var headsetSettings
@@ -25,7 +25,7 @@ struct TeamsView: View {
     }
     
     private var selectedRegion: Region {
-        Region(rawValue: selectedRegionRaw) ?? .northAmerica
+        Region(rawValue: selectedRegionRaw) ?? .americas
     }
     
     // MARK: - Body
@@ -39,8 +39,7 @@ struct TeamsView: View {
                     Text("Determines who you can talk to with Local Teams Comms (LTC).")
                         .font(.ibmPlexSans(size: 18))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 16)
-                        .padding(.bottom, 16)
+                        .padding(.vertical, 16)
                     
                     HStack(spacing: 10){
                         SelectionButton(

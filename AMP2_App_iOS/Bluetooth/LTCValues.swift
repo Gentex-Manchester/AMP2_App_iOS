@@ -111,17 +111,15 @@ extension Region {
     /// Zone setting (`0x0a`). The headset says "zone"; the app says "region".
     var ltcByte: UInt8 {
         switch self {
-        case .northAmerica: return 0x00
-        case .latinAmerica: return 0x01
-        case .eurasia:      return 0x02
+        case .americas:     return 0x00
+        case .eurasia:      return 0x01
         }
     }
 
     init?(ltcByte: UInt8) {
         switch ltcByte {
-        case 0x00: self = .northAmerica
-        case 0x01: self = .latinAmerica
-        case 0x02: self = .eurasia
+        case 0x00: self = .americas
+        case 0x01: self = .eurasia
         default: return nil
         }
     }

@@ -20,12 +20,10 @@ struct LTCVolumeView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Adjusts the volume of LTC communications in your headset.")
-                    .font(.ibmPlexSans(size: 18, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 50)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
+                Text("Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
 
                 VStack(spacing: 12) {
                     Slider(
@@ -44,7 +42,7 @@ struct LTCVolumeView: View {
                         }
                     )
                     .tint(.opsCoreRed)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
 
                     HStack {
                         Text("Quiet")
@@ -58,10 +56,16 @@ struct LTCVolumeView: View {
                             .font(.ibmPlexSans(size: 14))
                             .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("LTC Volume")
         .navigationBarTitleDisplayMode(.inline)
