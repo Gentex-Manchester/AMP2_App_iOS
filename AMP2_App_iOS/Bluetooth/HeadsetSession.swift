@@ -73,12 +73,12 @@ struct DiscoveredHeadset: Identifiable, Equatable {
         case advertised
     }
 
-    /// Mirrors Android's name check. With no advertised service UUIDs this is the
+    /// With no advertised service UUIDs this is the
     /// only pre-connect filter, so a nameless headset is missed (the packet console's
     /// unfiltered scan is the fallback). The GAIA service check verifies after connect.
     var looksLikeGentexHeadset: Bool {
         let lowercased = name.lowercased()
-        return lowercased.contains("gentex") || lowercased.contains("amp")
+        return lowercased.contains("amp")
     }
 
     static func == (lhs: DiscoveredHeadset, rhs: DiscoveredHeadset) -> Bool {

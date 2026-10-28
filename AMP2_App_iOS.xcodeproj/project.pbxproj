@@ -41,7 +41,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		93A101E82FE43EB4000B868A /* AMP 2.0 (Alpha).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AMP 2.0 (Alpha).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		93A101E82FE43EB4000B868A /* AMP_2.0_App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AMP_2.0_App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A101F72FE43EB5000B868A /* AMP2_App_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMP2_App_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A102012FE43EB5000B868A /* AMP2_App_iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMP2_App_iOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -103,7 +103,7 @@
 		93A101E92FE43EB4000B868A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93A101E82FE43EB4000B868A /* AMP 2.0 (Alpha).app */,
+				93A101E82FE43EB4000B868A /* AMP_2.0_App.app */,
 				93A101F72FE43EB5000B868A /* AMP2_App_iOSTests.xctest */,
 				93A102012FE43EB5000B868A /* AMP2_App_iOSUITests.xctest */,
 			);
@@ -133,7 +133,7 @@
 			packageProductDependencies = (
 			);
 			productName = Gentex_iOS;
-			productReference = 93A101E82FE43EB4000B868A /* AMP 2.0 (Alpha).app */;
+			productReference = 93A101E82FE43EB4000B868A /* AMP_2.0_App.app */;
 			productType = "com.apple.product-type.application";
 		};
 		93A101F62FE43EB5000B868A /* AMP2_App_iOSTests */ = {
@@ -438,7 +438,7 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "gentex.amp-2";
-				PRODUCT_NAME = "AMP 2.0 (Alpha)";
+				PRODUCT_NAME = AMP_2.0_App;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -477,7 +477,7 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "gentex.amp-2";
-				PRODUCT_NAME = "AMP 2.0 (Alpha)";
+				PRODUCT_NAME = AMP_2.0_App;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -659,7 +659,7 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "gentex.amp-2";
-				PRODUCT_NAME = "AMP 2.0 (Alpha)";
+				PRODUCT_NAME = AMP_2.0_App;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEV_NO_GATE";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
