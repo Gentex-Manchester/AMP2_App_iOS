@@ -14,22 +14,15 @@ func encrypt(_ password: String) -> Data? {
         return nil
     }
 
-    let key = SymmetricKey(data: Data(keyBytes))
-    let plaintextData = Data(password.utf8)
+    let derivedKey = Data(keyBytes)
+    print("Derived AES key: " + (keyBytes.map {String(format: "%02X", $0)}.joined(separator: " ")))
 
-    do {
-        let sealedBox = try AES.GCM.seal(plaintextData, using: key)
-        return sealedBox.combined
-    } catch {
-        print("Encryption failed: \(error)")
-        return nil
-    }
+    return derivedKey
 }
 
 private func deriveAES256Key(password: String) -> [UInt8]? {
-    let iterations = 600_000
-    let keyLength = 32 // 256 bits = 32 bytes
-
+    let iterations: UInt32 = 600_000
+    let keyLength = 32
     let salt = [UInt8](repeating: 0, count: 16)
     let passwordBytes = Array(password.utf8)
 
@@ -39,12 +32,14 @@ private func deriveAES256Key(password: String) -> [UInt8]? {
         salt.withUnsafeBytes { saltBuffer in
             CCKeyDerivationPBKDF(
                 CCPBKDFAlgorithm(kCCPBKDF2),
-                password,
+                passwordBuffer.baseAddress!
+                    .assumingMemoryBound(to: Int8.self),
                 passwordBytes.count,
-                saltBuffer.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                saltBuffer.baseAddress!
+                    .assumingMemoryBound(to: UInt8.self),
                 salt.count,
                 CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
-                UInt32(iterations),
+                iterations,
                 &derivedKey,
                 keyLength
             )
@@ -52,8 +47,10 @@ private func deriveAES256Key(password: String) -> [UInt8]? {
     }
 
     guard status == kCCSuccess else {
+        print("PBKDF2 failed with status: \(status)")
         return nil
     }
 
     return derivedKey
 }
+
