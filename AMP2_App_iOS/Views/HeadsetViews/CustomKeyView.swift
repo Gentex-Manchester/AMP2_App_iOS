@@ -40,27 +40,25 @@ struct CustomKeyView: View {
                             }
                         )
                     )
+                    .textInputAutocapitalization(.characters) // TODO: Replace with custom text field
+                    .autocorrectionDisabled()
                     .padding(12)
                     .background(Color(.systemGray).opacity(0.5)) // TODO: Replace with actual color scheme
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     
-                    Button(action: {
-                        guard !password.isEmpty else { return }
-                        if let encryptedData = encrypt(password) {
-                            let encryptedBytes: [UInt8] = Array(encryptedData)
-                            headsetSettings.write(LTCSetting.customSecurityKey, value: encryptedBytes)
+                    PrimaryButton(
+                        label: "Set",
+                        enabled: password.isEmpty == false,
+                        action: {
+                            guard !password.isEmpty else { return }
+                            if let encryptedData = encrypt(password) {
+                                let encryptedBytes: [UInt8] = Array(encryptedData)
+                                headsetSettings.write(LTCSetting.customSecurityKey, value: encryptedBytes)
+                            }
+                            password = ""
                         }
-                    }) {
-                        Text("Set")
-                            .font(.ibmPlexSans(size: 20))
-                            .foregroundColor(.white)
-                            // Android GentexPrimaryButton (64dp tall, 24dp margins)
-                            // ×1.1, since an Android dp draws ~10% larger.
-                            .frame(maxWidth: .infinity, minHeight: 70)
-                            .background(Color.opsCoreRed)
-                            .cornerRadius(16)
-                            .padding(.vertical, 12)
-                    }
+                    )
+                    .padding(.vertical, 12)
                     
                     let customKeyString = headsetSettings.settings.customSecurityKey?.prefix(4).map { String(format: "%02X ", $0) }.joined() ?? "—"
                     Text("Current custom key: " + customKeyString + "...")

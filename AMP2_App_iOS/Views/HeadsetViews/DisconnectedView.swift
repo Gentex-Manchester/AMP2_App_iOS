@@ -46,29 +46,21 @@ struct DisconnectedView: View {
             
             Spacer()
             
-            Button(action: {
-                // Scan first; a headset already connected in Settings needs no
-                // walkthrough. Show it only when nothing turns up.
-                if session.discoveredHeadsets.isEmpty && !session.isDiscovering {
-                    session.startDiscovery()
-                } else {
-                    showTutorial = true
+            PrimaryButton(
+                label: buttonTitle,
+                enabled: radioFault == nil,
+                action: {
+                    // Scan first; a headset already connected in Settings needs no
+                    // walkthrough. Show it only when nothing turns up.
+                    if session.discoveredHeadsets.isEmpty && !session.isDiscovering {
+                        session.startDiscovery()
+                    } else {
+                        showTutorial = true
+                    }
                 }
-            }) {
-                Text(buttonTitle)
-                    .font(.ibmPlexSans(size: 20))
-                    .foregroundColor(.white)
-                    // Android GentexPrimaryButton (64dp tall, 24dp margins)
-                    // ×1.1, since an Android dp draws ~10% larger.
-                    .frame(maxWidth: .infinity, minHeight: 70)
-                    .background(Color.opsCoreRed)
-                    .cornerRadius(16)
-                    .padding(.horizontal, 26)
-                    .padding(.bottom, isLandscape ? 16 : 40)
-            }
-            // Scanning with the radio down just fails; a dead button looks like an app bug.
-            .disabled(radioFault != nil)
-            .opacity(radioFault == nil ? 1 : 0.50)
+            )
+            .padding(.horizontal, 26)
+            .padding(.bottom, isLandscape ? 16 : 40)
         }
         .navigationTitle("Home")
         .navigationBarTitleDisplayMode(.inline)
