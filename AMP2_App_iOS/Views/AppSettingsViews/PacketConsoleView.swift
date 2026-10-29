@@ -191,7 +191,7 @@ struct PacketConsoleView: View {
 
             // `confirmed`, not `settings`: show only what the headset reported.
             let settings = sync.confirmed
-            row("Team byte", value(settings.predefinedTeam?.displayName, .team))
+            row("Team", value(settings.team?.displayName, .team))
             row("Security key", value(settings.securityKey?.rawValue, .securityKey))
             row("RF channel", value(settings.rfChannel.map(String.init), .rfChannel))
             row("Network ID", value(settings.networkId.map(String.init), .networkId))
@@ -241,7 +241,7 @@ struct PacketConsoleView: View {
     }
 
     private var activeTeamText: String {
-        sync.confirmed.activePredefinedTeam?.displayName ?? "—"
+        sync.confirmed.team?.displayName ?? "—"
     }
 
     // MARK: - Isolated Writes

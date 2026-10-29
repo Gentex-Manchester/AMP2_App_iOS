@@ -17,7 +17,7 @@ import Observation
 
 /// Last-reported headset config. `nil` means "not read yet", never "off" or zero.
 struct HeadsetSettingsState: Equatable, Sendable {
-    var predefinedTeam: Team?
+    var team: Team?
     var securityKey: SecurityKey?
     var rfChannel: Int?
     var networkId: Int?
@@ -32,15 +32,9 @@ struct HeadsetSettingsState: Equatable, Sendable {
     var unrecognized: [LTCSetting: UInt8] = [:]
 
     var isComplete: Bool {
-        predefinedTeam != nil && securityKey != nil && rfChannel != nil
+        team != nil && securityKey != nil && rfChannel != nil
             && networkId != nil && ltcMode != nil && vadThreshold != nil
             && txPower != nil && ltcVolume != nil && zone != nil
-    }
-
-    /// Derived from key, channel, and network ID, not the `predefinedTeam` byte,
-    /// which goes stale after a custom team is written.
-    var activePredefinedTeam: Team? {
-        predefinedTeam
     }
 
     // MARK: Decoding
@@ -51,8 +45,8 @@ struct HeadsetSettingsState: Equatable, Sendable {
 
         switch setting {
         case .team:
-            predefinedTeam = Team(rawValue: byte)
-            recognized = predefinedTeam != nil
+            team = Team(rawValue: byte)
+            recognized = team != nil
         case .securityKey:
             securityKey = SecurityKey(ltcByte: byte)
             recognized = securityKey != nil
@@ -90,7 +84,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
     /// UI-formatted value, or `nil` if not read yet.
     func displayValue(for setting: LTCSetting) -> String? {
         switch setting {
-        case .team:    return predefinedTeam?.displayName
+        case .team:              return team?.displayName
         case .securityKey:       return securityKey?.rawValue.capitalized
         case .rfChannel:         return rfChannel.map(String.init)
         case .networkId:         return networkId.map(String.init)
@@ -312,9 +306,9 @@ final class HeadsetSettingsSync {
 
     /// A preset goes out as the single team command (`0x00`): the headset then plays its
     /// spoken confirmation and sets key/channel/network itself.
-    func applyTeam(preset: Team) throws {
-        optimistic[.team] = preset.rawValue
-        priorityQueue.append(.write(.team, value: preset.rawValue))
+    func applyTeam(team: Team) throws {
+        optimistic[.team] = team.rawValue
+        priorityQueue.append(.write(.team, value: team.rawValue))
         lastFailure = nil
 
         routineQueue.removeAll()

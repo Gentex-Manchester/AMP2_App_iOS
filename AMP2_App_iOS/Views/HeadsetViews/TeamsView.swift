@@ -15,12 +15,12 @@ struct TeamsView: View {
     @Environment(HeadsetSettingsSync.self) private var headsetSettings
     
 
-    private func joinPreset(_ preset: Team) {
+    private func joinTeam(_ team: Team) {
         guard session.state.isConnected else {
             return
         }
         do {
-            try headsetSettings.applyTeam(preset: preset)
+            try headsetSettings.applyTeam(team: team)
         } catch { }
     }
     
@@ -33,7 +33,7 @@ struct TeamsView: View {
     var body: some View {
         ScrollView {
             if (session.state.isConnected) {
-                let selectedTeam = headsetSettings.settings.activePredefinedTeam
+                let selectedTeam = headsetSettings.settings.team
                 
                 VStack(spacing: 10) {
                     Text("Determines who you can talk to with Local Teams Comms (LTC).")
@@ -45,13 +45,13 @@ struct TeamsView: View {
                         SelectionButton(
                             label: "Alpha",
                             selected: selectedTeam == Team.alpha,
-                            action: { joinPreset(Team.alpha) }
+                            action: { joinTeam(Team.alpha) }
                         )
                         
                         SelectionButton(
                             label: "Bravo",
                             selected: selectedTeam == Team.bravo,
-                            action: { joinPreset(Team.bravo) }
+                            action: { joinTeam(Team.bravo) }
                         )
                     }
                     
@@ -59,13 +59,13 @@ struct TeamsView: View {
                         SelectionButton(
                             label: "Charlie",
                             selected: selectedTeam == Team.charlie,
-                            action: { joinPreset(Team.charlie) }
+                            action: { joinTeam(Team.charlie) }
                         )
 
                         SelectionButton(
                             label: "Delta",
                             selected: selectedTeam == Team.delta,
-                            action: { joinPreset(Team.delta) }
+                            action: { joinTeam(Team.delta) }
                         )
                     }
                     
@@ -73,7 +73,7 @@ struct TeamsView: View {
                         SelectionButton(
                             label: "Joint Ops",
                             selected: selectedTeam == Team.jointOps,
-                            action: { joinPreset(Team.jointOps) }
+                            action: { joinTeam(Team.jointOps) }
                         )
                     }
                 }
