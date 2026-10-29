@@ -80,10 +80,10 @@ struct LTCResponse: Equatable, Sendable {
     static let responseHeader: [UInt8] = [0x00, 0x1d, 0x41, 0x2c]
 
     /// Bytes after the header. One byte for every setting the app uses.
-    let payload: Data
+    let payload: [UInt8]
 
     /// Setting value for a read, status code for a write.
-    var value: UInt8? { payload.first }
+    var value: [UInt8]? { payload }
 
     /// Throws on a missing header so a truncated notification isn't misread as a value.
     static func parse(_ data: Data) throws -> LTCResponse {
@@ -92,11 +92,11 @@ struct LTCResponse: Equatable, Sendable {
               Array(bytes.prefix(responseHeader.count)) == responseHeader else {
             throw LTCProtocolError.malformedResponse(hex: data.ltcHexString)
         }
-        return LTCResponse(payload: Data(bytes.dropFirst(responseHeader.count)))
+        return LTCResponse(payload: Array(bytes.dropFirst(responseHeader.count)))
     }
 
     func validateWriteSucceeded() throws {
-        guard let raw = value else { throw LTCProtocolError.emptyPayload }
+        guard let raw = value?.first else { throw LTCProtocolError.emptyPayload }
         guard let status = LTCStatus(rawValue: raw) else {
             throw LTCProtocolError.unknownStatus(raw)
         }
@@ -105,7 +105,7 @@ struct LTCResponse: Equatable, Sendable {
         }
     }
 
-    func readValue() throws -> UInt8 {
+    func readValue() throws -> [UInt8] {
         guard let value else { throw LTCProtocolError.emptyPayload }
         return value
     }

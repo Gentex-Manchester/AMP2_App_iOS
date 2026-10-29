@@ -31,7 +31,7 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
 
     /// Heartbeat poll order, per the doc. Skips `customSecurityKey` (not in firmware).
     static let pollSequence: [LTCSetting] = [
-        .team, .securityKey, .rfChannel, .networkId,
+        .team, .securityKey, .customSecurityKey, .rfChannel, .networkId,
         .ltcMode, .vadThreshold, .txPower, .ltcVolume, .zone
     ]
 
@@ -66,14 +66,13 @@ enum LTCPacket {
         Data(commandHeader + [opRead, setting.rawValue, expectedLength])
     }
 
-    /// `00 1d 40 2c 01 <setting> <len> <payload>` — e.g. team Alpha: `00 1d 40 2c 01 00 01 00`
-    static func write(_ setting: LTCSetting, value: UInt8) -> Data {
-        Data(commandHeader + [opWrite, setting.rawValue, 0x01, value])
-    }
-
     /// No setting is multi-byte yet; here for the custom security key if it lands.
-    static func write(_ setting: LTCSetting, payload: Data) -> Data {
+    static func write(_ setting: LTCSetting, payload: [UInt8]) -> Data {
         Data(commandHeader + [opWrite, setting.rawValue, UInt8(payload.count)] + payload)
+    }
+    
+    static func write(_ setting: LTCSetting, value: UInt8) -> Data {
+        write(setting, payload: [value])
     }
 
     // MARK: - Headset Identity
