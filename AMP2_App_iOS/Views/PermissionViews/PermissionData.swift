@@ -10,12 +10,10 @@ import Foundation
 enum PermissionType: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     case bluetooth
-    case camera
 
     var buttonTitle: String {
         switch self {
         case .bluetooth: return "Bluetooth Permissions"
-        case .camera: return "Camera Permissions"
         }
     }
 
@@ -27,12 +25,6 @@ enum PermissionType: String, CaseIterable, Identifiable {
                 title: "This app needs permission to use Bluetooth",
                 description: ""
             )
-        case .camera:
-            return PermissionData(
-                imageName: "Camera (Dark)",
-                title: "This app needs permission to use the camera to scan QR codes",
-                description: ""
-            )
         }
     }
 
@@ -42,14 +34,6 @@ enum PermissionType: String, CaseIterable, Identifiable {
         case .bluetooth:
             switch CBManager.authorization {
             case .allowedAlways: return .allowed
-            case .denied: return .denied
-            case .restricted: return .restricted
-            case .notDetermined: return .notRequested
-            @unknown default: return .notRequested
-            }
-        case .camera:
-            switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .authorized: return .allowed
             case .denied: return .denied
             case .restricted: return .restricted
             case .notDetermined: return .notRequested
