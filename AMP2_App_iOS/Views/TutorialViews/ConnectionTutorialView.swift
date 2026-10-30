@@ -20,19 +20,6 @@ struct ConnectionTutorialView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title2)
-                        .foregroundColor(.primary)
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top)
-
             stepContent
                 .frame(maxHeight: .infinity)
 
@@ -53,7 +40,23 @@ struct ConnectionTutorialView: View {
         .onAppear {
             startLookingIfPairing()
         }
-        .navigationTitle("Connection Tutorial")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Bluetooth Pairing")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                }
+            }
+        }
+        .navigationTitle("Bluetooth Pairing")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     // MARK: - Step Content
@@ -230,6 +233,8 @@ struct ConnectionTutorialView: View {
 }
 
 #Preview {
-    ConnectionTutorialView()
-        .environment(HeadsetSession())
+    NavigationStack {
+        ConnectionTutorialView()
+            .environment(HeadsetSession())
+    }
 }

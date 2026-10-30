@@ -80,7 +80,9 @@ struct DisconnectedView: View {
             }
         }
         .fullScreenCover(isPresented: $showTutorial) {
-            ConnectionTutorialView()
+            NavigationStack {
+                ConnectionTutorialView()
+            }
         }
         #if DEBUG
         .onAppear {
