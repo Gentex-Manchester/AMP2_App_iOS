@@ -154,11 +154,11 @@ struct ConnectionTutorialView: View {
                 waitingForHeadset
 
                 HStack(spacing: 18) {
-                    secondaryButton("Back") {
+                    SecondaryButton(label: "Back") {
                         goBack()
                     }
 
-                    secondaryButton(session.isDiscovering ? "Looking…" : "Check Again") {
+                    SecondaryButton(label: session.isDiscovering ? "Looking…" : "Check Again") {
                         session.startDiscovery()
                     }
                     .disabled(session.isDiscovering)
@@ -166,11 +166,11 @@ struct ConnectionTutorialView: View {
             }
         } else {
             HStack(spacing: 18) {
-                secondaryButton("Back") {
+                SecondaryButton(label: "Back") {
                     goBack()
                 }
 
-                primaryButton("Next") {
+                PrimaryButton(label: "Next") {
                     currentStep += 1
                 }
             }
@@ -202,32 +202,6 @@ struct ConnectionTutorialView: View {
             currentStep -= 1
         } else {
             dismiss()
-        }
-    }
-
-    // MARK: - Button Styles
-
-    // Android's primary (64dp) and secondary (56dp) buttons, margins, and gaps
-    // ×1.1, since an Android dp draws ~10% larger. The heights differ there too.
-    private func primaryButton(_ text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.ibmPlexSans(size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, minHeight: 70)
-                .background(Color.opsCoreRed)
-                .cornerRadius(16)
-        }
-    }
-
-    private func secondaryButton(_ text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.ibmPlexSans(size: 20))
-                .foregroundColor(.opsCoreRed)
-                .frame(maxWidth: .infinity, minHeight: 62)
-                .background(Color(.systemGray5))
-                .cornerRadius(16)
         }
     }
 }

@@ -14,7 +14,7 @@ struct PrimaryButton: View {
 
     init(
         label: String,
-        enabled: Bool,
+        enabled: Bool = true,
         action: @escaping () -> Void
     ) {
         self.label = label
@@ -33,6 +33,33 @@ struct PrimaryButton: View {
         }
         .disabled(!enabled)
         .opacity(enabled ? 1 : 0.50)
+    }
+}
+
+struct SecondaryButton: View {
+    let label: String
+    let enabled: Bool
+    let action: () -> Void
+
+    init(
+        label: String,
+        enabled: Bool = true,
+        action: @escaping () -> Void
+    ) {
+        self.label = label
+        self.enabled = enabled
+        self.action = action
+    }
+    
+    var body : some View {
+        Button(action: action) {
+            Text(label)
+                .font(.ibmPlexSans(size: 20))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, minHeight: 70)
+                .background(Color(.systemGray2))
+                .cornerRadius(16)
+        }
     }
 }
 
