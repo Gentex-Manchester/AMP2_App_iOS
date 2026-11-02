@@ -2,9 +2,6 @@
 //  TeamsView.swift
 //  AMP2_App_iOS
 //
-//  Displays persisted custom teams, built-in headset teams (placeholder),
-//  and provides access to team creation, editing, and QR import/export.
-//
 
 import SwiftUI
 

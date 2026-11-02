@@ -70,7 +70,9 @@ struct DisconnectedView: View {
                     .font(.ibmPlexSans(size: 28, weight: .bold))
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(value: Route.settings) {
+                NavigationLink {
+                    AppSettingsView()
+                } label: {
                     Image("settings_24px")
                         .renderingMode(.template)
                         .resizable()

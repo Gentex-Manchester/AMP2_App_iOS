@@ -34,7 +34,7 @@ struct ErrorBanner: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.opsCoreRed)
+                    .foregroundColor(.accent)
 
                 Text(title)
                     .font(.ibmPlexSans(size: 18, weight: .bold))
@@ -52,15 +52,7 @@ struct ErrorBanner: View {
             }
 
             if let retry {
-                Button(action: retry) {
-                    Text("Try Again")
-                        .font(.ibmPlexSans(size: 18))
-                        .foregroundColor(.white)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.opsCoreRed)
-                        .cornerRadius(16)
-                }
+                PrimaryButton(label: "Try Again", action: retry)
                 .padding(.top, 4)
             }
         }

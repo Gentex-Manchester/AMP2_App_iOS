@@ -116,8 +116,11 @@ struct LTCKeyView: View {
                 Text("LTC Key")
                     .font(.ibmPlexSans(size: 28, weight: .bold))
             }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(value: Route.customKey) {
+                NavigationLink {
+                    CustomKeyView()
+                } label: {
                     Image("tuning_24px")
                         .renderingMode(.template)
                         .resizable()

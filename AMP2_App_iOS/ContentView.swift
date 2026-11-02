@@ -9,34 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("orientationMode") private var orientationMode: OrientationMode = .portrait
-    @State private var headsetNavigationPath: [Route] = []
     @State private var showDisconnectedAlert = false
     @Environment(HeadsetSession.self) private var headsetSession
 
     var body: some View {
-        NavigationStack(path: $headsetNavigationPath) {
+        NavigationStack {
             Group {
                 if headsetSession.state.isConnected {
                     ConnectedView()
                 } else {
                     DisconnectedView()
-                }
-            }
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .settings: AppSettingsView()
-                case .appearance: AppearanceSettingsView()
-                case .orientation: OrientationSettingsView()
-                case .regions: RegionsView()
-                case .teams: TeamsView()
-                case .vadThreshold: VADThresholdView()
-                case .ltcVolume: LTCVolumeView()
-                case .txPower: TxPowerView()
-                case .ltcKey: LTCKeyView()
-                case .customKey: CustomKeyView()
-                #if DEBUG
-                case .packetConsole: PacketConsoleView()
-                #endif
                 }
             }
         }
@@ -67,8 +49,7 @@ struct ContentView: View {
     ) {
         guard previous.isConnected, !current.isConnected else { return }
         guard !headsetSession.isIntentionallyDisconnected else { return }
-
-        headsetNavigationPath.popHeadsetOnlyScreens()
+        
         showDisconnectedAlert = true
     }
 

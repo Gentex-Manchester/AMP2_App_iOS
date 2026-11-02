@@ -41,7 +41,7 @@ struct LTCVolumeView: View {
                             self.draftLevel = nil
                         }
                     )
-                    .tint(.opsCoreRed)
+                    .tint(.accent)
                     .padding(.horizontal, 16)
 
                     HStack {

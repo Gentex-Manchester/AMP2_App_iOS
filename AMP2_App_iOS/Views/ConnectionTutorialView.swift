@@ -182,7 +182,7 @@ struct ConnectionTutorialView: View {
         HStack(spacing: 8) {
             ProgressView()
                 .controlSize(.small)
-                .tint(.opsCoreRed)
+                .tint(.accent)
 
             Text("Waiting for your headset…")
                 .font(.ibmPlexSans(size: 18))

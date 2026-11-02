@@ -1,5 +1,5 @@
 //
-//  SelectionButton.swift
+//  Button.swift
 //  AMP2_App_iOS
 //
 //  Created by Peter Sargent on 10/28/26.
@@ -28,7 +28,7 @@ struct PrimaryButton: View {
                 .font(.ibmPlexSans(size: 20))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, minHeight: 70)
-                .background(Color.opsCoreRed)
+                .background(Color.accent)
                 .cornerRadius(16)
         }
         .disabled(!enabled)
@@ -90,7 +90,7 @@ struct SelectionButton: View {
             .padding(.vertical, 16)
             .padding(.horizontal)
             .frame(maxWidth: .infinity)
-            .background(selected ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
+            .background(selected ? Color.accent : Color.accent.opacity(0.50))
             .cornerRadius(16)
         }
     }

@@ -32,7 +32,9 @@ struct ConnectedView: View {
                     .font(.ibmPlexSans(size: 28, weight: .bold))
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(value: Route.settings) {
+                NavigationLink {
+                    AppSettingsView()
+                } label: {
                     Image("settings_24px")
                         .renderingMode(.template)
                         .resizable()
@@ -57,7 +59,7 @@ struct ConnectedView: View {
 
                 Text("|")
                     .font(.ibmPlexSans(size: 50))
-                    .foregroundColor(Color.opsCoreRed)
+                    .foregroundColor(Color.accent)
 
                 Text("AMP 2.0 Elite")
                     .font(.ibmPlexSans(size: 20))
@@ -85,7 +87,13 @@ struct ConnectedView: View {
 
             HStack(spacing: 10) {
                 ForEach(LTCMode.allCases, id: \.self) { mode in
-                    modeButton(mode)
+                    SelectionButton(
+                        label: mode.displayName,
+                        selected: settings.settings.ltcMode == mode,
+                        action: {
+                            settings.write(.ltcMode, value: mode.rawValue)
+                        }
+                    )
                 }
             }
             .padding(.horizontal)
@@ -93,43 +101,34 @@ struct ConnectedView: View {
         .padding(.bottom, 10)
     }
 
-    private func modeButton(_ mode: LTCMode) -> some View {
-        Button {
-            settings.write(.ltcMode, value: mode.rawValue)
-        } label: {
-            Text(mode.displayName)
-                .font(.ibmPlexSans(size: 18))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .foregroundColor(.white)
-                .padding(.vertical, 20)
-                .padding(.horizontal, 6)
-                .frame(maxWidth: .infinity)
-                .background(
-                    settings.settings.ltcMode == mode
-                        ? Color.opsCoreRed
-                        : Color.opsCoreRed.opacity(0.50)
-                )
-                .cornerRadius(16)
-        }
-    }
-
     // MARK: - Setting Links
 
     private var settingsLinks: some View {
         VStack(spacing: 0) {
             if settings.settings.ltcMode == .vad {
-                SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
+                SettingRow(title: LTCSetting.vadThreshold.displayName) {
+                    VADThresholdView()
+                }
             }
             
-            SettingRow(title: "LTC Team", route: .teams)
-            SettingRow(title: "LTC Key", route: .ltcKey)
-            SettingRow(title: LTCSetting.ltcVolume.displayName, route: .ltcVolume)
-            SettingRow(title: LTCSetting.txPower.displayName, route: .txPower)
+            SettingRow(title: "LTC Team") {
+                TeamsView()
+            }
+            SettingRow(title: "LTC Key") {
+                LTCKeyView()
+            }
+            SettingRow(title: "LTC Volume") {
+                LTCVolumeView()
+            }
+            SettingRow(title: "LTC Power") {
+                TxPowerView()
+            }
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
-                SettingRow(title: LTCSetting.zone.displayName, route: .regions)
+                SettingRow(title: "LTC Zone") {
+                    RegionsView()
+                }
             }
         }
     }

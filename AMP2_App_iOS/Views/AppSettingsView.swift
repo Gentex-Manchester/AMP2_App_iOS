@@ -11,21 +11,22 @@ struct AppSettingsView: View {
     var body: some View {
         ScrollView {
             VStack {
-                SettingRow(
-                    title: "Appearance",
-                    route: Route.appearance
-                )
+                SettingRow(title: "Appearance") {
+                    AppearanceSettingsView()
+                }
 
                 SettingRow(
-                    title: "Orientation",
-                    route: Route.orientation
-                )
+                    title: "Orientation"
+                ) {
+                    OrientationSettingsView()
+                }
         
                 #if DEBUG
                 SettingRow(
-                    title: "DEBUG: Packet Console",
-                    route: Route.packetConsole
-                )
+                    title: "DEBUG: Packet Console"
+                ) {
+                    PacketConsoleView()
+                }
                 #endif
             }
             .frame(maxWidth: .infinity, alignment: .top)

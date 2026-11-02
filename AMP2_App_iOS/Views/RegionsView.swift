@@ -64,24 +64,6 @@ struct RegionsView: View {
             }
         }
     }
-
-    private func regionButton(_ region: Region) -> some View {
-        Button {
-            // Always stored, so it survives a disconnect and drives validation.
-            selectedRegionRaw = region.rawValue
-            if session.state.isConnected {
-                settings.write(.zone, value: region.ltcByte)
-            }
-        } label: {
-            Text(region.displayName)
-                .font(.ibmPlexSans(size: 20))
-                .foregroundColor(.white)
-                .padding(.vertical, 24)
-                .frame(maxWidth: .infinity)
-                .background(activeRegion == region ? Color.opsCoreRed : Color.opsCoreRed.opacity(0.50))
-                .cornerRadius(16)
-        }
-    }
 }
 
 #Preview {

@@ -1,25 +1,24 @@
 //
-//  ErrorBanner.swift
+//  SettingRow.swift
 //  AMP2_App_iOS
-//
-//  Shows a failure, what to do about it, and a way to try again.
-//  Shows both `errorDescription` and `recoverySuggestion`, so a failure never
-//  looks like an empty state.
 //
 
 import SwiftUI
 
-struct SettingRow: View {
-    let title: String
-    var route: Route
+struct SettingRow<Destination: View>: View {
 
-    init(title: String, route: Route) {
+    let title: String
+    let view: Destination
+
+    init(title: String, @ViewBuilder view: () -> Destination) {
         self.title = title
-        self.route = route
+        self.view = view()
     }
-    
-    var body : some View {
-        NavigationLink(value: route) {
+
+    var body: some View {
+        NavigationLink {
+            view
+        } label: {
             HStack {
                 Text(title)
                     .font(.ibmPlexSans(size: 20))

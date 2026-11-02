@@ -44,7 +44,7 @@ struct TxPowerView: View {
                             self.draftIndex = nil
                         }
                     )
-                    .tint(.opsCoreRed)
+                    .tint(.accent)
                     .padding(.horizontal, 16)
 
                     HStack {
