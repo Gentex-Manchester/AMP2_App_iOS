@@ -22,6 +22,7 @@ struct ConnectionTutorialView: View {
         VStack(spacing: 0) {
             stepContent
                 .frame(maxHeight: .infinity)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer(minLength: 0)
 

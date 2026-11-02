@@ -43,6 +43,7 @@ struct DisconnectedView: View {
             }
             // 30% of the spare space above, 70% below. Taller content scrolls.
             .defaultScrollAnchor(UnitPoint(x: 0.5, y: 0.3), for: .alignment)
+            .scrollBounceBehavior(.basedOnSize)
             
             Spacer()
             
