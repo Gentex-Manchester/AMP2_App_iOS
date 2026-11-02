@@ -9,8 +9,6 @@ struct LTCKeyView: View {
     @Environment(HeadsetSession.self) private var session
     @Environment(HeadsetSettingsSync.self) private var headsetSettings
     
-    // MARK: - Body
-    
     var body: some View {
         ScrollView {
             let selectedKey = headsetSettings.settings.securityKey

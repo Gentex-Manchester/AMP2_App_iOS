@@ -62,8 +62,6 @@ struct ContentView: View {
     }
 }
 
-
-
 #Preview {
     let session = HeadsetSession()
     let sync = HeadsetSettingsSync(transport: session)

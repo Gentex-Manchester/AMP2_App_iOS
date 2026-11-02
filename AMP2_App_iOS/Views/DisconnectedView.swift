@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  DisconnectedView.swift
 //  AMP2_App_iOS
 //
 //  Created by aaron stockdale on 6/18/26.

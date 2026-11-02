@@ -14,13 +14,6 @@ struct RegionsView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
     @Environment(HeadsetSession.self) private var session
 
-    @AppStorage("selectedRegion") private var selectedRegionRaw: String = Region.americas.rawValue
-
-    /// The headset's reported zone wins over the stored preference.
-    private var activeRegion: Region {
-        settings.settings.zone ?? Region(rawValue: selectedRegionRaw) ?? .americas
-    }
-
     var body: some View {
         ScrollView {
             let selectedZone = settings.settings.zone

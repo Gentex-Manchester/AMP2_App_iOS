@@ -13,8 +13,6 @@ struct CustomKeyView: View {
     
     @State private var password = ""
     
-    // MARK: - Body
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 10) {

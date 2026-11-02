@@ -7,23 +7,11 @@ import SwiftUI
 
 struct TeamsView: View {
     @Environment(HeadsetSession.self) private var session
-    @Environment(HeadsetSettingsSync.self) private var headsetSettings
-    
-
-    private func joinTeam(_ team: Team) {
-        guard session.state.isConnected else {
-            return
-        }
-        do {
-            try headsetSettings.applyTeam(team: team)
-        } catch { }
-    }
-    
-    // MARK: - Body
+    @Environment(HeadsetSettingsSync.self) private var settings
     
     var body: some View {
         ScrollView {
-            let selectedTeam = headsetSettings.settings.team
+            let selectedTeam = settings.settings.team
             
             VStack(spacing: 10) {
                 Text("Determines who you can talk to with Local Teams Comms (LTC).")
@@ -36,14 +24,14 @@ struct TeamsView: View {
                         label: "Alpha",
                         enabled: session.state.isConnected,
                         selected: selectedTeam == Team.alpha,
-                        action: { joinTeam(Team.alpha) }
+                        action: { settings.write(LTCSetting.team, value: Team.alpha.rawValue) }
                     )
                     
                     SelectionButton(
                         label: "Bravo",
                         enabled: session.state.isConnected,
                         selected: selectedTeam == Team.bravo,
-                        action: { joinTeam(Team.bravo) }
+                        action: { settings.write(LTCSetting.team, value: Team.bravo.rawValue) }
                     )
                 }
                 
@@ -52,14 +40,14 @@ struct TeamsView: View {
                         label: "Charlie",
                         enabled: session.state.isConnected,
                         selected: selectedTeam == Team.charlie,
-                        action: { joinTeam(Team.charlie) }
+                        action: { settings.write(LTCSetting.team, value: Team.charlie.rawValue) }
                     )
 
                     SelectionButton(
                         label: "Delta",
                         enabled: session.state.isConnected,
                         selected: selectedTeam == Team.delta,
-                        action: { joinTeam(Team.delta) }
+                        action: { settings.write(LTCSetting.team, value: Team.delta.rawValue) }
                     )
                 }
                 
@@ -68,7 +56,7 @@ struct TeamsView: View {
                         label: "Joint Ops",
                         enabled: session.state.isConnected,
                         selected: selectedTeam == Team.jointOps,
-                        action: { joinTeam(Team.jointOps) }
+                        action: { settings.write(LTCSetting.team, value: Team.jointOps.rawValue) }
                     )
                 }
             }

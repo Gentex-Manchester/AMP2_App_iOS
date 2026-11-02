@@ -310,18 +310,6 @@ final class HeadsetSettingsSync {
         write(setting, value: [value])
     }
 
-    /// A preset goes out as the single team command (`0x00`): the headset then plays its
-    /// spoken confirmation and sets key/channel/network itself.
-    func applyTeam(team: Team) throws {
-        optimistic[.team] = [team.rawValue]
-        priorityQueue.append(.write(.team, value: [team.rawValue]))
-        lastFailure = nil
-
-        routineQueue.removeAll()
-        beginLull()
-        wakeUp?.yield()
-    }
-
     // MARK: - Resolving Optimistic Values
 
     private func confirmOptimistic(_ setting: LTCSetting) {
