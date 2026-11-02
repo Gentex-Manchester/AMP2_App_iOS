@@ -45,9 +45,7 @@ struct AppSettingsView: View {
 }
 
 #Preview {
-    let session = HeadsetSession()
-    let sync = HeadsetSettingsSync(transport: session)
-    ContentView()
-        .environment(session)
-        .environment(sync)
+    NavigationStack {
+        AppSettingsView()
+    }
 }

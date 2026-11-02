@@ -126,7 +126,7 @@ struct ConnectedView: View {
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
-                SettingRow(title: "LTC Zone") {
+                SettingRow(title: LTCSetting.zone.displayName) {
                     RegionsView()
                 }
             }
@@ -136,9 +136,9 @@ struct ConnectedView: View {
 
 #Preview {
     let session = HeadsetSession()
-    NavigationStack {
-        ConnectedView()
-            .environment(session)
-            .environment(HeadsetSettingsSync(transport: session))
-    }
+    let settings = HeadsetSettingsSync(transport: session)
+    
+    ConnectedView()
+        .environment(session)
+        .environment(settings)
 }

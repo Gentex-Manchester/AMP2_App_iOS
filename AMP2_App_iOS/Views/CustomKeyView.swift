@@ -84,3 +84,13 @@ struct CustomKeyView: View {
         }
     }
 }
+
+#Preview {
+    let session = HeadsetSession()
+    let settings = HeadsetSettingsSync(transport: session)
+    
+    CustomKeyView()
+        .environment(session)
+        .environment(settings)
+}
+

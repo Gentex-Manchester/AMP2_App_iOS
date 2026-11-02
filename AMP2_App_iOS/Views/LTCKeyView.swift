@@ -13,101 +13,110 @@ struct LTCKeyView: View {
     
     var body: some View {
         ScrollView {
-            if (session.state.isConnected) {
-                let selectedKey = headsetSettings.settings.securityKey
+            let selectedKey = headsetSettings.settings.securityKey
+            
+            VStack(spacing: 10) {
+                Text("Determines how LTC communications are encrypted.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
                 
-                VStack(spacing: 10) {
-                    Text("Determines how LTC communications are encrypted.")
-                        .font(.ibmPlexSans(size: 18))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 16)
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Mike",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.MIKE,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.MIKE.ltcByte) }
+                    )
                     
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Mike",
-                            selected: selectedKey == SecurityKey.MIKE,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.MIKE.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "November",
-                            selected: selectedKey == SecurityKey.NOVEMBER,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.NOVEMBER.ltcByte) }
-                        )
-                    }
-                    
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Oscar",
-                            selected: selectedKey == SecurityKey.OSCAR,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.OSCAR.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "Papa",
-                            selected: selectedKey == SecurityKey.PAPA,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.PAPA.ltcByte) }
-                        )
-                    }
-                    
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Quebec",
-                            selected: selectedKey == SecurityKey.QUEBEC,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.QUEBEC.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "Romeo",
-                            selected: selectedKey == SecurityKey.ROMEO,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.ROMEO.ltcByte) }
-                        )
-                    }
-                    
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Sierra",
-                            selected: selectedKey == SecurityKey.SIERRA,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.SIERRA.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "Tango",
-                            selected: selectedKey == SecurityKey.TANGO,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.TANGO.ltcByte) }
-                        )
-                    }
-                    
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Uniform",
-                            selected: selectedKey == SecurityKey.UNIFORM,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.UNIFORM.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "Victory",
-                            selected: selectedKey == SecurityKey.VICTOR,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.VICTOR.ltcByte) }
-                        )
-                    }
-                    
-                    HStack(spacing: 10) {
-                        SelectionButton(
-                            label: "Custom",
-                            selected: selectedKey == SecurityKey.CUSTOM,
-                            action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.CUSTOM.ltcByte) }
-                        )
-                    }
+                    SelectionButton(
+                        label: "November",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.NOVEMBER,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.NOVEMBER.ltcByte) }
+                    )
                 }
-                .frame(
-                    maxWidth: .infinity,
-                    alignment: .top
-                )
-                .padding(
-                    .horizontal, 16
-                )
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Oscar",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.OSCAR,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.OSCAR.ltcByte) }
+                    )
+                    
+                    SelectionButton(
+                        label: "Papa",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.PAPA,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.PAPA.ltcByte) }
+                    )
+                }
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Quebec",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.QUEBEC,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.QUEBEC.ltcByte) }
+                    )
+                    
+                    SelectionButton(
+                        label: "Romeo",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.ROMEO,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.ROMEO.ltcByte) }
+                    )
+                }
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Sierra",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.SIERRA,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.SIERRA.ltcByte) }
+                    )
+                    
+                    SelectionButton(
+                        label: "Tango",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.TANGO,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.TANGO.ltcByte) }
+                    )
+                }
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Uniform",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.UNIFORM,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.UNIFORM.ltcByte) }
+                    )
+                    
+                    SelectionButton(
+                        label: "Victory",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.VICTOR,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.VICTOR.ltcByte) }
+                    )
+                }
+                
+                HStack(spacing: 10) {
+                    SelectionButton(
+                        label: "Custom",
+                        enabled: session.state.isConnected,
+                        selected: selectedKey == SecurityKey.CUSTOM,
+                        action: { headsetSettings.write(LTCSetting.securityKey, value: SecurityKey.CUSTOM.ltcByte) }
+                    )
+                }
             }
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("LTC Key")
         .navigationBarTitleDisplayMode(.inline)
@@ -135,7 +144,7 @@ struct LTCKeyView: View {
 #Preview {
     let session = HeadsetSession()
     let sync = HeadsetSettingsSync(transport: session)
-    TeamsView()
+    LTCKeyView()
         .environment(session)
         .environment(sync)
 }

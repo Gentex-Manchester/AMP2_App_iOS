@@ -60,38 +60,48 @@ struct SecondaryButton: View {
                 .background(Color(.systemGray2))
                 .cornerRadius(16)
         }
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.50)
     }
 }
 
 struct SelectionButton: View {
     let label: String
+    let enabled: Bool
     let selected: Bool
     let action: () -> Void
 
     init(
         label: String,
+        enabled: Bool = true,
         selected: Bool,
         action: @escaping () -> Void
     ) {
         self.label = label
+        self.enabled = enabled
         self.selected = selected
         self.action = action
     }
     
     var body : some View {
         Button(action: action) {
-            HStack {
-                Spacer()
-                Text(label)
-                    .font(.ibmPlexSans(size: 20))
-                Spacer()
-            }
-            .foregroundColor(.white)
-            .padding(.vertical, 16)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-            .background(selected ? Color.accent : Color.accent.opacity(0.50))
-            .cornerRadius(16)
+            Text(label)
+                .font(.ibmPlexSans(size: 20))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, minHeight: 70)
+                .background(selected ? Color.accent : Color.accent.opacity(0.50))
+                .cornerRadius(16)
         }
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.50)
+    }
+}
+
+#Preview {
+    VStack {
+        PrimaryButton(label: "Primary Button", action: {})
+        SecondaryButton(label: "Secondary Button", action: {})
+        SelectionButton(label: "Selection Button (Selected)", selected: true, action: {})
+        SelectionButton(label: "Selection Button (Deselected)", selected: false, action: {})
     }
 }

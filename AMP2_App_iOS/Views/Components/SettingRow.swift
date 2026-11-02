@@ -38,3 +38,11 @@ struct SettingRow<Destination: View>: View {
         .padding(.bottom, 10)
     }
 }
+
+#Preview {
+    NavigationStack {
+        SettingRow(title: "Preview") {
+            Text("Preview Location")
+        }
+    }
+}

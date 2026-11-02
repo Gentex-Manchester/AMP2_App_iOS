@@ -23,37 +23,37 @@ struct RegionsView: View {
 
     var body: some View {
         ScrollView {
-            if (session.state.isConnected) {
-                let selectedZone = settings.settings.zone
+            let selectedZone = settings.settings.zone
+            
+            VStack(spacing: 10) {
+                Text("Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
                 
-                VStack(spacing: 10) {
-                    Text("Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
-                        .font(.ibmPlexSans(size: 18))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 16)
+                HStack(spacing: 10){
+                    SelectionButton(
+                        label: "Americas",
+                        enabled: session.state.isConnected,
+                        selected: selectedZone == Region.americas,
+                        action: { settings.write(LTCSetting.zone, value: Region.americas.ltcByte) }
+                    )
                     
-                    HStack(spacing: 10){
-                        SelectionButton(
-                            label: "Americas",
-                            selected: selectedZone == Region.americas,
-                            action: { settings.write(LTCSetting.zone, value: Region.americas.ltcByte) }
-                        )
-                        
-                        SelectionButton(
-                            label: "Eurasia",
-                            selected: selectedZone == Region.eurasia,
-                            action: { settings.write(LTCSetting.zone, value: Region.eurasia.ltcByte) }
-                        )
-                    }
+                    SelectionButton(
+                        label: "Eurasia",
+                        enabled: session.state.isConnected,
+                        selected: selectedZone == Region.eurasia,
+                        action: { settings.write(LTCSetting.zone, value: Region.eurasia.ltcByte) }
+                    )
                 }
-                .frame(
-                    maxWidth: .infinity,
-                    alignment: .top
-                )
-                .padding(
-                    .horizontal, 16
-                )
             }
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
         .navigationTitle("Region")
         .navigationBarTitleDisplayMode(.inline)

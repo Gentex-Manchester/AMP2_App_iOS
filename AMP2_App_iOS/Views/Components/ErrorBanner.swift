@@ -63,7 +63,7 @@ struct ErrorBanner: View {
     }
 }
 
-#Preview("Message only") {
+#Preview {
     ErrorBanner(title: "Couldn't join team", message: "Connect a headset to join a team.")
         .padding()
 }
