@@ -33,14 +33,6 @@ struct ConnectionTutorialView: View {
         .onChange(of: session.state) { _, newState in
             if newState.isConnected { dismiss() }
         }
-        // Scan from the pairing step so it's running on return from Settings.
-        .onChange(of: currentStep) { _, _ in
-            startLookingIfPairing()
-        }
-        // Also on appear: `onChange` never fires when opening at the pairing step.
-        .onAppear {
-            startLookingIfPairing()
-        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("Bluetooth Pairing")
@@ -158,11 +150,6 @@ struct ConnectionTutorialView: View {
                     SecondaryButton(label: "Back") {
                         goBack()
                     }
-
-                    SecondaryButton(label: session.isDiscovering ? "Looking…" : "Check Again") {
-                        session.startDiscovery()
-                    }
-                    .disabled(session.isDiscovering)
                 }
             }
         } else {
@@ -191,11 +178,6 @@ struct ConnectionTutorialView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-    }
-
-    private func startLookingIfPairing() {
-        guard isPairingStep, !session.state.isConnected, !session.isDiscovering else { return }
-        session.startDiscovery()
     }
 
     private func goBack() {
