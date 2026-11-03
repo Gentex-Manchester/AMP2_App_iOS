@@ -25,42 +25,19 @@ struct TxPowerView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Determines how much power the headset gives to LTC, which impacts transmission range.")
-                    .font(.ibmPlexSans(size: 18))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-
-                VStack(spacing: 12) {
-                    Slider(
-                        value: Binding(
-                            get: { index },
-                            set: { draftIndex = $0 }
-                        ),
-                        in: 0...Double(TxPower.allCases.count - 1),
-                        step: 1,
-                        onEditingChanged: { editing in
-                            guard !editing, let draftIndex else { return }
-                            settings.write(.txPower, value: TxPower.allCases[Int(draftIndex)].rawValue)
-                            self.draftIndex = nil
-                        }
-                    )
-                    .tint(.accent)
-                    .padding(.horizontal, 16)
-
-                    HStack {
-                        Text(TxPower.minus18.displayName)
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text(settings.settings.txPower?.displayName ?? "—")
-                            .font(.ibmPlexSans(size: 18, weight: .bold))
-                        Spacer()
-                        Text(TxPower.plus10.displayName)
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 16)
-                }
+                SelectionSlider(
+                    level: index,
+                    range: 0...Double(TxPower.allCases.count - 1),
+                    onSelection: { selection in
+                        settings.write(.txPower, value: TxPower.allCases[Int(selection)].rawValue)
+                    },
+                    label: { selection in
+                        settings.settings.txPower?.displayName ?? "—"
+                    },
+                    description: "Determines how much power the headset gives to LTC, which impacts transmission range.",
+                    lowLabel: TxPower.minus18.displayName,
+                    highLabel: TxPower.plus10.displayName
+                )
             }
             .frame(
                 maxWidth: .infinity,

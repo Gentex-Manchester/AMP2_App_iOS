@@ -20,44 +20,21 @@ struct LTCVolumeView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.")
-                    .font(.ibmPlexSans(size: 18))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-
-                VStack(spacing: 12) {
-                    Slider(
-                        value: Binding(
-                            get: { level },
-                            set: { draftLevel = $0 }
-                        ),
-                        in: 0...10,
-                        step: 1,
-                        onEditingChanged: { editing in
-                            guard !editing, let draftLevel else { return }
-                            if let byte = LTCLevel.byte(for: Int(draftLevel)) {
-                                settings.write(.ltcVolume, value: byte)
-                            }
-                            self.draftLevel = nil
+                SelectionSlider(
+                    level: level,
+                    range: 0...10,
+                    onSelection: { selection in
+                        if let byte = LTCLevel.byte(for: Int(selection)) {
+                            settings.write(.ltcVolume, value: byte)
                         }
-                    )
-                    .tint(.accent)
-                    .padding(.horizontal, 16)
-
-                    HStack {
-                        Text("Quiet")
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text(settings.settings.ltcVolume.map(String.init) ?? "—")
-                            .font(.ibmPlexSans(size: 18, weight: .bold))
-                        Spacer()
-                        Text("Loud")
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 16)
-                }
+                    },
+                    label: { selection in
+                        "\(selection)"
+                    },
+                    description: "Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.",
+                    lowLabel: "Quiet",
+                    highLabel: "Loud"
+                )
             }
             .frame(
                 maxWidth: .infinity,

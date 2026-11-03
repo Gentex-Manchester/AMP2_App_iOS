@@ -23,44 +23,21 @@ struct VADThresholdView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Determines the sensitivity of the microphone when VAD mode is enabled.")
-                    .font(.ibmPlexSans(size: 18))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-
-                VStack(spacing: 12) {
-                    Slider(
-                        value: Binding(
-                            get: { level },
-                            set: { draftLevel = $0 }
-                        ),
-                        in: 0...10,
-                        step: 1,
-                        onEditingChanged: { editing in
-                            guard !editing, let draftLevel else { return }
-                            if let byte = LTCLevel.byte(for: Int(draftLevel)) {
-                                settings.write(.vadThreshold, value: byte)
-                            }
-                            self.draftLevel = nil
+                SelectionSlider(
+                    level: level,
+                    range: 0...10,
+                    onSelection: { selection in
+                        if let byte = LTCLevel.byte(for: Int(selection)) {
+                            settings.write(.vadThreshold, value: byte)
                         }
-                    )
-                    .tint(.accent)
-                    .padding(.horizontal, 16)
-
-                    HStack {
-                        Text("Low")
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text(settings.settings.vadThreshold.map(String.init) ?? "—")
-                            .font(.ibmPlexSans(size: 18, weight: .bold))
-                        Spacer()
-                        Text("High")
-                            .font(.ibmPlexSans(size: 14))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 16)
-                }
+                    },
+                    label: { selection in
+                        settings.settings.vadThreshold.map(String.init) ?? "—"
+                    },
+                    description: "Determines the sensitivity of the microphone when VAD mode is enabled.",
+                    lowLabel: "Low",
+                    highLabel: "High"
+                )
             }
             .frame(
                 maxWidth: .infinity,
