@@ -11,6 +11,7 @@ struct ContentView: View {
     @AppStorage("orientationMode") private var orientationMode: OrientationMode = .portrait
     @State private var showDisconnectedAlert = false
     @Environment(HeadsetSession.self) private var headsetSession
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         NavigationStack {
@@ -25,6 +26,10 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: headsetSession.state) { previous, current in
             handleConnectionChange(from: previous, to: current)
+        }
+        .onChange(of: scenePhase) { _, _ in
+            // Restarts discovery when the app returns to the foreground
+            headsetSession.startDiscovery()
         }
         .alert("Headset disconnected", isPresented: $showDisconnectedAlert) {
             Button("OK", role: .cancel) { }

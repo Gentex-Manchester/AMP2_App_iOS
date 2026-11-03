@@ -110,6 +110,7 @@ final class HeadsetSession: NSObject {
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey: true]
         )
+        startDiscovery()
     }
 
     // MARK: - Discovery
