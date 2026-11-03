@@ -25,12 +25,10 @@ struct TxPowerView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("Adjusts the transmission power of LTC communications. Higher power increases range and reduces battery life.")
-                    .font(.ibmPlexSans(size: 18, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 50)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
+                Text("Determines how much power the headset gives to LTC, which impacts transmission range.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
 
                 VStack(spacing: 12) {
                     Slider(
@@ -46,8 +44,8 @@ struct TxPowerView: View {
                             self.draftIndex = nil
                         }
                     )
-                    .tint(.opsCoreRed)
-                    .padding(.horizontal, 30)
+                    .tint(.accent)
+                    .padding(.horizontal, 16)
 
                     HStack {
                         Text(TxPower.minus18.displayName)
@@ -61,11 +59,18 @@ struct TxPowerView: View {
                             .font(.ibmPlexSans(size: 14))
                             .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
+        .navigationTitle("LTC Power")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

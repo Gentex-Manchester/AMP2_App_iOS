@@ -17,8 +17,9 @@ import Observation
 
 /// Last-reported headset config. `nil` means "not read yet", never "off" or zero.
 struct HeadsetSettingsState: Equatable, Sendable {
-    var predefinedTeam: PredefinedTeam?
+    var team: Team?
     var securityKey: SecurityKey?
+    var customSecurityKey: [UInt8]?
     var rfChannel: Int?
     var networkId: Int?
     var ltcMode: LTCMode?
@@ -29,68 +30,63 @@ struct HeadsetSettingsState: Equatable, Sendable {
 
     /// Raw bytes the app doesn't recognize (e.g. LTC mode `0x04`), so an unknown
     /// value doesn't look like "not read yet".
-    var unrecognized: [LTCSetting: UInt8] = [:]
+    var unrecognized: [LTCSetting: [UInt8]] = [:]
 
     var isComplete: Bool {
-        predefinedTeam != nil && securityKey != nil && rfChannel != nil
+        team != nil && securityKey != nil && rfChannel != nil
             && networkId != nil && ltcMode != nil && vadThreshold != nil
             && txPower != nil && ltcVolume != nil && zone != nil
-    }
-
-    /// Derived from key, channel, and network ID, not the `predefinedTeam` byte,
-    /// which goes stale after a custom team is written.
-    var activePredefinedTeam: PredefinedTeam? {
-        predefinedTeam
     }
 
     // MARK: Decoding
 
     /// Shared by poll responses and the optimistic overlay so both decode bytes the same way.
-    mutating func apply(_ byte: UInt8, to setting: LTCSetting) {
+    mutating func apply(_ bytes: [UInt8], to setting: LTCSetting) {
         var recognized = true
 
         switch setting {
-        case .predefinedTeam:
-            predefinedTeam = PredefinedTeam(rawValue: byte)
-            recognized = predefinedTeam != nil
+        case .team:
+            team = Team(rawValue: bytes[0])
+            recognized = team != nil
         case .securityKey:
-            securityKey = SecurityKey(ltcByte: byte)
+            securityKey = SecurityKey(ltcByte: bytes[0])
             recognized = securityKey != nil
         case .rfChannel:
-            rfChannel = LTCRFChannel.channel(forByte: byte)
+            rfChannel = LTCRFChannel.channel(forByte: bytes[0])
             recognized = rfChannel != nil
         case .networkId:
-            networkId = Int(byte)          // any byte is valid
+            networkId = Int(bytes[0])          // any byte is valid
         case .ltcMode:
-            ltcMode = LTCMode(rawValue: byte)
+            ltcMode = LTCMode(rawValue: bytes[0])
             recognized = ltcMode != nil
         case .vadThreshold:
-            vadThreshold = LTCLevel.level(forByte: byte)
+            vadThreshold = LTCLevel.level(forByte: bytes[0])
             recognized = vadThreshold != nil
         case .txPower:
-            txPower = TxPower(rawValue: byte)
+            txPower = TxPower(rawValue: bytes[0])
             recognized = txPower != nil
         case .ltcVolume:
-            ltcVolume = LTCLevel.level(forByte: byte)
+            ltcVolume = LTCLevel.level(forByte: bytes[0])
             recognized = ltcVolume != nil
         case .zone:
-            zone = Region(ltcByte: byte)
+            zone = Region(ltcByte: bytes[0])
             recognized = zone != nil
         case .customSecurityKey:
-            return  // reserved, never polled
+            customSecurityKey = bytes
+            recognized = true
         }
 
         if recognized {
             unrecognized[setting] = nil
         } else {
-            unrecognized[setting] = byte
+            unrecognized[setting] = bytes
         }
     }
 
     /// UI-formatted value, or `nil` if not read yet.
     func displayValue(for setting: LTCSetting) -> String? {
         switch setting {
-        case .predefinedTeam:    return predefinedTeam?.displayName
+        case .team:              return team?.displayName
         case .securityKey:       return securityKey?.rawValue.capitalized
         case .rfChannel:         return rfChannel.map(String.init)
         case .networkId:         return networkId.map(String.init)
@@ -99,7 +95,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
         case .txPower:           return txPower?.displayName
         case .ltcVolume:         return ltcVolume.map(String.init)
         case .zone:              return zone?.displayName
-        case .customSecurityKey: return nil
+        case .customSecurityKey: return customSecurityKey?.description
         }
     }
 }
@@ -153,7 +149,7 @@ private enum HeadsetTask: Equatable {
     /// Heartbeat read. Droppable.
     case poll(LTCSetting)
     /// User write. Preempts polls, never dropped.
-    case write(LTCSetting, value: UInt8)
+    case write(LTCSetting, value: [UInt8])
 
     var setting: LTCSetting {
         switch self {
@@ -195,14 +191,14 @@ final class HeadsetSettingsSync {
 
     /// Unconfirmed user values. Confirmation takes 3–5s (lull plus a poll cycle),
     /// so changes show at once and roll back if the headset disagrees.
-    private var optimistic: [LTCSetting: UInt8] = [:]
+    private var optimistic: [LTCSetting: [UInt8]] = [:]
 
     /// `confirmed` with unconfirmed changes overlaid. What the UI shows.
     var settings: HeadsetSettingsState {
         guard !optimistic.isEmpty else { return confirmed }
         var merged = confirmed
-        for (setting, byte) in optimistic {
-            merged.apply(byte, to: setting)
+        for (setting, bytes) in optimistic {
+            merged.apply(bytes, to: setting)
         }
         return merged
     }
@@ -296,7 +292,7 @@ final class HeadsetSettingsSync {
     // MARK: - Writes
 
     /// Shows the value immediately; rolls back on rejection, error, or a mismatched read.
-    func write(_ setting: LTCSetting, value: UInt8) {
+    func write(_ setting: LTCSetting, value: [UInt8]) {
         optimistic[setting] = value
         lastFailure = nil
 
@@ -309,41 +305,9 @@ final class HeadsetSettingsSync {
         beginLull()
         wakeUp?.yield()
     }
-
-    /// A preset goes out as the single team command (`0x00`): the headset then plays its
-    /// spoken confirmation and sets key/channel/network itself. Three separate writes
-    /// regroup silently and leave the team byte stale (Android: `TeamsViewModel.setTeam`).
-    /// Custom teams have no team byte, so they still take three writes.
-    func applyTeam(securityKey: SecurityKey, rfChannel: Int, networkId: Int) throws {
-        guard let channelByte = LTCRFChannel.byte(forChannel: rfChannel) else {
-            throw LTCProtocolError.headsetReportedError(.badValue)
-        }
-        guard let networkByte = LTCNetworkID.byte(for: networkId) else {
-            throw LTCProtocolError.headsetReportedError(.badValue)
-        }
-
-        // Predict all three so the "Active" badge moves on the tap.
-        optimistic[.securityKey] = securityKey.ltcByte
-        optimistic[.rfChannel] = channelByte
-        optimistic[.networkId] = networkByte
-        lastFailure = nil
-
-        if let preset = PredefinedTeam.matching(
-            securityKey: securityKey, rfChannel: rfChannel, networkId: networkId
-        ) {
-            optimistic[.predefinedTeam] = preset.rawValue
-            priorityQueue.append(.write(.predefinedTeam, value: preset.rawValue))
-        } else {
-            priorityQueue.append(contentsOf: [
-                .write(.securityKey, value: securityKey.ltcByte),
-                .write(.rfChannel, value: channelByte),
-                .write(.networkId, value: networkByte)
-            ])
-        }
-
-        routineQueue.removeAll()
-        beginLull()
-        wakeUp?.yield()
+    
+    func write(_ setting: LTCSetting, value: UInt8) {
+        write(setting, value: [value])
     }
 
     // MARK: - Resolving Optimistic Values
@@ -356,13 +320,6 @@ final class HeadsetSettingsSync {
     /// and a warning each time reads as an app bug. Recorded in `lastFailure` and the debug log.
     private func revertOptimistic(_ setting: LTCSetting, because reason: WriteFailure.Reason) {
         guard optimistic.removeValue(forKey: setting) != nil else { return }
-
-        // A failed team write takes its three predicted values with it.
-        if setting == .predefinedTeam {
-            optimistic[.securityKey] = nil
-            optimistic[.rfChannel] = nil
-            optimistic[.networkId] = nil
-        }
 
         let failure = WriteFailure(
             setting: setting,
@@ -429,9 +386,13 @@ final class HeadsetSettingsSync {
         let packet: Data
         switch task {
         case .poll(let setting):
-            packet = LTCPacket.read(setting)
+            if (setting == LTCSetting.customSecurityKey) {
+                packet = LTCPacket.read(setting, expectedLength: 0x20)
+            } else {
+                packet = LTCPacket.read(setting)
+            }
         case .write(let setting, let value):
-            packet = LTCPacket.write(setting, value: value)
+            packet = LTCPacket.write(setting, payload: value)
             lastWriteAt = ContinuousClock.now
         }
 

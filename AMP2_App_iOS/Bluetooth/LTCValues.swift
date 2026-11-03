@@ -65,11 +65,10 @@ enum TxPower: UInt8, CaseIterable, Sendable {
     }
 }
 
-// MARK: - Predefined Teams
+// MARK: - Teams
 
-/// Setting `0x00`. Each team fixes key, channel, and network ID; if the reported
-/// three don't match the reported team, a custom team is in use.
-enum PredefinedTeam: UInt8, CaseIterable, Sendable {
+/// Setting `0x00`
+enum Team: UInt8, CaseIterable, Sendable {
     case alpha    = 0x00
     case bravo    = 0x01
     case charlie  = 0x02
@@ -83,36 +82,6 @@ enum PredefinedTeam: UInt8, CaseIterable, Sendable {
         case .charlie: return "Charlie"
         case .delta: return "Delta"
         case .jointOps: return "Joint Ops"
-        }
-    }
-
-    var securityKey: SecurityKey { .MIKE }
-
-    /// RF channel as displayed (1-based), not the wire byte.
-    var rfChannel: Int {
-        switch self {
-        case .alpha: return 2
-        case .bravo: return 3
-        case .charlie: return 4
-        case .delta: return 5
-        case .jointOps: return 1
-        }
-    }
-
-    var networkId: Int {
-        switch self {
-        case .alpha: return 100
-        case .bravo: return 125
-        case .charlie: return 150
-        case .delta: return 175
-        case .jointOps: return 200
-        }
-    }
-
-    /// `nil` means a custom team.
-    static func matching(securityKey: SecurityKey, rfChannel: Int, networkId: Int) -> PredefinedTeam? {
-        allCases.first {
-            $0.securityKey == securityKey && $0.rfChannel == rfChannel && $0.networkId == networkId
         }
     }
 }
@@ -142,17 +111,15 @@ extension Region {
     /// Zone setting (`0x0a`). The headset says "zone"; the app says "region".
     var ltcByte: UInt8 {
         switch self {
-        case .northAmerica: return 0x00
-        case .latinAmerica: return 0x01
-        case .eurasia:      return 0x02
+        case .americas:     return 0x00
+        case .eurasia:      return 0x01
         }
     }
 
     init?(ltcByte: UInt8) {
         switch ltcByte {
-        case 0x00: self = .northAmerica
-        case 0x01: self = .latinAmerica
-        case 0x02: self = .eurasia
+        case 0x00: self = .americas
+        case 0x01: self = .eurasia
         default: return nil
         }
     }
@@ -174,6 +141,7 @@ extension SecurityKey {
         case .TANGO:    return 0x07
         case .UNIFORM:  return 0x08
         case .VICTOR:   return 0x09
+        case .CUSTOM:   return 0x0a
         }
     }
 

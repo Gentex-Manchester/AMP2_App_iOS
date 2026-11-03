@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  DisconnectedView.swift
 //  AMP2_App_iOS
 //
 //  Created by aaron stockdale on 6/18/26.
@@ -11,6 +11,7 @@ struct DisconnectedView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(HeadsetSession.self) private var session
     @State private var showTutorial = false
+    @State private var showConnectionIssuePopup = false
 
     var isLandscape: Bool { verticalSizeClass == .compact }
 
@@ -25,12 +26,12 @@ struct DisconnectedView: View {
                         .frame(maxHeight: isLandscape ? 130 : 250)
                     
                     // Without padding the text clips beside the landscape sidebar.
-                    Text(headline)
+                    Text("No headset connected")
                         .font(.ibmPlexSans(size: 22, weight: .bold))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
-                    Text(explanation)
+                    Text("To use this app, you must connect to an AMP 2.0 headset, like the AMP 2.0 Elite headset.")
                         .font(.ibmPlexSans(size: 20))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
@@ -43,35 +44,53 @@ struct DisconnectedView: View {
             }
             // 30% of the spare space above, 70% below. Taller content scrolls.
             .defaultScrollAnchor(UnitPoint(x: 0.5, y: 0.3), for: .alignment)
+            .scrollBounceBehavior(.basedOnSize)
             
             Spacer()
             
-            Button(action: {
-                // Scan first; a headset already connected in Settings needs no
-                // walkthrough. Show it only when nothing turns up.
-                if session.discoveredHeadsets.isEmpty && !session.isDiscovering {
-                    session.startDiscovery()
-                } else {
-                    showTutorial = true
+            PrimaryButton(
+                label: buttonTitle,
+                action: {
+                    if (radioFault == nil) {
+                        showTutorial = true
+                    } else {
+                        showConnectionIssuePopup = true
+                    }
                 }
-            }) {
-                Text(buttonTitle)
-                    .font(.ibmPlexSans(size: 20))
-                    .foregroundColor(.white)
-                    // Android GentexPrimaryButton (64dp tall, 24dp margins)
-                    // ×1.1, since an Android dp draws ~10% larger.
-                    .frame(maxWidth: .infinity, minHeight: 70)
-                    .background(Color.opsCoreRed)
-                    .cornerRadius(16)
-                    .padding(.horizontal, 26)
-                    .padding(.bottom, isLandscape ? 16 : 40)
+            )
+            .padding(.horizontal, 26)
+            .padding(.bottom, isLandscape ? 16 : 40)
+        }
+        .navigationTitle("Home")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Home")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
             }
-            // Scanning with the radio down just fails; a dead button looks like an app bug.
-            .disabled(radioFault != nil)
-            .opacity(radioFault == nil ? 1 : 0.50)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    AppSettingsView()
+                } label: {
+                    Image("settings_24px")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                }
+            }
         }
         .fullScreenCover(isPresented: $showTutorial) {
-            ConnectionTutorialView()
+            NavigationStack {
+                ConnectionTutorialView()
+            }
+        }
+        .alert("Unable to connect", isPresented: $showConnectionIssuePopup) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(radioFault?.localizedDescription ?? "") +
+            Text("\n") +
+            Text(radioFault?.recoverySuggestion ?? "")
         }
         #if DEBUG
         .onAppear {
@@ -98,23 +117,9 @@ struct DisconnectedView: View {
         }
     }
 
-    private var headline: String {
-        if let description = radioFault?.errorDescription {
-            return description
-        }
-        return session.isDiscovering ? "Looking for your headset…" : "No headset connected"
-    }
-
-    private var explanation: String {
-        if let suggestion = radioFault?.recoverySuggestion {
-            return suggestion
-        }
-        return "To use this app, you must connect to an AMP 2.0 headset, like the AMP 2.0 Elite headset."
-    }
-
     private var buttonTitle: String {
         if radioFault != nil { return "Bluetooth unavailable" }
-        return session.isDiscovering ? "Searching…" : "Connect over Bluetooth"
+        return "Connect over Bluetooth"
     }
 }
 

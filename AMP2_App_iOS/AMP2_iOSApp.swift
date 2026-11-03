@@ -54,9 +54,6 @@ struct AMP2_App_iOSApp: App {
     @State private var headsetSettings: HeadsetSettingsSync
 
     init() {
-        // UIKit chrome ignores SwiftUI font modifiers.
-        GentexAppearance.apply()
-
         let session = HeadsetSession()
         _headsetSession = State(initialValue: session)
         _headsetSettings = State(initialValue: HeadsetSettingsSync(transport: session))

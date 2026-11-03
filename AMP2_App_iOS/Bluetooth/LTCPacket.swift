@@ -18,9 +18,8 @@ import Foundation
 ///
 /// `0x09` (frequency hopping) is used by Android but not in the Gentex BLE doc, so it is omitted.
 enum LTCSetting: UInt8, CaseIterable, Sendable {
-    case predefinedTeam    = 0x00
+    case team              = 0x00
     case securityKey       = 0x01
-    /// Reserved: "not implemented at this time" in firmware. No UI.
     case customSecurityKey = 0x02
     case rfChannel         = 0x03
     case networkId         = 0x04
@@ -32,14 +31,14 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
 
     /// Heartbeat poll order, per the doc. Skips `customSecurityKey` (not in firmware).
     static let pollSequence: [LTCSetting] = [
-        .predefinedTeam, .securityKey, .rfChannel, .networkId,
+        .team, .securityKey, .customSecurityKey, .rfChannel, .networkId,
         .ltcMode, .vadThreshold, .txPower, .ltcVolume, .zone
     ]
 
     /// On-screen label, matching the Headset screen. Names the setting in failure messages.
     var displayName: String {
         switch self {
-        case .predefinedTeam:    return "Team"
+        case .team:    return "Team"
         case .securityKey:       return "Security Key"
         case .customSecurityKey: return "Custom Security Key"
         case .rfChannel:         return "RF Channel"
@@ -67,14 +66,13 @@ enum LTCPacket {
         Data(commandHeader + [opRead, setting.rawValue, expectedLength])
     }
 
-    /// `00 1d 40 2c 01 <setting> <len> <payload>` — e.g. team Alpha: `00 1d 40 2c 01 00 01 00`
-    static func write(_ setting: LTCSetting, value: UInt8) -> Data {
-        Data(commandHeader + [opWrite, setting.rawValue, 0x01, value])
-    }
-
     /// No setting is multi-byte yet; here for the custom security key if it lands.
-    static func write(_ setting: LTCSetting, payload: Data) -> Data {
+    static func write(_ setting: LTCSetting, payload: [UInt8]) -> Data {
         Data(commandHeader + [opWrite, setting.rawValue, UInt8(payload.count)] + payload)
+    }
+    
+    static func write(_ setting: LTCSetting, value: UInt8) -> Data {
+        write(setting, payload: [value])
     }
 
     // MARK: - Headset Identity

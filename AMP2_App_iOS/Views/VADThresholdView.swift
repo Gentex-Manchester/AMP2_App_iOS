@@ -1,31 +1,32 @@
 //
-//  LTCVolumeView.swift
+//  VADThresholdView.swift
 //  AMP2_App_iOS
 //
-//  LTC volume (setting 0x08), 0–10.
+//  VAD/VOX microphone sensitivity (setting 0x06), 0–10.
+//
+//  Reached from the bottom of the Headset screen, and only while VOX/VAD is the
+//  selected LTC mode, per Peter's 07/07/2026 mock-ups.
 //
 
 import SwiftUI
 
-struct LTCVolumeView: View {
+struct VADThresholdView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
 
     /// Local while dragging so the poll loop doesn't fight the slider; written on release.
     @State private var draftLevel: Double?
 
     private var level: Double {
-        draftLevel ?? Double(settings.settings.ltcVolume ?? 0)
+        draftLevel ?? Double(settings.settings.vadThreshold ?? 0)
     }
 
     var body: some View {
         ScrollView {
             VStack {
-                Text("Adjusts the volume of LTC communications in your headset.")
-                    .font(.ibmPlexSans(size: 18, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 50)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
+                Text("Determines the sensitivity of the microphone when VAD mode is enabled.")
+                    .font(.ibmPlexSans(size: 18))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 16)
 
                 VStack(spacing: 12) {
                     Slider(
@@ -38,35 +39,42 @@ struct LTCVolumeView: View {
                         onEditingChanged: { editing in
                             guard !editing, let draftLevel else { return }
                             if let byte = LTCLevel.byte(for: Int(draftLevel)) {
-                                settings.write(.ltcVolume, value: byte)
+                                settings.write(.vadThreshold, value: byte)
                             }
                             self.draftLevel = nil
                         }
                     )
-                    .tint(.opsCoreRed)
-                    .padding(.horizontal, 30)
+                    .tint(.accent)
+                    .padding(.horizontal, 16)
 
                     HStack {
-                        Text("Quiet")
+                        Text("Low")
                             .font(.ibmPlexSans(size: 14))
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text(settings.settings.ltcVolume.map(String.init) ?? "—")
+                        Text(settings.settings.vadThreshold.map(String.init) ?? "—")
                             .font(.ibmPlexSans(size: 18, weight: .bold))
                         Spacer()
-                        Text("Loud")
+                        Text("High")
                             .font(.ibmPlexSans(size: 14))
                             .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 16)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .top)
+            .frame(
+                maxWidth: .infinity,
+                alignment: .top
+            )
+            .padding(
+                .horizontal, 16
+            )
         }
+        .navigationTitle("VAD Threshold")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("LTC Volume")
+                Text("VAD Threshold")
                     .font(.ibmPlexSans(size: 28, weight: .bold))
             }
         }
@@ -76,7 +84,7 @@ struct LTCVolumeView: View {
 #Preview {
     let session = HeadsetSession()
     NavigationStack {
-        LTCVolumeView()
+        VADThresholdView()
             .environment(HeadsetSettingsSync(transport: session))
     }
 }

@@ -2,14 +2,12 @@ import Foundation
 
 /// The three operating regions that govern RF channel availability.
 enum Region: String, CaseIterable, Codable, Sendable {
-    case northAmerica
-    case latinAmerica
+    case americas
     case eurasia
 
     var displayName: String {
         switch self {
-        case .northAmerica: return "North America"
-        case .latinAmerica: return "Latin America"
+        case .americas: return "Americas"
         case .eurasia: return "Eurasia"
         }
     }

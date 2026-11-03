@@ -24,6 +24,25 @@ struct ConnectedView: View {
             .frame(maxWidth: .infinity, alignment: .top)
             .padding(.top, 10)
         }
+        .navigationTitle("My AMP®")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("My AMP®")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    AppSettingsView()
+                } label: {
+                    Image("settings_24px")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
     }
 
     // MARK: - Header
@@ -40,7 +59,7 @@ struct ConnectedView: View {
 
                 Text("|")
                     .font(.ibmPlexSans(size: 50))
-                    .foregroundColor(Color.opsCoreRed)
+                    .foregroundColor(Color.accent)
 
                 Text("AMP 2.0 Elite")
                     .font(.ibmPlexSans(size: 20))
@@ -68,7 +87,13 @@ struct ConnectedView: View {
 
             HStack(spacing: 10) {
                 ForEach(LTCMode.allCases, id: \.self) { mode in
-                    modeButton(mode)
+                    SelectionButton(
+                        label: mode.displayName,
+                        selected: settings.settings.ltcMode == mode,
+                        action: {
+                            settings.write(.ltcMode, value: mode.rawValue)
+                        }
+                    )
                 }
             }
             .padding(.horizontal)
@@ -76,54 +101,44 @@ struct ConnectedView: View {
         .padding(.bottom, 10)
     }
 
-    private func modeButton(_ mode: LTCMode) -> some View {
-        Button {
-            settings.write(.ltcMode, value: mode.rawValue)
-        } label: {
-            Text(mode.displayName)
-                .font(.ibmPlexSans(size: 18))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .foregroundColor(.white)
-                .padding(.vertical, 20)
-                .padding(.horizontal, 6)
-                .frame(maxWidth: .infinity)
-                .background(
-                    settings.settings.ltcMode == mode
-                        ? Color.opsCoreRed
-                        : Color.opsCoreRed.opacity(0.50)
-                )
-                .cornerRadius(16)
-        }
-    }
-
     // MARK: - Setting Links
 
     private var settingsLinks: some View {
         VStack(spacing: 0) {
-            SettingRow(title: "Teams", route: .teams)
-            SettingRow(title: LTCSetting.ltcVolume.displayName, route: .ltcVolume)
-            SettingRow(title: LTCSetting.txPower.displayName, route: .txPower)
+            if settings.settings.ltcMode == .vad {
+                SettingRow(title: LTCSetting.vadThreshold.displayName) {
+                    VADThresholdView()
+                }
+            }
+            
+            SettingRow(title: "LTC Team") {
+                TeamsView()
+            }
+            SettingRow(title: "LTC Key") {
+                LTCKeyView()
+            }
+            SettingRow(title: "LTC Volume") {
+                LTCVolumeView()
+            }
+            SettingRow(title: "LTC Power") {
+                TxPowerView()
+            }
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
-                SettingRow(title: LTCSetting.zone.displayName, route: .regions)
+                SettingRow(title: LTCSetting.zone.displayName) {
+                    RegionsView()
+                }
             }
-            
-            if settings.settings.ltcMode == .vad {
-                SettingRow(title: LTCSetting.vadThreshold.displayName, route: .vadThreshold)
-            }
-            
-            SettingRow(title: "App Settings", route: .settings)
         }
     }
 }
 
 #Preview {
     let session = HeadsetSession()
-    NavigationStack {
-        ConnectedView()
-            .environment(session)
-            .environment(HeadsetSettingsSync(transport: session))
-    }
+    let settings = HeadsetSettingsSync(transport: session)
+    
+    ConnectedView()
+        .environment(session)
+        .environment(settings)
 }

@@ -20,21 +20,9 @@ struct ConnectionTutorialView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title2)
-                        .foregroundColor(.primary)
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top)
-
             stepContent
                 .frame(maxHeight: .infinity)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer(minLength: 0)
 
@@ -45,14 +33,23 @@ struct ConnectionTutorialView: View {
         .onChange(of: session.state) { _, newState in
             if newState.isConnected { dismiss() }
         }
-        // Scan from the pairing step so it's running on return from Settings.
-        .onChange(of: currentStep) { _, _ in
-            startLookingIfPairing()
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Bluetooth Pairing")
+                    .font(.ibmPlexSans(size: 28, weight: .bold))
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                }
+            }
         }
-        // Also on appear: `onChange` never fires when opening at the pairing step.
-        .onAppear {
-            startLookingIfPairing()
-        }
+        .navigationTitle("Bluetooth Pairing")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     // MARK: - Step Content
@@ -150,23 +147,18 @@ struct ConnectionTutorialView: View {
                 waitingForHeadset
 
                 HStack(spacing: 18) {
-                    secondaryButton("Back") {
+                    SecondaryButton(label: "Back") {
                         goBack()
                     }
-
-                    secondaryButton(session.isDiscovering ? "Looking…" : "Check Again") {
-                        session.startDiscovery()
-                    }
-                    .disabled(session.isDiscovering)
                 }
             }
         } else {
             HStack(spacing: 18) {
-                secondaryButton("Back") {
+                SecondaryButton(label: "Back") {
                     goBack()
                 }
 
-                primaryButton("Next") {
+                PrimaryButton(label: "Next") {
                     currentStep += 1
                 }
             }
@@ -178,7 +170,7 @@ struct ConnectionTutorialView: View {
         HStack(spacing: 8) {
             ProgressView()
                 .controlSize(.small)
-                .tint(.opsCoreRed)
+                .tint(.accent)
 
             Text("Waiting for your headset…")
                 .font(.ibmPlexSans(size: 18))
@@ -188,11 +180,6 @@ struct ConnectionTutorialView: View {
         .padding(.vertical, 16)
     }
 
-    private func startLookingIfPairing() {
-        guard isPairingStep, !session.state.isConnected, !session.isDiscovering else { return }
-        session.startDiscovery()
-    }
-
     private func goBack() {
         if currentStep > 0 {
             currentStep -= 1
@@ -200,35 +187,11 @@ struct ConnectionTutorialView: View {
             dismiss()
         }
     }
-
-    // MARK: - Button Styles
-
-    // Android's primary (64dp) and secondary (56dp) buttons, margins, and gaps
-    // ×1.1, since an Android dp draws ~10% larger. The heights differ there too.
-    private func primaryButton(_ text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.ibmPlexSans(size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, minHeight: 70)
-                .background(Color.opsCoreRed)
-                .cornerRadius(16)
-        }
-    }
-
-    private func secondaryButton(_ text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.ibmPlexSans(size: 20))
-                .foregroundColor(.opsCoreRed)
-                .frame(maxWidth: .infinity, minHeight: 62)
-                .background(Color(.systemGray5))
-                .cornerRadius(16)
-        }
-    }
 }
 
 #Preview {
-    ConnectionTutorialView()
-        .environment(HeadsetSession())
+    NavigationStack {
+        ConnectionTutorialView()
+            .environment(HeadsetSession())
+    }
 }
