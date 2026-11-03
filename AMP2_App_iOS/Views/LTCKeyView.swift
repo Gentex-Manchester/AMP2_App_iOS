@@ -46,8 +46,7 @@ struct LTCKeyView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("LTC Key")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("LTC Key", style: .header3)
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {

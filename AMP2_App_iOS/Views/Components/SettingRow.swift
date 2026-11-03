@@ -20,8 +20,7 @@ struct SettingRow<Destination: View>: View {
             view
         } label: {
             HStack {
-                Text(title)
-                    .font(.ibmPlexSans(size: 20))
+                AppText(title, style: .body)
 
                 Spacer()
 

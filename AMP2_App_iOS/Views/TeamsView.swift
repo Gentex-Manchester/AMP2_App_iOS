@@ -52,8 +52,7 @@ struct TeamsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Teams")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Teams", style: .header3)
             }
         }
     }

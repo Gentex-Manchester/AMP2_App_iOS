@@ -35,8 +35,7 @@ struct ConnectionTutorialView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Bluetooth Pairing")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Bluetooth Pairing", style: .header3)
             }
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -75,13 +74,11 @@ struct ConnectionTutorialView: View {
                         .frame(maxHeight: 250)
                 }
 
-                Text(step.title)
-                    .font(.ibmPlexSans(size: 22, weight: .bold))
+                AppText(step.title, style: .header2)
                     .multilineTextAlignment(.center)
 
                 if !step.description.isEmpty {
-                    Text(step.description)
-                        .font(.ibmPlexSans(size: 18))
+                    AppText(step.description, style: .body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -94,13 +91,11 @@ struct ConnectionTutorialView: View {
         ScrollView {
             if step.imageName.isEmpty {
                 VStack(spacing: 16) {
-                    Text(step.title)
-                        .font(.ibmPlexSans(size: 22, weight: .bold))
+                    AppText(step.title, style: .header2)
                         .multilineTextAlignment(.center)
 
                     if !step.description.isEmpty {
-                        Text(step.description)
-                            .font(.ibmPlexSans(size: 18))
+                        AppText(step.description, style: .body)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                     }
@@ -114,13 +109,11 @@ struct ConnectionTutorialView: View {
                         .frame(maxWidth: .infinity, maxHeight: 250)
 
                     VStack(spacing: 16) {
-                        Text(step.title)
-                            .font(.ibmPlexSans(size: 22, weight: .bold))
+                        AppText(step.title, style: .header2)
                             .multilineTextAlignment(.center)
 
                         if !step.description.isEmpty {
-                            Text(step.description)
-                                .font(.ibmPlexSans(size: 18))
+                            AppText(step.description, style: .body)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
                         }
@@ -172,8 +165,7 @@ struct ConnectionTutorialView: View {
                 .controlSize(.small)
                 .tint(.accent)
 
-            Text("Waiting for your headset…")
-                .font(.ibmPlexSans(size: 18))
+            AppText("Waiting for your headset…", style: .body)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)

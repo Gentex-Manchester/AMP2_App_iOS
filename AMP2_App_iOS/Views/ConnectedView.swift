@@ -28,8 +28,7 @@ struct ConnectedView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("My AMP®")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("My AMP®", style: .header3)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
@@ -49,29 +48,21 @@ struct ConnectedView: View {
 
     private var headerSection: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-
-                Image("Ops-Core")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 35)
-
-                Text("|")
-                    .font(.ibmPlexSans(size: 50))
-                    .foregroundColor(Color.accent)
-
-                Text("AMP 2.0 Elite")
-                    .font(.ibmPlexSans(size: 20))
-
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
-
             Image("Device Connected (Dark)")
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 250)
+            
+            Spacer()
+            
+            Image("Ops-Core")
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 35)
+
+            AppText("AMP 2.0 Elite", style: .header1)
+            
+            Spacer()
         }
     }
 
@@ -80,8 +71,7 @@ struct ConnectedView: View {
     /// Inline per the 07/07 mock-ups.
     private var ltcModeSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("LTC Mode")
-                .font(.ibmPlexSans(size: 18, weight: .bold))
+            AppText("LTC Mode", style: .header3)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
 

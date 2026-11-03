@@ -24,8 +24,7 @@ struct PrimaryButton: View {
     
     var body : some View {
         Button(action: action) {
-            Text(label)
-                .font(.ibmPlexSans(size: 20))
+            AppText(label, style: .body)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, minHeight: 70)
                 .background(Color.accent)
@@ -53,8 +52,7 @@ struct SecondaryButton: View {
     
     var body : some View {
         Button(action: action) {
-            Text(label)
-                .font(.ibmPlexSans(size: 20))
+            AppText(label, style: .body)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, minHeight: 70)
                 .background(Color(.systemGray2))
@@ -85,8 +83,7 @@ struct SelectionButton: View {
     
     var body : some View {
         Button(action: action) {
-            Text(label)
-                .font(.ibmPlexSans(size: 20))
+            AppText(label, style: .body)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, minHeight: 70)
                 .background(selected ? Color.accent : Color.accent.opacity(0.50))

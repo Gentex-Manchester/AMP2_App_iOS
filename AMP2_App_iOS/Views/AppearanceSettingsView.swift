@@ -41,8 +41,7 @@ struct AppearanceSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Appearance")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Appearance", style: .header3)
             }
         }
         

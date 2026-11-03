@@ -42,8 +42,7 @@ struct SelectionSlider: View {
         VStack(spacing: 10) {
 
             if let description = description {
-                Text(description)
-                    .font(.ibmPlexSans(size: 18))
+                AppText(description, style: .body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 16)
             }
@@ -72,19 +71,16 @@ struct SelectionSlider: View {
                 .padding(.horizontal, 16)
 
                 HStack {
-                    Text(highLabel)
-                        .font(.ibmPlexSans(size: 14))
+                    AppText(lowLabel, style: .subbody)
                         .foregroundColor(.secondary)
 
                     Spacer()
 
-                    Text(label(draftLevel ?? level))
-                        .font(.ibmPlexSans(size: 18, weight: .bold))
+                    AppText(label(draftLevel ?? level), style: .body)
 
                     Spacer()
 
-                    Text(lowLabel)
-                        .font(.ibmPlexSans(size: 14))
+                    AppText(highLabel, style: .subbody)
                         .foregroundColor(.secondary)
                 }
                 .padding(.horizontal, 16)

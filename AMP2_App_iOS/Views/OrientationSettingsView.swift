@@ -73,8 +73,7 @@ struct OrientationSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Orientation")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Orientation", style: .header3)
             }
         }
     }

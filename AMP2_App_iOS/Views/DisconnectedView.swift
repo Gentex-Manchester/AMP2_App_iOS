@@ -26,13 +26,11 @@ struct DisconnectedView: View {
                         .frame(maxHeight: isLandscape ? 130 : 250)
                     
                     // Without padding the text clips beside the landscape sidebar.
-                    Text("No headset connected")
-                        .font(.ibmPlexSans(size: 22, weight: .bold))
+                    AppText("No AMP connected", style: .header2)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
-                    Text("To use this app, you must connect to an AMP 2.0 headset, like the AMP 2.0 Elite headset.")
-                        .font(.ibmPlexSans(size: 20))
+                    AppText("To use this app, you must connect to an AMP 2.0 headset, like the AMP 2.0 Elite headset.", style: .body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
@@ -65,8 +63,7 @@ struct DisconnectedView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Home")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Home", style: .header3)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {

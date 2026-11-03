@@ -37,8 +37,7 @@ struct AppSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("App Settings")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("App Settings", style: .header3)
             }
         }
     }

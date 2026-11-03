@@ -34,8 +34,7 @@ struct SelectionButtonRow<Option: Hashable>: View {
     var body: some View {
         VStack(spacing: 10) {
             if let description = description {
-                Text(description)
-                    .font(.ibmPlexSans(size: 18))
+                AppText(description, style: .body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 16)
             }

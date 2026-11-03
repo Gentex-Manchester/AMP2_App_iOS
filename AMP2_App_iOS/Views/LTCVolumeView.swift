@@ -48,8 +48,7 @@ struct LTCVolumeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("LTC Volume")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("LTC Volume", style: .header3)
             }
         }
     }

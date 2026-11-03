@@ -54,8 +54,7 @@ struct RegionsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Region")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("Region", style: .header3)
             }
         }
     }

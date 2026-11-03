@@ -51,8 +51,7 @@ struct TxPowerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("LTC Power")
-                    .font(.ibmPlexSans(size: 28, weight: .bold))
+                AppText("LTC Power", style: .header3)
             }
         }
     }
