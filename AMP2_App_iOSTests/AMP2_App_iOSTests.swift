@@ -47,9 +47,9 @@ struct SecurityKeyTests {
     @Test("All 11 pkeys are present")
     func allKeysPresent() {
         #expect(SecurityKey.all.count == 11)
-        let expected = ["MIKE", "NOVEMBER", "OSCAR", "PAPA", "QUEBEC",
-                        "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR",
-                        "CUSTOM"]
+        let expected = ["Mike", "November", "Oscar", "Papa", "Quebec",
+                        "Romeo", "Sierra", "Tango", "Uniform", "Victor",
+                        "Custom"]
         #expect(SecurityKey.all.map(\.rawValue) == expected)
     }
 
@@ -71,7 +71,7 @@ struct SecurityKeyTests {
     @Test("Codable round-trip preserves the key")
     func codableRoundTrip() throws {
         let data = try JSONEncoder().encode(SecurityKey.TANGO)
-        #expect(String(data: data, encoding: .utf8) == "\"TANGO\"")
+        #expect(String(data: data, encoding: .utf8) == "\"Tango\"")
         let decoded = try JSONDecoder().decode(SecurityKey.self, from: data)
         #expect(decoded == .TANGO)
     }

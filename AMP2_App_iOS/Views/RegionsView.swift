@@ -11,35 +11,37 @@
 import SwiftUI
 
 struct RegionsView: View {
-    @Environment(HeadsetSettingsSync.self) private var settings
+    @Environment(HeadsetSettingsSync.self) private var headsetSettings
     @Environment(HeadsetSession.self) private var session
 
     var body: some View {
         ScrollView {
-            let selectedZone = settings.settings.zone
+            let selectedZone = headsetSettings.settings.zone
             
-            VStack(spacing: 10) {
-                Text("Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
-                    .font(.ibmPlexSans(size: 18))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-                
-                HStack(spacing: 10){
-                    SelectionButton(
-                        label: "Americas",
-                        enabled: session.state.isConnected,
-                        selected: selectedZone == Region.americas,
-                        action: { settings.write(LTCSetting.zone, value: Region.americas.ltcByte) }
-                    )
-                    
-                    SelectionButton(
-                        label: "Eurasia",
-                        enabled: session.state.isConnected,
-                        selected: selectedZone == Region.eurasia,
-                        action: { settings.write(LTCSetting.zone, value: Region.eurasia.ltcByte) }
-                    )
-                }
-            }
+            SelectionButtonRow(
+                options: Region.allCases,
+                selection: Binding(
+                        get: {
+                            headsetSettings.settings.zone ?? Region.americas
+                        },
+                        set: { selection in
+                            headsetSettings.write(
+                                LTCSetting.zone,
+                                value: selection.ltcByte
+                            )
+                        }
+                    ),
+                onSelection: { selection in
+                    headsetSettings.write(LTCSetting.zone, value: selection.ltcByte)
+                },
+                label: { option in
+                    switch option {
+                    case .americas: return "Americas"
+                    case .eurasia: return "Eurasia"
+                    }
+                },
+                description: "Determines how LTC communications are encrypted."
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top

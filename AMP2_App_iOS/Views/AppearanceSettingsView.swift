@@ -18,38 +18,17 @@ struct AppearanceSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 10) {
-                Text("Adjusts the colors used in the app's user interface")
-                    .font(.ibmPlexSans(size: 18))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 16)
-                
-                HStack(spacing: 10){
-                    SelectionButton(
-                        label: "System",
-                        selected: appearanceMode == .system,
-                        action: { appearanceMode = .system }
-                    )
-                    
-                    SelectionButton(
-                        label: "Light Mode",
-                        selected: appearanceMode == .light,
-                        action: { appearanceMode = .light }
-                    )
-                }
-                
-                HStack(spacing: 10) {
-                    SelectionButton(
-                        label: "Dark Mode",
-                        selected: appearanceMode == .dark,
-                        action: { appearanceMode = .dark }
-                    )
-
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                        .padding(.trailing)
-                }
-            }
+            SelectionButtonRow(
+                options: AppearanceMode.allCases,
+                selection: $appearanceMode,
+                onSelection: { selection in
+                    appearanceMode = selection
+                },
+                label: { option in
+                    option.rawValue
+                },
+                description: "Adjusts the colors used in the app's user interface."
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top
