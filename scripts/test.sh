@@ -16,9 +16,9 @@ set -o pipefail
 
 cd "$(dirname "$0")/.." || exit 1
 
-SCHEME="${SCHEME:-Gentex_iOS}"
+SCHEME="${SCHEME:-AMP2_App_iOS}"
 DEVICE="${DEVICE:-iPhone 17}"
-PROJECT="Gentex_iOS.xcodeproj"
+PROJECT="AMP2_App_iOS.xcodeproj"
 OUT_DIR="build/test-results"
 BUNDLE="$OUT_DIR/latest.xcresult"
 LOG="$OUT_DIR/xcodebuild.log"
@@ -73,14 +73,14 @@ if [ -d "$BUNDLE" ]; then
     if xcrun xccov view --report --only-targets "$BUNDLE" > "$OUT_DIR/coverage.txt" 2>/dev/null; then
         # Row shape: "0  Gentex_iOS.app  44  15.20% (2152/14156)", so the
         # percentage is the second-to-last field and the ratio is the last.
-        coverage_line=$(grep -m1 "Gentex_iOS.app" "$OUT_DIR/coverage.txt" \
+        coverage_line=$(grep -m1 "AMP2_App_iOS.app" "$OUT_DIR/coverage.txt" \
             | awk '{print $(NF-1) " " $NF}')
         [ -z "$coverage_line" ] && coverage_line="not available"
         coverage_table=$(cat "$OUT_DIR/coverage.txt")
 
         # Per-file, least covered first. This is the list that says where the
         # next test is worth writing.
-        xcrun xccov view --report --files-for-target Gentex_iOS.app "$BUNDLE" \
+        xcrun xccov view --report --files-for-target AMP2_App_iOS.app "$BUNDLE" \
             > "$OUT_DIR/coverage-by-file.txt" 2>/dev/null
     fi
 fi
@@ -130,7 +130,7 @@ fi
                     if ($i ~ /\.swift$/) path = $i
                 }
                 if (pct == "" || path == "") next
-                sub(/.*\/Gentex_iOS\/Gentex_iOS\//, "", path)
+                sub(/.*\/AMP2_App_iOS\/AMP2_App_iOS\//, "", path)
                 sub(/%$/, "", pct)
                 printf "%7.2f%%  %s\n", pct, path
             }
