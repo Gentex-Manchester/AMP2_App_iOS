@@ -8,10 +8,6 @@ Welcome! This document explains how to contribute to the Gentex AMP 2.0 iOS head
 
 - **Roadmap & requirements** — see [`requirements/README.md`](requirements/README.md) for the big-picture plan and feature requirements.
 
-### Labels
-
-Look for the **`good first issue`** label — those are specifically curated for newcomers or contributors who want a small, well-scoped task to start with.
-
 ---
 
 ## Branching Model
@@ -28,9 +24,8 @@ Key rules:
 
 | Convention | Rule |
 |---|---|
-| **Subviews** | `private var fooView: some View` computed property — never `@ViewBuilder func` |
 | **MARK comments** | Use `// MARK: - SectionName` to group Properties, Init, Body, Subviews, etc. |
-| **Imports** | `import SwiftUI` in views; for database code use `import Foundation` + `import AppDependencies` (re-exports `SQLite`). Never `import SQLite` directly. |
+| **Imports** | `import SwiftUI` in views; |
 | **Font** | `.font(.ibmPlexSans(size:weight:))` — never system fonts. |
 | **Previews** | Every view must have a `#Preview`. |
 | **Error handling** | `throws`-based with custom `LocalizedError` enums providing `errorDescription` + `recoverySuggestion`. |
@@ -43,10 +38,10 @@ Key rules:
 ## Testing Expectations
 
 - **Framework**: Unit tests use Swift Testing (`import Testing`): `@Suite`, `@Test`, `#expect`, `#expect(throws:)`. UI tests use XCTest.
-- **Existing suite**: `Gentex_iOSTests/Gentex_iOSTests.swift` (unit) and `Gentex_iOSUITests/` (UI) — these must stay green. `./scripts/test.sh` runs both.
-- **New features**: Must include tests. Database tests use `TeamStore(connection:)` with an in-memory `Connection(.inMemory)` for isolated state — no database file or setUp/tearDown needed.
-- **Access**: Use `@testable import Gentex_iOS` for internal symbols; use the `sampleTeam()` helper fixture.
-- **Run tests**: `xcodebuild -project Gentex_iOS.xcodeproj -scheme Gentex_iOS -destination 'platform=iOS Simulator,name=iPhone 17' test`
+- **Existing suite**: `AMP2_App_iOSTests/Gentex_iOSTests.swift` (unit) and `AMP2_App_iOSUITests/` (UI) — these must stay green. `./scripts/test.sh` runs both.
+- **New features**: Must include tests.
+- **Access**: Use `@testable import AMP2_App_iOS` for internal symbols; use the `sampleTeam()` helper fixture.
+- **Run tests**: `xcodebuild -project AMP2_App_iOS.xcodeproj -scheme AMP2_App_iOS -destination 'platform=iOS Simulator,name=iPhone 17' test`
 
 ---
 
@@ -63,14 +58,6 @@ Before opening a PR, verify:
 
 - **Requesting review**: Give the reviewer the issue, the diff, and what you tested before merging.
 - **Receiving review**: Verify feedback against the codebase before implementing; technical correctness over performative agreement.
-
----
-
-## Dev Scheme (`Gentex_iOS (Dev)`)
-
-The project includes a **`Gentex_iOS (Dev)`** scheme that uses the **`Debug-Dev`** build configuration, which defines the **`DEV_NO_GATE`** compiler flag. That flag originally bypassed a Flagship-headset gate on custom teams; Gentex removed that requirement and the gate is gone, so the flag gates nothing and the scheme builds the same app as `Gentex_iOS`. Its test action runs unit tests only.
-
-- Use the **`Gentex_iOS`** scheme for builds, CI, and the full test suite.
 
 ---
 
