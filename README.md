@@ -19,9 +19,7 @@ applied to the headset over Bluetooth. Built for iOS 18.0+ with SwiftUI.
   and writes every documented setting. Changes appear immediately and roll back
   if the headset refuses them. Pairing itself happens in the iOS Settings app,
   because iOS gives apps no way to open the system Bluetooth pairing screen. See
-  [`docs/ble-protocol.md`](docs/ble-protocol.md).
-
-For detailed technical documentation, see [`docs/README.md`](docs/README.md).
+  [`ble-protocol.md`](ble-protocol.md).
 
 ---
 
