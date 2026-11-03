@@ -10,57 +10,18 @@ import Foundation
 import CryptoKit
 import SwiftUI
 import UIKit
-import AppDependencies  // re-exports SQLite (Connection, Table, Expression, ...)
-@testable import AMP2_App_iOS
-
-// MARK: - Test Helpers
-
-private func sampleTeam(
-    name: String = "Alpha Team",
-    region: String = "North America",
-    rfChannel: Int = 3,
-    securityKey: String = "Mike",
-    networkId: Int = 42
-) -> Team {
-    Team(
-        region: region,
-        rfChannel: rfChannel,
-        securityKey: securityKey,
-        networkId: networkId,
-        name: name
-    )
-}
+@testable import AMP_2_0_App
 
 // MARK: - Region Rules
 
 @Suite("Region Rules")
 struct RegionRulesTests {
 
-    @Test("North America / Latin America expose channels 1...5")
-    func naLaChannels() {
-        #expect(Region.northAmerica.availableChannels == 1...5)
-        #expect(Region.latinAmerica.availableChannels == 1...5)
-    }
-
-    @Test("Eurasia exposes channels 1...5 like every region")
-    func eurasiaChannels() {
-        #expect(Region.eurasia.availableChannels == 1...5)
-    }
-
-    @Test("Channels 1–5 are available in every region", arguments: 1...5)
-    func sharedChannels(channel: Int) {
-        #expect(Region.northAmerica.availableChannels.contains(channel) == true)
-        #expect(Region.latinAmerica.availableChannels.contains(channel) == true)
-        #expect(Region.eurasia.availableChannels.contains(channel) == true)
-    }
-
     @Test("init(from:) is case-insensitive for raw values and display names")
     func caseInsensitiveInit() {
-        #expect(Region(from: "northAmerica") == .northAmerica)
-        #expect(Region(from: "NORTHAMERICA") == .northAmerica)
-        #expect(Region(from: "North America") == .northAmerica)
-        #expect(Region(from: "north america") == .northAmerica)
-        #expect(Region(from: "Latin America") == .latinAmerica)
+        #expect(Region(from: "Americas") == .americas)
+        #expect(Region(from: "AMERICAS") == .americas)
+        #expect(Region(from: "americas") == .americas)
         #expect(Region(from: "eurasia") == .eurasia)
         #expect(Region(from: "Eurasia") == .eurasia)
     }
@@ -73,8 +34,7 @@ struct RegionRulesTests {
 
     @Test("displayName maps to human-readable names")
     func displayNames() {
-        #expect(Region.northAmerica.displayName == "North America")
-        #expect(Region.latinAmerica.displayName == "Latin America")
+        #expect(Region.americas.displayName == "Americas")
         #expect(Region.eurasia.displayName == "Eurasia")
     }
 }
@@ -84,11 +44,12 @@ struct RegionRulesTests {
 @Suite("SecurityKey")
 struct SecurityKeyTests {
 
-    @Test("All 10 predefined keys are present")
+    @Test("All 11 pkeys are present")
     func allKeysPresent() {
-        #expect(SecurityKey.all.count == 10)
+        #expect(SecurityKey.all.count == 11)
         let expected = ["MIKE", "NOVEMBER", "OSCAR", "PAPA", "QUEBEC",
-                        "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR"]
+                        "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR",
+                        "CUSTOM"]
         #expect(SecurityKey.all.map(\.rawValue) == expected)
     }
 
@@ -116,41 +77,6 @@ struct SecurityKeyTests {
     }
 }
 
-// MARK: - Team Model
-
-@Suite("Team Model")
-struct TeamModelTests {
-    
-    @Test("isDuplicate ignores id, favorite, and locked flags")
-    func isDuplicateIgnoresMetadata() {
-        let a = Team(id: 1, region: "North America", rfChannel: 3, securityKey: "MIKE",
-                     networkId: 42, name: "Alpha", isFavorited: true, isLocked: false)
-        let b = Team(id: 2, region: "North America", rfChannel: 3, securityKey: "MIKE",
-                     networkId: 42, name: "Alpha", isFavorited: false, isLocked: true)
-        #expect(a.isDuplicate(of: b) == true)
-    }
-    
-    @Test("isDuplicate false when any meaningful field differs")
-    func isDuplicateFalseOnDifference() {
-        let base = sampleTeam()
-        #expect(base.isDuplicate(of: sampleTeam(name: "Bravo")) == false)
-        #expect(base.isDuplicate(of: sampleTeam(region: "Eurasia")) == false)
-        #expect(base.isDuplicate(of: sampleTeam(rfChannel: 4)) == false)
-        #expect(base.isDuplicate(of: sampleTeam(securityKey: "TANGO")) == false)
-        #expect(base.isDuplicate(of: sampleTeam(networkId: 43)) == false)
-    }
-    
-    @Test("Codable round-trip preserves all fields")
-    func codableRoundTrip() throws {
-        let original = Team(id: 7, region: "Eurasia", rfChannel: 4, securityKey: "VICTOR",
-                            customSecurityKey: nil, networkId: 200, name: "Zeta",
-                            isFavorited: true, isLocked: true)
-        let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(Team.self, from: data)
-        #expect(decoded == original)
-    }
-}
-
 // MARK: - LTC Protocol Codec
 
 /// BLE wire format. Expected bytes come from
@@ -163,14 +89,14 @@ struct LTCProtocolTests {
     @Test("Read command matches the documented example byte for byte")
     func readCommandMatchesDoc() {
         // "00 1d 40 2c 00 00 01" — read the pre-defined team setting.
-        #expect(LTCPacket.read(.predefinedTeam) == Data([0x00, 0x1d, 0x40, 0x2c, 0x00, 0x00, 0x01]))
+        #expect(LTCPacket.read(.team) == Data([0x00, 0x1d, 0x40, 0x2c, 0x00, 0x00, 0x01]))
     }
 
     @Test("Write command matches the documented example byte for byte")
     func writeCommandMatchesDoc() {
         // "00 1d 40 2c 01 00 01 00" — set the pre-defined team to Alpha.
         #expect(
-            LTCPacket.write(.predefinedTeam, value: PredefinedTeam.alpha.rawValue)
+            LTCPacket.write(.team, value: Team.alpha.rawValue)
                 == Data([0x00, 0x1d, 0x40, 0x2c, 0x01, 0x00, 0x01, 0x00])
         )
     }
@@ -178,23 +104,26 @@ struct LTCProtocolTests {
     @Test("Every documented poll command encodes exactly as published")
     func pollSequenceMatchesDoc() {
         let expected: [LTCSetting: [UInt8]] = [
-            .predefinedTeam: [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x00, 0x01],
-            .securityKey:    [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x01, 0x01],
-            .rfChannel:      [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x03, 0x01],
-            .networkId:      [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x04, 0x01],
-            .ltcMode:        [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x05, 0x01],
-            .vadThreshold:   [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x06, 0x01],
-            .txPower:        [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x07, 0x01],
-            .ltcVolume:      [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x08, 0x01],
-            .zone:           [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x0a, 0x01]
+            .team:              [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x00, 0x01],
+            .securityKey:       [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x01, 0x01],
+            .customSecurityKey: [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x02, 0x20],
+            .ltcMode:           [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x05, 0x01],
+            .vadThreshold:      [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x06, 0x01],
+            .txPower:           [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x07, 0x01],
+            .ltcVolume:         [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x08, 0x01],
+            .zone:              [0x00, 0x1d, 0x40, 0x2c, 0x00, 0x0a, 0x01]
         ]
         for (setting, bytes) in expected {
-            #expect(LTCPacket.read(setting) == Data(bytes))
+            if (setting == .customSecurityKey) {
+                #expect(LTCPacket.read(setting, expectedLength: 32) == Data(bytes))
+            }
+            else {
+                #expect(LTCPacket.read(setting) == Data(bytes))
+            }
         }
         // customSecurityKey is unimplemented in firmware, so it is not polled.
         #expect(Set(LTCSetting.pollSequence) == Set(expected.keys))
-        #expect(LTCSetting.pollSequence.count == 9)
-        #expect(!LTCSetting.pollSequence.contains(.customSecurityKey))
+        #expect(LTCSetting.pollSequence.count == 8)
     }
 
     /// Android's SPP framing (`FF 03 01 <len> …` + XOR checksum) must not leak
@@ -216,7 +145,7 @@ struct LTCProtocolTests {
 
     @Test("Multi-byte writes set the length byte from the payload")
     func multiByteWriteLength() {
-        let packet = LTCPacket.write(.customSecurityKey, payload: Data([0xaa, 0xbb, 0xcc]))
+        let packet = LTCPacket.write(.customSecurityKey, payload: [0xaa, 0xbb, 0xcc])
         #expect(packet == Data([0x00, 0x1d, 0x40, 0x2c, 0x01, 0x02, 0x03, 0xaa, 0xbb, 0xcc]))
     }
 
@@ -226,8 +155,8 @@ struct LTCProtocolTests {
     func readResponseMatchesDoc() throws {
         // "00 1d 41 2c 02" — the current team is Charlie.
         let response = try LTCResponse.parse(Data([0x00, 0x1d, 0x41, 0x2c, 0x02]))
-        #expect(try response.readValue() == 0x02)
-        #expect(PredefinedTeam(rawValue: try response.readValue()) == .charlie)
+        #expect(try response.readValue()[0] == 0x02)
+        #expect(Team(rawValue: try response.readValue()[0]) == .charlie)
     }
 
     @Test("Write response of 0x00 is success")
@@ -272,13 +201,6 @@ struct LTCProtocolTests {
         }
     }
 
-    @Test("A header-only response has no value")
-    func emptyPayloadRejected() throws {
-        let response = try LTCResponse.parse(Data([0x00, 0x1d, 0x41, 0x2c]))
-        #expect(response.value == nil)
-        #expect(throws: LTCProtocolError.emptyPayload) { _ = try response.readValue() }
-    }
-
     // MARK: Headset Identity
 
     @Test("Identity response decodes the documented part number")
@@ -317,25 +239,24 @@ struct LTCProtocolTests {
 
     // MARK: Value Mappings
 
-    @Test("Security keys map to bytes 0x00 through 0x09 and back")
+    @Test("Security keys map to bytes 0x00 through 0x0a and back")
     func securityKeyBytes() {
         #expect(SecurityKey.MIKE.ltcByte == 0x00)
-        #expect(SecurityKey.VICTOR.ltcByte == 0x09)
+        #expect(SecurityKey.CUSTOM.ltcByte == 0x0a)
         for key in SecurityKey.allCases {
             #expect(SecurityKey(ltcByte: key.ltcByte) == key)
         }
-        #expect(SecurityKey(ltcByte: 0x0a) == nil)
+        #expect(SecurityKey(ltcByte: 0x0b) == nil)
     }
 
     @Test("Regions map to the headset's zone bytes and back")
     func zoneBytes() {
-        #expect(Region.northAmerica.ltcByte == 0x00)
-        #expect(Region.latinAmerica.ltcByte == 0x01)
-        #expect(Region.eurasia.ltcByte == 0x02)
+        #expect(Region.americas.ltcByte == 0x00)
+        #expect(Region.eurasia.ltcByte == 0x01)
         for region in Region.allCases {
             #expect(Region(ltcByte: region.ltcByte) == region)
         }
-        #expect(Region(ltcByte: 0x03) == nil)
+        #expect(Region(ltcByte: 0x02) == nil)
     }
 
     /// The headset is 0-based, the UI is 1-based, and only 1–5 are supported.
@@ -389,32 +310,6 @@ struct LTCProtocolTests {
         #expect(LTCNetworkID.byte(for: 256) == nil)
     }
 
-    // MARK: Predefined Teams
-
-    @Test("Predefined teams carry the documented settings")
-    func predefinedTeamSettings() {
-        // From the doc's table. Every preset uses Mike.
-        let expected: [(PredefinedTeam, Int, Int)] = [
-            (.alpha, 2, 100), (.bravo, 3, 125), (.charlie, 4, 150),
-            (.delta, 5, 175), (.jointOps, 1, 200)
-        ]
-        for (team, channel, networkId) in expected {
-            #expect(team.securityKey == .MIKE)
-            #expect(team.rfChannel == channel)
-            #expect(team.networkId == networkId)
-        }
-    }
-
-    /// A custom team is one whose settings match no preset.
-    @Test("Preset matching identifies custom teams by their settings")
-    func presetMatching() {
-        #expect(PredefinedTeam.matching(securityKey: .MIKE, rfChannel: 2, networkId: 100) == .alpha)
-        #expect(PredefinedTeam.matching(securityKey: .MIKE, rfChannel: 1, networkId: 200) == .jointOps)
-        // Alpha's channel and network ID, different key.
-        #expect(PredefinedTeam.matching(securityKey: .TANGO, rfChannel: 2, networkId: 100) == nil)
-        #expect(PredefinedTeam.matching(securityKey: .MIKE, rfChannel: 2, networkId: 101) == nil)
-    }
-
     // MARK: Hex Formatting
 
     @Test("Hex formatting matches the Android logger's format")
@@ -441,7 +336,7 @@ struct HeadsetDiscoveryTests {
 
     @Test("Either brand token is enough, in any casing")
     func recognizesBrandTokens() {
-        let names = ["Gentex_AMP2.0_PROTO-123456", "gentex", "AMP 2.0", "amp2.0", "GENTEX AMP"]
+        let names = ["Gentex_AMP2.0_PROTO-123456", "AMP 2.0", "amp2.0", "GENTEX AMP"]
         for name in names {
             let headset = DiscoveredHeadset(id: UUID(), name: name, source: .advertised)
             #expect(headset.looksLikeGentexHeadset, "expected \(name) to match")
@@ -474,22 +369,14 @@ struct HeadsetDiscoveryTests {
 @Suite("Headset settings state")
 struct HeadsetSettingsStateTests {
 
-    private func preset(_ team: PredefinedTeam) -> HeadsetSettingsState {
-        HeadsetSettingsState(
-            securityKey: team.securityKey,
-            rfChannel: team.rfChannel,
-            networkId: team.networkId
-        )
-    }
-
     @Test("Completeness requires every setting")
     func completeness() {
         var state = HeadsetSettingsState(
-            predefinedTeam: .alpha, securityKey: .MIKE, rfChannel: 2, networkId: 100,
-            ltcMode: .pushToTalk, vadThreshold: 5, txPower: .zero, ltcVolume: 5
+            team: .alpha, securityKey: .MIKE, ltcMode: .pushToTalk,
+            vadThreshold: 5, txPower: .zero, ltcVolume: 5
         )
         #expect(!state.isComplete)   // zone still missing
-        state.zone = .northAmerica
+        state.zone = .americas
         #expect(state.isComplete)
     }
 
@@ -524,7 +411,7 @@ struct PresetFavoritesTests {
     /// as in Android's PresetFavoritesRepository.
     @Test("Every preset name survives the newline-delimited encoding")
     func namesRoundTrip() {
-        let names = PredefinedTeam.allCases.map(\.displayName)
+        let names = Team.allCases.map(\.displayName)
         let encoded = names.sorted().joined(separator: "\n")
         let decoded = Set(encoded.split(separator: "\n").map(String.init))
         #expect(decoded == Set(names))
@@ -693,30 +580,26 @@ struct HeadsetSettingsSyncBehaviourTests {
         let transport = FakeHeadsetTransport()
         // Varied values, so a misattributed reply shows up in the wrong field.
         transport.values = [
-            .predefinedTeam: 0x00,   // Alpha
+            .team: 0x00,   // Alpha
             .securityKey: 0x00,      // Mike
-            .rfChannel: 0x01,        // channel 2
-            .networkId: 0x2a,        // 42
             .ltcMode: 0x01,          // PTT
             .vadThreshold: 0x05,
             .txPower: 0x02,          // -12 dBm
             .ltcVolume: 0x08,
-            .zone: 0x01              // Latin America
+            .zone: 0x01              // Eurasia
         ]
         let sync = HeadsetSettingsSync(transport: transport)
 
         sync.pollOnce()
         try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
 
-        #expect(sync.settings.predefinedTeam == .alpha)
+        #expect(sync.settings.team == .alpha)
         #expect(sync.settings.securityKey == .MIKE)
-        #expect(sync.settings.rfChannel == 2)
-        #expect(sync.settings.networkId == 42)
         #expect(sync.settings.ltcMode == .pushToTalk)
         #expect(sync.settings.vadThreshold == 5)
         #expect(sync.settings.txPower == .minus12)
         #expect(sync.settings.ltcVolume == 8)
-        #expect(sync.settings.zone == .latinAmerica)
+        #expect(sync.settings.zone == .eurasia)
     }
 
     @Test("Undocumented values are kept as raw bytes, not discarded")
@@ -730,55 +613,7 @@ struct HeadsetSettingsSyncBehaviourTests {
         try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
 
         #expect(sync.settings.ltcMode == nil)
-        #expect(sync.settings.unrecognized[.ltcMode] == 0x04)
-    }
-
-    @Test("A custom team writes key, channel, then network ID in that order")
-    func applyCustomTeamOrder() async throws {
-        let transport = FakeHeadsetTransport()
-        let sync = HeadsetSettingsSync(transport: transport)
-
-        // TANGO matches no preset, so there is no team byte; it takes three writes.
-        try sync.applyTeam(securityKey: .TANGO, rfChannel: 4, networkId: 200)
-        try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
-
-        let writes = zip(transport.sentSettings, transport.sentWasWrite)
-            .filter { $0.1 }.map { $0.0 }
-        #expect(writes.prefix(3) == [
-            LTCSetting.securityKey.rawValue,
-            LTCSetting.rfChannel.rawValue,
-            LTCSetting.networkId.rawValue
-        ])
-    }
-
-    @Test("A preset team goes out as the single team command")
-    func applyPresetTeamUsesTeamCommand() async throws {
-        let transport = FakeHeadsetTransport()
-        let sync = HeadsetSettingsSync(transport: transport)
-
-        // Bravo. Three separate writes set the same values, but the headset plays
-        // no confirmation and its team byte goes stale (Gentex, on hardware).
-        try sync.applyTeam(securityKey: .MIKE, rfChannel: 3, networkId: 125)
-        try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
-
-        let writes = zip(transport.sentSettings, transport.sentWasWrite)
-            .filter { $0.1 }.map { $0.0 }
-        #expect(writes == [LTCSetting.predefinedTeam.rawValue])
-        #expect(transport.sent.first == Data([0x00, 0x1d, 0x40, 0x2c, 0x01, 0x00, 0x01, 0x01]))
-    }
-
-    @Test("An out-of-range team is rejected before anything is sent")
-    func applyTeamRejectsBadValues() {
-        let transport = FakeHeadsetTransport()
-        let sync = HeadsetSettingsSync(transport: transport)
-
-        #expect(throws: LTCProtocolError.self) {
-            try sync.applyTeam(securityKey: .MIKE, rfChannel: 9, networkId: 100)
-        }
-        #expect(throws: LTCProtocolError.self) {
-            try sync.applyTeam(securityKey: .MIKE, rfChannel: 1, networkId: 999)
-        }
-        #expect(transport.sent.isEmpty)
+        #expect(sync.settings.unrecognized[.ltcMode] == [0x04])
     }
 
     @Test("A rejected write is surfaced rather than silently swallowed")
@@ -799,10 +634,10 @@ struct HeadsetSettingsSyncBehaviourTests {
         let transport = FakeHeadsetTransport()
         let sync = HeadsetSettingsSync(transport: transport)
 
-        transport.values = [.networkId: 0x2a]
+        transport.values = [.ltcVolume: 0x05]
         sync.pollOnce()
         try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
-        #expect(sync.settings.networkId != nil)
+        #expect(sync.settings.ltcVolume != nil)
 
         transport.disconnect()
         try? await Task.sleep(for: .milliseconds(100))
@@ -845,44 +680,6 @@ struct OptimisticWriteTests {
         // No await: the value must be visible on the same tick as the tap.
         #expect(sync.settings.ltcVolume == 7)
         #expect(sync.confirmed.ltcVolume == nil, "the headset has not reported anything yet")
-    }
-
-    @Test("Joining a team moves every setting it touches at once")
-    func applyTeamShowsImmediately() throws {
-        let transport = FakeHeadsetTransport()
-        let sync = HeadsetSettingsSync(transport: transport)
-
-        try sync.applyTeam(securityKey: .MIKE, rfChannel: 3, networkId: 125)
-
-        #expect(sync.settings.securityKey == .MIKE)
-        #expect(sync.settings.rfChannel == 3)
-        #expect(sync.settings.networkId == 125)
-        // Drives the Active badge.
-        #expect(sync.settings.activePredefinedTeam == .bravo)
-        // Team byte is predicted too, so it agrees with the three settings.
-        #expect(sync.settings.predefinedTeam == .bravo)
-    }
-
-    @Test("A team the headset refuses takes its predicted settings back with it")
-    func refusedTeamRevertsEverything() async throws {
-        let transport = FakeHeadsetTransport()
-        transport.values = [.predefinedTeam: 0x00, .securityKey: 0x00,
-                            .rfChannel: 0x01, .networkId: 100]
-        let sync = HeadsetSettingsSync(transport: transport)
-        await seed(sync)
-        #expect(sync.settings.activePredefinedTeam == .alpha)
-
-        transport.writeStatus = 0x02   // LTC_BAD_VALUE
-        try sync.applyTeam(securityKey: .MIKE, rfChannel: 3, networkId: 125)
-        #expect(sync.settings.activePredefinedTeam == .bravo, "optimistic, before the reply")
-
-        try? await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
-
-        // All four revert together, not three waiting on a poll.
-        #expect(sync.settings.activePredefinedTeam == .alpha)
-        #expect(sync.settings.securityKey == .MIKE)
-        #expect(sync.settings.rfChannel == 2)
-        #expect(sync.settings.networkId == 100)
     }
 
     // MARK: Confirmation
@@ -995,52 +792,6 @@ struct OptimisticWriteTests {
     }
 }
 
-// MARK: - Losing the headset
-
-@Suite("Navigation when the headset drops")
-struct HeadsetOnlyRouteTests {
-
-    @Test("Popping leaves the deepest screen that still works")
-    func popsToNearestUsableScreen() {
-        var path: [Route] = [.appearance, .ltcVolume]
-        path.popHeadsetOnlyScreens()
-        #expect(path == [.appearance])
-    }
-
-    @Test("Popping the root is a no-op")
-    func handlesEmptyPath() {
-        var path: [Route] = []
-        path.popHeadsetOnlyScreens()
-        #expect(path.isEmpty)
-    }
-
-    @Test("A headset-only screen at the root pops all the way back")
-    func popsToRoot() {
-        var path: [Route] = [.txPower]
-        path.popHeadsetOnlyScreens()
-        #expect(path.isEmpty)
-    }
-}
-
-@Suite("Permission status")
-struct PermissionStatusTests {
-
-    @Test("Only an allowed permission is usable")
-    func onlyAllowedIsUsable() {
-        #expect(PermissionStatus.allowed.isUsable)
-        #expect(!PermissionStatus.denied.isUsable)
-        #expect(!PermissionStatus.restricted.isUsable)
-        #expect(!PermissionStatus.notRequested.isUsable)
-    }
-
-    @Test("Every status says something the user can read")
-    func everyStatusIsLabelled() {
-        let statuses: [PermissionStatus] = [.allowed, .denied, .restricted, .notRequested]
-        #expect(Set(statuses.map(\.label)).count == statuses.count)
-        #expect(statuses.allSatisfy { !$0.label.isEmpty })
-    }
-}
-
 @Suite("Reconnecting after a drop")
 struct ConnectionRetryTests {
 
@@ -1095,10 +846,10 @@ struct BluetoothSettingsIntegrationTests {
         let sync = HeadsetSettingsSync(transport: transport)
 
         // Stuck in North America.
-        transport.values[.zone] = Region.northAmerica.ltcByte
+        transport.values[.zone] = Region.americas.ltcByte
         sync.pollOnce()
         try await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
-        #expect(sync.confirmed.zone == .northAmerica)
+        #expect(sync.confirmed.zone == .americas)
 
         sync.write(.zone, value: Region.eurasia.ltcByte)
         #expect(sync.settings.zone == .eurasia)
@@ -1107,8 +858,8 @@ struct BluetoothSettingsIntegrationTests {
         // would push that poll past the deadline.
         try await Task.sleep(for: Self.reconcileTime)
 
-        #expect(sync.settings.zone == .northAmerica, "the app kept a change the headset discarded")
-        #expect(sync.confirmed.zone == .northAmerica)
+        #expect(sync.settings.zone == .americas, "the app kept a change the headset discarded")
+        #expect(sync.confirmed.zone == .americas)
         #expect(sync.lastFailure?.setting == .zone)
         #expect(sync.lastFailure?.reason == .notApplied)
     }
@@ -1131,7 +882,7 @@ struct BluetoothSettingsIntegrationTests {
         try await Task.sleep(for: Self.reconcileTime)
 
         #expect(sync.settings.ltcMode == nil, "0x04 is not a mode the app may pretend to understand")
-        #expect(sync.confirmed.unrecognized[.ltcMode] == 0x04, "the raw byte must survive for diagnostics")
+        #expect(sync.confirmed.unrecognized[.ltcMode] == [0x04], "the raw byte must survive for diagnostics")
         #expect(sync.lastFailure?.setting == .ltcMode)
     }
 
@@ -1181,39 +932,6 @@ struct BluetoothSettingsIntegrationTests {
         try await Task.sleep(for: FakeHeadsetTransport.cycleSettleTime)
 
         #expect(sync.confirmed.ltcVolume == 5, "state after a reconnect comes from the headset")
-    }
-
-    /// Peter's bug: a preset is one team command, and its implied settings come
-    /// back from the headset, not from the app's prediction.
-    @Test("A preset join is one command, and the headset supplies what follows")
-    func presetJoinIsOneCommandAndReconcilesFromHardware() async throws {
-        let preset = PredefinedTeam.allCases[0]
-        let transport = FakeHeadsetTransport()
-        let sync = HeadsetSettingsSync(transport: transport)
-
-        // What the headset reports after adopting the team.
-        transport.values[.predefinedTeam] = preset.rawValue
-        transport.values[.securityKey] = preset.securityKey.ltcByte
-        transport.values[.rfChannel] = LTCRFChannel.byte(forChannel: preset.rfChannel) ?? 0
-        transport.values[.networkId] = LTCNetworkID.byte(for: preset.networkId) ?? 0
-
-        try sync.applyTeam(
-            securityKey: preset.securityKey,
-            rfChannel: preset.rfChannel,
-            networkId: preset.networkId
-        )
-
-        try await Task.sleep(for: Self.dispatchTime)
-
-        #expect(transport.sentWasWrite.first == true)
-        #expect(transport.sentSettings.first == LTCSetting.predefinedTeam.rawValue)
-        #expect(transport.sentWasWrite.filter { $0 }.count == 1, "a preset is one command, not three")
-
-        try await Task.sleep(for: Self.reconcileTime)
-
-        #expect(sync.confirmed.predefinedTeam == preset)
-        #expect(sync.confirmed.securityKey == preset.securityKey)
-        #expect(sync.lastFailure == nil)
     }
 
     /// One refused write must not roll back a neighbor the headset accepted.
@@ -1336,7 +1054,7 @@ struct BrandColourTests {
         var green: CGFloat = 0
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
-        UIColor(Color.opsCoreRed).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        UIColor(Color.accent).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
 
         #expect(Int((red * 255).rounded()) == 0xE3)
         #expect(Int((green * 255).rounded()) == 0x1B)

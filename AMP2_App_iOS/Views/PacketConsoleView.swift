@@ -193,8 +193,6 @@ struct PacketConsoleView: View {
             let settings = sync.confirmed
             row("Team", value(settings.team?.displayName, .team))
             row("Security key", value(settings.securityKey?.rawValue, .securityKey))
-            row("RF channel", value(settings.rfChannel.map(String.init), .rfChannel))
-            row("Network ID", value(settings.networkId.map(String.init), .networkId))
             row("LTC mode", value(settings.ltcMode?.displayName, .ltcMode))
             row("VAD threshold", value(settings.vadThreshold.map(String.init), .vadThreshold))
             row("Tx power", value(settings.txPower?.displayName, .txPower))

@@ -20,8 +20,6 @@ struct HeadsetSettingsState: Equatable, Sendable {
     var team: Team?
     var securityKey: SecurityKey?
     var customSecurityKey: [UInt8]?
-    var rfChannel: Int?
-    var networkId: Int?
     var ltcMode: LTCMode?
     var vadThreshold: Int?
     var txPower: TxPower?
@@ -33,8 +31,7 @@ struct HeadsetSettingsState: Equatable, Sendable {
     var unrecognized: [LTCSetting: [UInt8]] = [:]
 
     var isComplete: Bool {
-        team != nil && securityKey != nil && rfChannel != nil
-            && networkId != nil && ltcMode != nil && vadThreshold != nil
+        team != nil && securityKey != nil && ltcMode != nil && vadThreshold != nil
             && txPower != nil && ltcVolume != nil && zone != nil
     }
 
@@ -51,11 +48,6 @@ struct HeadsetSettingsState: Equatable, Sendable {
         case .securityKey:
             securityKey = SecurityKey(ltcByte: bytes[0])
             recognized = securityKey != nil
-        case .rfChannel:
-            rfChannel = LTCRFChannel.channel(forByte: bytes[0])
-            recognized = rfChannel != nil
-        case .networkId:
-            networkId = Int(bytes[0])          // any byte is valid
         case .ltcMode:
             ltcMode = LTCMode(rawValue: bytes[0])
             recognized = ltcMode != nil
@@ -88,8 +80,6 @@ struct HeadsetSettingsState: Equatable, Sendable {
         switch setting {
         case .team:              return team?.displayName
         case .securityKey:       return securityKey?.rawValue.capitalized
-        case .rfChannel:         return rfChannel.map(String.init)
-        case .networkId:         return networkId.map(String.init)
         case .ltcMode:           return ltcMode?.displayName
         case .vadThreshold:      return vadThreshold.map(String.init)
         case .txPower:           return txPower?.displayName

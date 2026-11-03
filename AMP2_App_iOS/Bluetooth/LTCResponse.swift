@@ -87,12 +87,11 @@ struct LTCResponse: Equatable, Sendable {
 
     /// Throws on a missing header so a truncated notification isn't misread as a value.
     static func parse(_ data: Data) throws -> LTCResponse {
-        let bytes = [UInt8](data)
-        guard bytes.count >= responseHeader.count,
-              Array(bytes.prefix(responseHeader.count)) == responseHeader else {
+        
+        guard data.count >= responseHeader.count, Array(data.prefix(responseHeader.count)) == responseHeader else {
             throw LTCProtocolError.malformedResponse(hex: data.ltcHexString)
         }
-        return LTCResponse(payload: Array(bytes.dropFirst(responseHeader.count)))
+        return LTCResponse(payload: Array(data.dropFirst(responseHeader.count)))
     }
 
     func validateWriteSucceeded() throws {

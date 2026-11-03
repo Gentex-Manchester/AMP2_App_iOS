@@ -21,8 +21,6 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
     case team              = 0x00
     case securityKey       = 0x01
     case customSecurityKey = 0x02
-    case rfChannel         = 0x03
-    case networkId         = 0x04
     case ltcMode           = 0x05
     case vadThreshold      = 0x06
     case txPower           = 0x07
@@ -31,7 +29,7 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
 
     /// Heartbeat poll order, per the doc. Skips `customSecurityKey` (not in firmware).
     static let pollSequence: [LTCSetting] = [
-        .team, .securityKey, .customSecurityKey, .rfChannel, .networkId,
+        .team, .securityKey, .customSecurityKey,
         .ltcMode, .vadThreshold, .txPower, .ltcVolume, .zone
     ]
 
@@ -41,8 +39,6 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
         case .team:    return "Team"
         case .securityKey:       return "Security Key"
         case .customSecurityKey: return "Custom Security Key"
-        case .rfChannel:         return "RF Channel"
-        case .networkId:         return "Network ID"
         case .ltcMode:           return "LTC Mode"
         case .vadThreshold:      return "VAD Threshold"
         case .txPower:           return "LTC Power"
