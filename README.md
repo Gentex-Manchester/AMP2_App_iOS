@@ -85,5 +85,5 @@ For the full conventions, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Related Repositories
 
-- **Gentex Android** — Android companion app with a similar feature set.
+- **AMP 2.0 App for Android** — Android companion app with a similar feature set.
   The Android app includes some features not available on iOS, like USB connectivity.
