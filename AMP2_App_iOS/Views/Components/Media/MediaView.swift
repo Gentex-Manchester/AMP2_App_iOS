@@ -19,7 +19,8 @@ struct MediaView: View {
             switch media.type {
             case .image:
                 ImageView(media: media)
-            // TODO: Add animated option
+            case .gif:
+                GIFImageView(media: media)
             }
         }
         .frame(

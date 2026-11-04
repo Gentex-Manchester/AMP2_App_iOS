@@ -24,6 +24,16 @@ func portraitLayout(_ step: TutorialStep) -> some View {
                     media: step.media,
                     configuration: MediaConfiguration(
                         contentMode: .fit,
+                        width: 250,
+                        height: 250
+                    )
+                )
+            } else if step.media.type == .gif {
+                GIFImageView(
+                    media: step.media,
+                    configuration: MediaConfiguration(
+                        contentMode: .fit,
+                        width: 250,
                         height: 250
                     )
                 )
@@ -50,6 +60,16 @@ func landscapeLayout(_ step: TutorialStep) -> some View {
                     media: step.media,
                     configuration: MediaConfiguration(
                         contentMode: .fit,
+                        width: 200,
+                        height: 200
+                    )
+                )
+            } else if step.media.type == .gif {
+                GIFImageView(
+                    media: step.media,
+                    configuration: MediaConfiguration(
+                        contentMode: .fit,
+                        width: 200,
                         height: 200
                     )
                 )

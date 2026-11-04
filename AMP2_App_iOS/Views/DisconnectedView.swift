@@ -19,7 +19,7 @@ struct DisconnectedView: View {
         VStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Image("Connect Device")
+                    Image("headset_silhouette")
                         .resizable()
                         .scaledToFit()
                         // Smaller in landscape so the text fits without scrolling.

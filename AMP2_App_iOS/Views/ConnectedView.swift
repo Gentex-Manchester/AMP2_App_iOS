@@ -48,14 +48,14 @@ struct ConnectedView: View {
 
     private var headerSection: some View {
         VStack(spacing: 0) {
-            Image("Device Connected (Dark)")
+            Image("headset_tan")
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 250)
             
             Spacer()
             
-            Image("Ops-Core")
+            Image("ops_core_logo")
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 35)

@@ -7,4 +7,5 @@
 
 enum MediaType {
     case image
+    case gif
 }
