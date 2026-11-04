@@ -15,43 +15,40 @@ struct TutorialStep {
 let pairingSteps: [TutorialStep] = [
     TutorialStep(
         media: MediaItem(name: "bt_pairing_1", type: .gif),
-        title: "Put on the headset.",
-        description: "You will need to use the buttons on the right-hand side and listen to audio prompts to walk through this tutorial.",
+        title: "Put on the headset",
+        description: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial.",
         controls: .first
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_2", type: .gif),
-        title: "Hold the plus (+) button to power on the headset.",
-        description: "If the headset isn't powering on, make sure to check on your headset battery.",
+        title: "Turn on the headset",
+        description: "Press and hold + to turn on the headset.",
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_3", type: .gif),
-        title: "Hold the plus (+) and minus (-) buttons to enter the menu.",
-        description: "You should hear \"Menu,\" then one of the menu options, like \"Configure LTC.\"",
+        title: "Enter the menu",
+        description: "Press and hold the + and - buttons to enter the menu built into the headset.",
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_4", type: .gif),
-        title: "Press the plus (+) button until you get to the \"Configure Bluetooth\" option.",
-        description: "Don't press the button too quickly, this may lead to selecting the wrong option.",
+        title: "Navigate the menu",
+        description: "Press the + or - button until the headset reads “Bluetooth Settings.”",
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_5", type: .gif),
-        title: "Press the center button to enter the Bluetooth menu, then press it again to activate Bluetooth pairing.",
-        description: "You should hear \"Bluetooth Pairing\" after the first press, then \"Selection Confirmed.\" after the second press.",
+        title: "Enable pairing",
+        description: "Press ● to select Bluetooth, then press ● again to start pairing.",
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "headset_silhouette", type: .image),
-        title: "The headset is now in Bluetooth pairing mode.",
+        title: "Go to Settings",
         description: """
-            Leave this app open, then open Settings › Bluetooth on your iPhone \
-            and tap your headset under Other Devices.
-
-            It should move to My Devices and read "Connected." If it says "Not \
-            Connected," tap it once more.
+            Leave this app open, then open Settings › Bluetooth on your iPhone and \
+            click on the headset with your serial number. Once it has connected, return to this app.
             """,
         controls: .last
     ),
@@ -60,23 +57,20 @@ let pairingSteps: [TutorialStep] = [
 let reconnectingSteps: [TutorialStep] = [
     TutorialStep(
         media: MediaItem(name: "bt_pairing_1", type: .gif),
-        title: "Put on the headset.",
-        description: """
-            Listen to audio cues inside of the headset and use the buttons on the left \
-            earcup to walk through this tutorial.
-            """,
+        title: "Put on the headset",
+        description: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial.",
         controls: .first
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_2", type: .gif),
-        title: "Hold the plus (+) button to power on the headset.",
-        description: "If the headset isn't powering on, make sure to check on your headset battery.",
+        title: "Turn on the headset",
+        description: "Press and hold + to turn on the headset.",
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_reconnection", type: .gif),
-        title: "Enable Bluetooth.",
-        description: "Press and hold the - and SELECT buttons to continue.",
+        title: "Enable Bluetooth",
+        description: "Press and hold the - and ● buttons to enable Bluetooth.",
         controls: .last
     ),
 ]

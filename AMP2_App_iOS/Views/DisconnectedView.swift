@@ -26,11 +26,11 @@ struct DisconnectedView: View {
                         .frame(maxHeight: isLandscape ? 130 : 250)
                     
                     // Without padding the text clips beside the landscape sidebar.
-                    AppText("No AMP connected", style: .header2)
+                    AppText("No AMP® connected", style: .header2)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
-                    AppText("To use this app, you must connect to an AMP 2.0 headset, like the AMP 2.0 Elite headset.", style: .body)
+                    AppText("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.", style: .body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 

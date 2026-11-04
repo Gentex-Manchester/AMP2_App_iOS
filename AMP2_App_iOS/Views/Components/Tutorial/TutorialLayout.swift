@@ -40,12 +40,13 @@ func portraitLayout(_ step: TutorialStep) -> some View {
             }
 
             AppText(step.title, style: .header2)
-                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
 
             if !step.description.isEmpty {
                 AppText(step.description, style: .body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
             }
         }
         .padding(.horizontal)
@@ -53,40 +54,47 @@ func portraitLayout(_ step: TutorialStep) -> some View {
 }
 
 func landscapeLayout(_ step: TutorialStep) -> some View {
-    ScrollView {
-        HStack(spacing: 32) {
-            if step.media.type == .image {
-                ImageView(
-                    media: step.media,
-                    configuration: MediaConfiguration(
-                        contentMode: .fit,
-                        width: 200,
-                        height: 200
-                    )
+    HStack(spacing: 32) {
+        if step.media.type == .image {
+            ImageView(
+                media: step.media,
+                configuration: MediaConfiguration(
+                    contentMode: .fit,
+                    width: 200,
+                    height: 200
                 )
-            } else if step.media.type == .gif {
-                GIFImageView(
-                    media: step.media,
-                    configuration: MediaConfiguration(
-                        contentMode: .fit,
-                        width: 200,
-                        height: 200
-                    )
+            )
+        } else if step.media.type == .gif {
+            GIFImageView(
+                media: step.media,
+                configuration: MediaConfiguration(
+                    contentMode: .fit,
+                    width: 200,
+                    height: 200
                 )
-            }
-
-            VStack(spacing: 16) {
-                AppText(step.title, style: .header2)
-                    .multilineTextAlignment(.center)
-
-                if !step.description.isEmpty {
-                    AppText(step.description, style: .body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .frame(maxWidth: .infinity)
+            )
         }
-        .padding(.horizontal)
+
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 24) {
+                    AppText(step.title, style: .header2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+
+                    if !step.description.isEmpty {
+                        AppText(step.description, style: .body)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    minHeight: geometry.size.height,
+                    alignment: .center
+                )
+            }
+        }
     }
+    .padding(.horizontal)
 }
