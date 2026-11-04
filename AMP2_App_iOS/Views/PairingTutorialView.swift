@@ -71,7 +71,7 @@ struct PairingTutorialView: View {
                     ImageView(
                         media: step.media,
                         configuration: MediaConfiguration(
-                            width: 250,
+                            contentMode: .fit,
                             height: 250
                         )
                     )
@@ -97,7 +97,7 @@ struct PairingTutorialView: View {
                     ImageView(
                         media: step.media,
                         configuration: MediaConfiguration(
-                            width: 200,
+                            contentMode: .fit,
                             height: 200
                         )
                     )
