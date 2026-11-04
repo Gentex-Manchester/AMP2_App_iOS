@@ -15,12 +15,9 @@ struct PairingTutorialView: View {
     private var isLandscape: Bool { verticalSizeClass == .compact }
     private var steps: [TutorialStep] { pairingSteps }
 
-    /// Last step: send the user to Settings and wait for a connection.
-    private var isPairingStep: Bool { currentStep == steps.count - 1 }
-
     var body: some View {
         VStack(spacing: 0) {
-            stepContent
+            stepContent(steps[currentStep], isLandscape: isLandscape)
                 .frame(maxHeight: .infinity)
                 .scrollBounceBehavior(.basedOnSize)
             Spacer(minLength: 0)
@@ -51,74 +48,6 @@ struct PairingTutorialView: View {
         }
         .navigationTitle("Bluetooth Pairing")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    // MARK: - Step Content
-
-    @ViewBuilder
-    private var stepContent: some View {
-        let step = steps[currentStep]
-
-        if isLandscape {
-            landscapeLayout(step)
-        } else {
-            portraitLayout(step)
-        }
-    }
-
-    private func portraitLayout(_ step: TutorialStep) -> some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                if step.media.type == .image {
-                    ImageView(
-                        media: step.media,
-                        configuration: MediaConfiguration(
-                            contentMode: .fit,
-                            height: 250
-                        )
-                    )
-                }
-
-                AppText(step.title, style: .header2)
-                    .multilineTextAlignment(.center)
-
-                if !step.description.isEmpty {
-                    AppText(step.description, style: .body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .padding(.horizontal)
-        }
-    }
-
-    private func landscapeLayout(_ step: TutorialStep) -> some View {
-        ScrollView {
-            HStack(spacing: 32) {
-                if step.media.type == .image {
-                    ImageView(
-                        media: step.media,
-                        configuration: MediaConfiguration(
-                            contentMode: .fit,
-                            height: 200
-                        )
-                    )
-                }
-
-                VStack(spacing: 16) {
-                    AppText(step.title, style: .header2)
-                        .multilineTextAlignment(.center)
-
-                    if !step.description.isEmpty {
-                        AppText(step.description, style: .body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal)
-        }
     }
 
     private func goBack() {
