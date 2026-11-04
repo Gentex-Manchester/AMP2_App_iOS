@@ -41,7 +41,7 @@ final class HeadsetSession: NSObject {
 
     // MARK: - Observable State
 
-    /// Results of the last pass. More than one means the user picks (BLE doc requirement).
+    /// Results of the last pass.
     private(set) var discoveredHeadsets: [DiscoveredHeadset] = []
 
     private(set) var connectedHeadset: DiscoveredHeadset?

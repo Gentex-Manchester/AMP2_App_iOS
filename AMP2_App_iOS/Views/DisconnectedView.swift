@@ -79,7 +79,13 @@ struct DisconnectedView: View {
         }
         .fullScreenCover(isPresented: $showTutorial) {
             NavigationStack {
-                ConnectionTutorialView()
+                if session.connectedHeadset != nil {
+                    // If a headset has been connected to the app before
+                    // May not necessarily still be paired with the phone
+                    ReconnectingTutorialView()
+                } else {
+                    PairingTutorialView()
+                }
             }
         }
         .alert("Unable to connect", isPresented: $showConnectionIssuePopup) {

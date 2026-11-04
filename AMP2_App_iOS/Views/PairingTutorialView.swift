@@ -1,11 +1,11 @@
 //
-//  ConnectionTutorialView.swift
+//  PairiutorialView.swift
 //  AMP2_App_iOS
 //
 
 import SwiftUI
 
-struct ConnectionTutorialView: View {
+struct PairingTutorialView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(HeadsetSession.self) private var session
@@ -13,7 +13,7 @@ struct ConnectionTutorialView: View {
     @State private var currentStep = 0
 
     private var isLandscape: Bool { verticalSizeClass == .compact }
-    private var steps: [TutorialStep] { tutorialSteps }
+    private var steps: [TutorialStep] { pairingSteps }
 
     /// Last step: send the user to Settings and wait for a connection.
     private var isPairingStep: Bool { currentStep == steps.count - 1 }
@@ -67,11 +67,14 @@ struct ConnectionTutorialView: View {
     private func portraitLayout(_ step: TutorialStep) -> some View {
         ScrollView {
             VStack(spacing: 24) {
-                if !step.imageName.isEmpty {
-                    Image(step.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 250)
+                if step.media.type == .image {
+                    ImageView(
+                        media: step.media,
+                        configuration: MediaConfiguration(
+                            width: 250,
+                            height: 250
+                        )
+                    )
                 }
 
                 AppText(step.title, style: .header2)
@@ -89,7 +92,17 @@ struct ConnectionTutorialView: View {
 
     private func landscapeLayout(_ step: TutorialStep) -> some View {
         ScrollView {
-            if step.imageName.isEmpty {
+            HStack(spacing: 32) {
+                if step.media.type == .image {
+                    ImageView(
+                        media: step.media,
+                        configuration: MediaConfiguration(
+                            width: 200,
+                            height: 200
+                        )
+                    )
+                }
+
                 VStack(spacing: 16) {
                     AppText(step.title, style: .header2)
                         .multilineTextAlignment(.center)
@@ -100,28 +113,9 @@ struct ConnectionTutorialView: View {
                             .multilineTextAlignment(.center)
                     }
                 }
-                .padding(.horizontal)
-            } else {
-                HStack(spacing: 32) {
-                    Image(step.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: 250)
-
-                    VStack(spacing: 16) {
-                        AppText(step.title, style: .header2)
-                            .multilineTextAlignment(.center)
-
-                        if !step.description.isEmpty {
-                            AppText(step.description, style: .body)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
             }
+            .padding(.horizontal)
         }
     }
 
@@ -183,7 +177,7 @@ struct ConnectionTutorialView: View {
 
 #Preview {
     NavigationStack {
-        ConnectionTutorialView()
+        PairingTutorialView()
             .environment(HeadsetSession())
     }
 }
