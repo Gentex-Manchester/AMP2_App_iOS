@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-enum AppearanceMode: String, CaseIterable, Codable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-}
-
 struct AppearanceSettingsView: View {
     @AppStorage("appearanceMode") private var appearanceMode: AppearanceMode = .system
 

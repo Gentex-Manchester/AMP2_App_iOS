@@ -16,8 +16,6 @@ struct RegionsView: View {
 
     var body: some View {
         ScrollView {
-            let selectedZone = headsetSettings.settings.zone
-            
             SelectionButtonRow(
                 options: Region.allCases,
                 selection: Binding(

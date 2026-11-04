@@ -11,8 +11,6 @@ struct LTCKeyView: View {
     
     var body: some View {
         ScrollView {
-            let selectedKey = headsetSettings.settings.securityKey
-            
             SelectionButtonRow(
                 options: SecurityKey.allCases,
                 selection: Binding(

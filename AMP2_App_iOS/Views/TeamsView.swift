@@ -11,8 +11,6 @@ struct TeamsView: View {
     
     var body: some View {
         ScrollView {
-            let selectedTeam = headsetSettings.settings.team
-            
             SelectionButtonRow(
                 options: Team.allCases,
                 selection: Binding(
