@@ -459,7 +459,7 @@ extension HeadsetSession: CBCentralManagerDelegate {
 
             // Name shortlist for production; diagnostic mode keeps everything.
             guard discoveryMode == .unfiltered || headset.looksLikeGentexHeadset else { return }
-
+            
             discoveredHeadsets.append(headset)
 
             // Already chosen once; don't ask again.
