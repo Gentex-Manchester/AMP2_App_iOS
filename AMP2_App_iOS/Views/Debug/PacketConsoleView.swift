@@ -51,7 +51,7 @@ struct PacketConsoleView: View {
     private var statusSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             row("State", statusText)
-            if let headset = session.connectedHeadset {
+            if let headset = session.savedHeadset {
                 row("Headset", headset.name)
                 row("Found via", headset.source == .systemConnected ? "system connection" : "scan")
             }
@@ -112,6 +112,10 @@ struct PacketConsoleView: View {
             consoleButton("Scan everything (unfiltered)") {
                 lastError = nil
                 session.startDiscovery(mode: .unfiltered)
+            }
+            
+            consoleButton("Clear saved headset") {
+                session.resetSavedHeadset()
             }
 
             ForEach(session.discoveredHeadsets) { headset in

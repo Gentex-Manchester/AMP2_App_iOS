@@ -79,7 +79,7 @@ struct DisconnectedView: View {
         }
         .fullScreenCover(isPresented: $showTutorial) {
             NavigationStack {
-                if session.connectedHeadset != nil {
+                if session.savedHeadset != nil {
                     // If a headset has been connected to the app before
                     // May not necessarily still be paired with the phone
                     ReconnectingTutorialView()

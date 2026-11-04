@@ -62,7 +62,7 @@ let reconnectingSteps: [TutorialStep] = [
         media: MediaItem(name: "Connect Device", type: .image),
         title: "Put on the headset.",
         description: """
-            Listen to audio cues inside of the headset and use the buttons on the left
+            Listen to audio cues inside of the headset and use the buttons on the left \
             earcup to walk through this tutorial.
             """,
         controls: .first

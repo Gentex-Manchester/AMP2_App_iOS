@@ -44,7 +44,7 @@ final class HeadsetSession: NSObject {
     /// Results of the last pass.
     private(set) var discoveredHeadsets: [DiscoveredHeadset] = []
 
-    private(set) var connectedHeadset: DiscoveredHeadset?
+    private(set) var savedHeadset: DiscoveredHeadset?
 
     private(set) var isDiscovering = false
 
@@ -274,7 +274,7 @@ final class HeadsetSession: NSObject {
 
         peripheral = target
         target.delegate = self
-        connectedHeadset = headset
+        savedHeadset = headset
         packetLog.removeAll()
         state = .connecting
 
@@ -386,11 +386,15 @@ final class HeadsetSession: NSObject {
         peripheral = nil
         writeCharacteristic = nil
         notifyCharacteristic = nil
-        connectedHeadset = nil
         identity = nil
 
         // Stale candidates would look like "user is choosing" and block rediscovery.
         discoveredHeadsets.removeAll()
+    }
+    
+    func resetSavedHeadset() {
+        savedHeadset = nil
+        rememberedIdentifier = nil
     }
 
     /// `nil` for states that aren't failures.
@@ -551,7 +555,7 @@ extension HeadsetSession: CBPeripheralDelegate {
             state = .connected
 
             // GAIA confirmed; remember it only now.
-            rememberedIdentifier = connectedHeadset?.id
+            rememberedIdentifier = savedHeadset?.id
 
             // Non-fatal: on failure the region selector stays visible, the safe default.
             Task { [weak self] in try? await self?.requestIdentity() }
