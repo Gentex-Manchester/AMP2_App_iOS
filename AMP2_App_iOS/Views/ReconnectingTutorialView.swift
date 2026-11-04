@@ -23,11 +23,13 @@ struct ReconnectingTutorialView: View {
             stepContent
                 .frame(maxHeight: .infinity)
                 .scrollBounceBehavior(.basedOnSize)
-
             Spacer(minLength: 0)
-
-            bottomControls
-                .padding(.horizontal, 26)
+            BottomControls(
+                type: steps[currentStep].controls,
+                goBack: goBack,
+                goForward: { currentStep += 1 }
+            )
+            .padding(.horizontal, 26)
         }
         // Connecting ends the tutorial, as on Android.
         .onChange(of: session.state) { _, newState in
@@ -117,53 +119,6 @@ struct ReconnectingTutorialView: View {
             }
             .padding(.horizontal)
         }
-    }
-
-    // MARK: - Bottom Controls
-
-    @ViewBuilder
-    private var bottomControls: some View {
-        if isLastStep {
-            // No Next until connected (matches Android). One row in landscape so
-            // the instructions aren't cut off; AnyLayout keeps identity on rotation.
-            let layout = isLandscape
-                ? AnyLayout(HStackLayout(spacing: 18))
-                : AnyLayout(VStackLayout(spacing: 18))
-
-            layout {
-                waitingForHeadset
-
-                HStack(spacing: 18) {
-                    SecondaryButton(label: "Back") {
-                        goBack()
-                    }
-                }
-            }
-        } else {
-            HStack(spacing: 18) {
-                SecondaryButton(label: "Back") {
-                    goBack()
-                }
-
-                PrimaryButton(label: "Next") {
-                    currentStep += 1
-                }
-            }
-        }
-    }
-
-    /// Replaces Next on the pairing step, so there's no dead button.
-    private var waitingForHeadset: some View {
-        HStack(spacing: 8) {
-            ProgressView()
-                .controlSize(.small)
-                .tint(.accent)
-
-            AppText("Waiting for your headset…", style: .body)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
     }
 
     private func goBack() {
