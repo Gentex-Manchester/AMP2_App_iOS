@@ -82,6 +82,7 @@ struct DisconnectedView: View {
                 if session.savedHeadset != nil {
                     // If a headset has been connected to the app before
                     // May not necessarily still be paired with the phone
+                    // TODO: Need to rework to fix flashing issue when connecting
                     ReconnectingTutorialView()
                 } else {
                     PairingTutorialView()

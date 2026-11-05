@@ -16,45 +16,37 @@ func stepContent(_ step: TutorialStep, isLandscape: Bool) -> some View {
     }
 }
 
-func portraitLayout(_ step: TutorialStep) -> some View {
+private func portraitLayout(_ step: TutorialStep) -> some View {
     ScrollView {
         VStack(spacing: 24) {
-            if step.media.type == .image {
-                ImageView(
-                    media: step.media,
-                    configuration: MediaConfiguration(
-                        contentMode: .fit,
-                        width: 250,
-                        height: 250
-                    )
-                )
-            } else if step.media.type == .gif {
-                GIFImageView(
-                    media: step.media,
-                    configuration: MediaConfiguration(
-                        contentMode: .fit,
-                        width: 250,
-                        height: 250
-                    )
-                )
-            }
-
-            AppText(step.title, style: .header2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .multilineTextAlignment(.leading)
-
-            if !step.description.isEmpty {
-                AppText(step.description, style: .body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .multilineTextAlignment(.leading)
-            }
+            imageContent(step)
+            textContent(step)
         }
         .padding(.horizontal)
     }
 }
 
-func landscapeLayout(_ step: TutorialStep) -> some View {
+private func landscapeLayout(_ step: TutorialStep) -> some View {
     HStack(spacing: 32) {
+        imageContent(step)
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 24) {
+                    textContent(step)
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    minHeight: geometry.size.height,
+                    alignment: .center
+                )
+            }
+        }
+    }
+    .padding(.horizontal)
+}
+
+private func imageContent(_ step: TutorialStep) -> some View {
+    Group {
         if step.media.type == .image {
             ImageView(
                 media: step.media,
@@ -74,27 +66,38 @@ func landscapeLayout(_ step: TutorialStep) -> some View {
                 )
             )
         }
+    }
+}
 
-        GeometryReader { geometry in
-            ScrollView {
-                VStack(spacing: 24) {
-                    AppText(step.title, style: .header2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .multilineTextAlignment(.leading)
+private func textContent(_ step: TutorialStep) -> some View {
+    Group {
+        AppText(step.title, style: .header2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .multilineTextAlignment(.leading)
 
-                    if !step.description.isEmpty {
-                        AppText(step.description, style: .body)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .multilineTextAlignment(.leading)
-                    }
-                }
-                .frame(
-                    maxWidth: .infinity,
-                    minHeight: geometry.size.height,
-                    alignment: .center
-                )
-            }
+        AppText(step.description, style: .body)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .multilineTextAlignment(.leading)
+        
+        if let tsTitle = step.tsTitle, let tsText = step.tsText {
+            TroubleshootingPopup(
+                title: tsTitle,
+                text: tsText
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .multilineTextAlignment(.leading)
         }
     }
-    .padding(.horizontal)
+}
+
+#Preview {
+    let tutorialStep = TutorialStep(
+        media: MediaItem(name: "Placeholder", type: .image),
+        title: "Test Step",
+        description: "Test Description",
+        controls: .standard,
+        tsTitle: "Test tsTitle",
+        tsText: "Test tsText"
+    )
+    stepContent(tutorialStep, isLandscape: false)
 }
