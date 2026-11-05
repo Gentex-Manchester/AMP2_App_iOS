@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct DisconnectedView: View {
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(HeadsetSession.self) private var session
     @State private var showTutorial = false
     @State private var showConnectionIssuePopup = false
-
-    var isLandscape: Bool { verticalSizeClass == .compact }
 
     var body: some View {
         let disabledBg = MediaItem(
@@ -21,46 +18,46 @@ struct DisconnectedView: View {
             type: .image,
         )
         
-        HeroLayout(
-            primaryContent: {
-                Image("headset_silhouette")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 300)
-            },
-            secondaryContent: {
-                VStack(spacing: 16) {
-                    // Without padding the text clips beside the landscape sidebar.
-                    AppText("Connect your AMP®", style: .header2)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+        GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+            
+            HeroLayout(
+                primaryContent: {
+                    Image("headset_silhouette")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 300)
+                },
+                secondaryContent: {
+                    VStack(spacing: 16) {
+                        AppText("Connect your AMP®", style: .header2)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
 
-                    AppText("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.", style: .body)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-
-                    // No scan-failure hint: it flickered with each background
-                    // retry, and the walkthrough covers it.
-                    
-                    Spacer()
-                    
-                    PrimaryButton(
-                        label: buttonTitle,
-                        action: {
-                            if (radioFault == nil) {
-                                showTutorial = true
-                            } else {
-                                showConnectionIssuePopup = true
+                        AppText("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.", style: .body)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        PrimaryButton(
+                            label: buttonTitle,
+                            action: {
+                                if (radioFault == nil) {
+                                    showTutorial = true
+                                } else {
+                                    showConnectionIssuePopup = true
+                                }
                             }
-                        }
-                    )
-                    .padding(.horizontal, 26)
-                    .padding(.bottom, isLandscape ? 16 : 40)
-                }
-            },
-            primaryContentBg: disabledBg,
-            isLandscape: isLandscape
-        )
+                        )
+                        .padding(.horizontal, 26)
+                        .padding(.bottom, 40)
+                    }
+                },
+                primaryContentBg: disabledBg,
+                isLandscape: isLandscape
+            )
+        }
         .navigationTitle("Home")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)

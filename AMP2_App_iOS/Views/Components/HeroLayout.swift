@@ -5,8 +5,6 @@
 //  Created by Peter Sargent on 11/5/26.
 //
 
-// TODO: Need to optimize heavily
-
 import SwiftUI
 
 struct HeroLayout<Primary: View, Secondary: View>: View {
@@ -27,154 +25,119 @@ struct HeroLayout<Primary: View, Secondary: View>: View {
         self.primaryContent = primaryContent()
         self.secondaryContent = secondaryContent()
     }
-
+    
     var body: some View {
         if #available(iOS 26.0, *) {
             if (isLandscape) {
-                GeometryReader { geometry in
-                    HStack(spacing: 0) {
-
-                        // Left column
-                        ZStack {
-                            imageContent(primaryContentBg)
-                                .stretchy()
-
-                            VStack(spacing: 0) {
-                                primaryContent
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            }
-                        }
-                        .frame(width: geometry.size.width * 0.5)
-                        .clipped()
-
-                        // Right column
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(height: 64)
-
-                                secondaryContent
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .frame(width: geometry.size.width * 0.5)
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                }
-                .ignoresSafeArea(edges: .vertical)
-                .ignoresSafeArea(edges: .leading)
-                .scrollEdgeEffectHidden()
+                landscapeView()
+                    .scrollEdgeEffectHidden()
             } else {
-                ScrollView {
-                    VStack {
-                        ZStack {
-                            imageContent(primaryContentBg)
-                                .stretchy()
-                            
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(height: 128)
-
-                                primaryContent
-                                    .frame(maxWidth: .infinity, alignment: .center)
-
-                                Spacer()
-                                    .frame(height: 64)
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        
-                        secondaryContent
-                    }
-                }
-                .ignoresSafeArea(edges: .top)
-                .scrollEdgeEffectHidden()
+                portraitView()
+                    .scrollEdgeEffectHidden()
             }
         } else {
             if (isLandscape) {
-                GeometryReader { geometry in
-                    HStack(spacing: 0) {
-
-                        // Left column
-                        ZStack {
-                            imageContent(primaryContentBg)
-                                .stretchy()
-
-                            VStack(spacing: 0) {
-                                Spacer(minLength: 0)
-
-                                primaryContent
-                                    .frame(maxWidth: .infinity, alignment: .center)
-
-                                Spacer(minLength: 0)
-                            }
-                        }
-                        .frame(width: geometry.size.width * 0.5)
-                        .clipped()
-
-                        // Right column
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(height: 64)
-
-                                secondaryContent
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .frame(width: geometry.size.width * 0.5)
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                }
-                .ignoresSafeArea(edges: .vertical)
-                .ignoresSafeArea(edges: .leading)
+                landscapeView()
             } else {
+                portraitView()
+            }
+        }
+    }
+        
+    private func landscapeView() -> some View {
+        return GeometryReader { geometry in
+            HStack(spacing: 0) {
+                
+                // Left column
+                ZStack {
+                    imageContent(primaryContentBg)
+                        .stretchy()
+                    
+                    VStack(spacing: 0) {
+                        primaryContent
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                .frame(width: geometry.size.width * 0.5)
+                .clipped()
+                
+                // Right column
                 ScrollView {
-                    VStack {
-                        ZStack {
-                            imageContent(primaryContentBg)
-                                .stretchy()
-                            
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(height: 128)
-
-                                primaryContent
-                                    .frame(maxWidth: .infinity, alignment: .center)
-
-                                Spacer()
-                                    .frame(height: 64)
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
+                    VStack(spacing: 0) {
+                        Spacer()
+                            .frame(height: 64)
                         
                         secondaryContent
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .ignoresSafeArea(edges: .top)
+                .frame(width: geometry.size.width * 0.5)
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .ignoresSafeArea(edges: .vertical)
+        .ignoresSafeArea(edges: .leading)
+    }
+    
+    private func portraitView() -> some View {
+        GeometryReader { geometry in
+            let isCompact = geometry.size.height < 700
+            
+            ScrollView {
+                VStack(spacing: 0) {
+                    ZStack {
+                        imageContent(primaryContentBg)
+                            .ignoresSafeArea(edges: .horizontal)
+                            .stretchy()
+                            .frame(
+                                width: geometry.size.width
+                                + geometry.safeAreaInsets.leading
+                                + geometry.safeAreaInsets.trailing
+                            )
+
+                        VStack(spacing: 0) {
+                            Color(.clear)
+                                .frame(maxHeight: isCompact ? 16 : 128)
+
+                            primaryContent
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .offset(
+                                    x: -(geometry.safeAreaInsets.trailing
+                                        - geometry.safeAreaInsets.leading) / 2
+                                )
+
+                            Spacer()
+                                .frame(maxHeight: isCompact ? 16 : 32)
+                        }
+                        .frame(width: geometry.size.width)
+                    }
+                    
+                    Spacer()
+                        .frame(height: 32)
+                    
+                    secondaryContent
+                        .frame(
+                            maxWidth: geometry.size.width,
+                            alignment: .leading
+                        )
+                        .offset(
+                            x: -(geometry.safeAreaInsets.trailing
+                                - geometry.safeAreaInsets.leading) / 2
+                        )
+                }
+            }
+            .ignoresSafeArea(edges: .top)
         }
     }
 }
 
 private func imageContent(_ media: MediaItem) -> some View {
-    Group {
-        if media.type == .image {
-            ImageView(
-                media: media,
-                configuration: MediaConfiguration(
-                    contentMode: .fit
-                )
-            )
-        } else if media.type == .gif {
-            GIFImageView(
-                media: media,
-                configuration: MediaConfiguration(
-                    contentMode: .fit
-                )
-            )
-        }
-    }
+    MediaView(
+        media: media,
+        configuration: MediaConfiguration(
+            contentMode: .fit
+        )
+    )
 }
 
 #Preview {

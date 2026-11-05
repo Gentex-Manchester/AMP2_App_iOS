@@ -23,15 +23,5 @@ struct MediaView: View {
                 GIFImageView(media: media)
             }
         }
-        .frame(
-            width: configuration.width,
-            height: configuration.height
-        )
-        .background(configuration.backgroundColor)
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: configuration.cornerRadius
-            )
-        )
     }
 }
