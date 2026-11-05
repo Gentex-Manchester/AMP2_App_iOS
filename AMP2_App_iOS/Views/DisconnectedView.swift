@@ -16,17 +16,22 @@ struct DisconnectedView: View {
     var isLandscape: Bool { verticalSizeClass == .compact }
 
     var body: some View {
-        VStack {
-            ScrollView {
+        let disabledBg = MediaItem(
+            name: "disabled_bg_texture",
+            type: .image,
+        )
+        
+        HeroLayout(
+            primaryContent: {
+                Image("headset_silhouette")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 300)
+            },
+            secondaryContent: {
                 VStack(spacing: 16) {
-                    Image("headset_silhouette")
-                        .resizable()
-                        .scaledToFit()
-                        // Smaller in landscape so the text fits without scrolling.
-                        .frame(maxHeight: isLandscape ? 130 : 250)
-                    
                     // Without padding the text clips beside the landscape sidebar.
-                    AppText("No AMP® connected", style: .header2)
+                    AppText("Connect your AMP®", style: .header2)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
@@ -36,34 +41,34 @@ struct DisconnectedView: View {
 
                     // No scan-failure hint: it flickered with each background
                     // retry, and the walkthrough covers it.
+                    
+                    Spacer()
+                    
+                    PrimaryButton(
+                        label: buttonTitle,
+                        action: {
+                            if (radioFault == nil) {
+                                showTutorial = true
+                            } else {
+                                showConnectionIssuePopup = true
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 26)
+                    .padding(.bottom, isLandscape ? 16 : 40)
                 }
-                .frame(maxWidth: . infinity, alignment: .top)
-                .padding(.top, 10)
-            }
-            // 30% of the spare space above, 70% below. Taller content scrolls.
-            .defaultScrollAnchor(UnitPoint(x: 0.5, y: 0.3), for: .alignment)
-            .scrollBounceBehavior(.basedOnSize)
-            
-            Spacer()
-            
-            PrimaryButton(
-                label: buttonTitle,
-                action: {
-                    if (radioFault == nil) {
-                        showTutorial = true
-                    } else {
-                        showConnectionIssuePopup = true
-                    }
-                }
-            )
-            .padding(.horizontal, 26)
-            .padding(.bottom, isLandscape ? 16 : 40)
-        }
+            },
+            primaryContentBg: disabledBg,
+            isLandscape: isLandscape
+        )
         .navigationTitle("Home")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
+                // Not visible to user but needed for navigation
                 AppText("Home", style: .header3)
+                    .foregroundStyle(.clear)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
