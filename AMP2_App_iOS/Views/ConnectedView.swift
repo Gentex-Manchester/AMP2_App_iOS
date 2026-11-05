@@ -12,17 +12,61 @@ import SwiftUI
 struct ConnectedView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
     @Environment(HeadsetSession.self) private var session
-
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                headerSection
-                ltcModeSection
-                settingsLinks
-                Spacer(minLength: 40)
+        let disabledBg = MediaItem(
+            name: "enabled_bg_texture",
+            type: .gif,
+        )
+        
+        GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+            
+            HeroLayout(
+                primaryContent: {
+                    if (isLandscape) {
+                        Spacer()
+                            .frame(height: 40)
+                    }
+                    headerSection
+                    if (isLandscape) {
+                        Spacer()
+                            .frame(height: 32)
+                    }
+                },
+                secondaryContent: {
+                    ltcModeSection
+                    settingsLinks
+                },
+                primaryContentBg: disabledBg,
+                isLandscape: isLandscape
+            )
+        }
+        .navigationTitle("My AMP®")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                // Not visible to user but needed for navigation
+                AppText("My AMP®", style: .header3)
+                    .foregroundStyle(.clear)
             }
-            .frame(maxWidth: .infinity, alignment: .top)
-            .padding(.top, 10)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    AppSettingsView()
+                } label: {
+                    Image("settings_24px")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
+    }
+
+    var unusedBody: some View {
+        ScrollView {
+            
         }
         .navigationTitle("My AMP®")
         .navigationBarTitleDisplayMode(.inline)
