@@ -19,7 +19,13 @@ func stepContent(_ step: TutorialStep, isLandscape: Bool) -> some View {
 private func portraitLayout(_ step: TutorialStep) -> some View {
     ScrollView {
         VStack(spacing: 24) {
-            imageContent(step, isLandscape: false)
+            MediaView(
+                media: step.media
+            )
+            .frame(
+                width: 300,
+                height: 300
+            )
             textContent(step)
         }
         .padding(.horizontal)
@@ -28,7 +34,14 @@ private func portraitLayout(_ step: TutorialStep) -> some View {
 
 private func landscapeLayout(_ step: TutorialStep) -> some View {
     HStack(spacing: 32) {
-        imageContent(step, isLandscape: true)
+        MediaView(
+            media: step.media
+        )
+        .frame(
+            width: 200,
+            height: 200
+        )
+        
         GeometryReader { geometry in
             ScrollView {
                 VStack(spacing: 24) {
@@ -43,30 +56,6 @@ private func landscapeLayout(_ step: TutorialStep) -> some View {
         }
     }
     .padding(.horizontal)
-}
-
-private func imageContent(_ step: TutorialStep, isLandscape: Bool) -> some View {
-    Group {
-        if step.media.type == .image {
-            ImageView(
-                media: step.media,
-                configuration: MediaConfiguration(
-                    contentMode: .fit,
-                    width: isLandscape ? 200 : 300,
-                    height: isLandscape ? 200 : 300
-                )
-            )
-        } else if step.media.type == .gif {
-            GIFImageView(
-                media: step.media,
-                configuration: MediaConfiguration(
-                    contentMode: .fit,
-                    width: isLandscape ? 200 : 300,
-                    height: isLandscape ? 200 : 300
-                )
-            )
-        }
-    }
 }
 
 private func textContent(_ step: TutorialStep) -> some View {

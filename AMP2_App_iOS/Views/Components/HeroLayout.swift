@@ -82,48 +82,40 @@ struct HeroLayout<Primary: View, Secondary: View>: View {
     private func portraitView() -> some View {
         GeometryReader { geometry in
             let isCompact = geometry.size.height < 700
-            
+
             ScrollView {
                 VStack(spacing: 0) {
-                    ZStack {
-                        imageContent(primaryContentBg)
-                            .ignoresSafeArea(edges: .horizontal)
-                            .stretchy()
-                            .frame(
-                                width: geometry.size.width
-                                + geometry.safeAreaInsets.leading
-                                + geometry.safeAreaInsets.trailing
-                            )
+                    VStack() {
+                        Spacer()
+                            .frame(height: isCompact ? 16 : 128)
 
-                        VStack(spacing: 0) {
-                            Color(.clear)
-                                .frame(maxHeight: isCompact ? 16 : 128)
+                        primaryContent
+                            .frame(maxWidth: .infinity, alignment: .center)
 
-                            primaryContent
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .offset(
-                                    x: -(geometry.safeAreaInsets.trailing
-                                        - geometry.safeAreaInsets.leading) / 2
-                                )
-
-                            Spacer()
-                                .frame(maxHeight: isCompact ? 16 : 32)
-                        }
-                        .frame(width: geometry.size.width)
+                        Spacer()
+                            .frame(height: isCompact ? 16 : 32)
                     }
-                    
+                    .frame(width: geometry.size.width)
+                    .background {
+                        GeometryReader { sectionGeometry in
+                            imageContent(primaryContentBg)
+                                .aspectRatio(contentMode: .fill)
+                                .frame(
+                                    width: sectionGeometry.size.width
+                                        + sectionGeometry.safeAreaInsets.leading
+                                        + sectionGeometry.safeAreaInsets.trailing,
+                                    height: sectionGeometry.size.height
+                                )
+                                .clipped()
+                                .stretchy()
+                                .ignoresSafeArea(edges: .horizontal)
+                        }
+                    }
+
                     Spacer()
-                        .frame(height: 32)
-                    
+                        .frame(height: isCompact ? 16 : 32)
+
                     secondaryContent
-                        .frame(
-                            maxWidth: geometry.size.width,
-                            alignment: .leading
-                        )
-                        .offset(
-                            x: -(geometry.safeAreaInsets.trailing
-                                - geometry.safeAreaInsets.leading) / 2
-                        )
                 }
             }
             .ignoresSafeArea(edges: .top)
@@ -131,12 +123,11 @@ struct HeroLayout<Primary: View, Secondary: View>: View {
     }
 }
 
-private func imageContent(_ media: MediaItem) -> some View {
+private func imageContent(
+    _ media: MediaItem
+) -> some View {
     MediaView(
-        media: media,
-        configuration: MediaConfiguration(
-            contentMode: .fit
-        )
+        media: media
     )
 }
 

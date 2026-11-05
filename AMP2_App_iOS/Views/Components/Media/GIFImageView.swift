@@ -13,24 +13,11 @@ struct GIFImageView: View {
 
     let media: MediaItem
 
-    var configuration: MediaConfiguration = .init()
-
     @Environment(\.colorScheme) private var colorScheme
 
     private var gifName: String {
         let suffix = colorScheme == .dark ? "_dark" : "_light"
         return media.name + suffix
-    }
-
-    private var placeholder: some View {
-        Rectangle()
-            .fill(configuration.backgroundColor)
-            .overlay {
-                if configuration.showsPlaceholder {
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-                }
-            }
     }
 
     var body: some View {
@@ -40,25 +27,10 @@ struct GIFImageView: View {
                 withExtension: "gif"
             ) != nil {
                 GIFRepresentable(
-                    name: gifName,
-                    contentMode: configuration.contentMode == .fill
-                        ? .scaleAspectFill
-                        : .scaleAspectFit
+                    name: gifName
                 )
-            } else {
-                placeholder
             }
         }
-        .frame(
-            width: configuration.width,
-            height: configuration.height
-        )
-        .background(configuration.backgroundColor)
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: configuration.cornerRadius
-            )
-        )
     }
 }
 
@@ -76,7 +48,6 @@ private final class GIFUIImageView: UIImageView {
 private struct GIFRepresentable: UIViewRepresentable {
 
     let name: String
-    let contentMode: UIView.ContentMode
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
@@ -85,8 +56,7 @@ private struct GIFRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> GIFUIImageView {
         let imageView = GIFUIImageView()
 
-        imageView.clipsToBounds = true
-        imageView.contentMode = contentMode
+        imageView.contentMode = .scaleToFill
         imageView.image = loadGIF(named: name)
         imageView.startAnimating()
 
@@ -99,8 +69,6 @@ private struct GIFRepresentable: UIViewRepresentable {
         _ imageView: GIFUIImageView,
         context: Context
     ) {
-        imageView.contentMode = contentMode
-
         guard context.coordinator.currentName != name else {
             return
         }

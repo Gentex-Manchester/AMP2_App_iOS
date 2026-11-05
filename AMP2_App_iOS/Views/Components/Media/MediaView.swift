@@ -12,8 +12,6 @@ struct MediaView: View {
 
     let media: MediaItem
 
-    var configuration: MediaConfiguration = .init()
-
     var body: some View {
         Group {
             switch media.type {

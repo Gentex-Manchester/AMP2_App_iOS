@@ -12,56 +12,14 @@ struct ImageView: View {
 
     let media: MediaItem
 
-    var configuration: MediaConfiguration = .init()
-
-    private var placeholder: some View {
-        Rectangle()
-            .fill(configuration.backgroundColor)
-            .overlay {
-                if configuration.showsPlaceholder {
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-                }
-            }
-    }
-
     var body: some View {
         Group {
             if let image = UIImage(named: media.name) {
-                rendered(Image(uiImage: image))
-            } else {
-                placeholder
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
             }
         }
-        .frame(
-            width: configuration.width,
-            height: configuration.height
-        )
-        .background(configuration.backgroundColor)
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: configuration.cornerRadius
-            )
-        )
     }
 
-    @ViewBuilder
-    private func rendered(_ image: Image) -> some View {
-        switch configuration.contentMode {
-        case .fill:
-            image
-                .resizable()
-                .scaledToFill()
-
-        case .fit:
-            image
-                .resizable()
-                .scaledToFit()
-
-        @unknown default:
-            image
-                .resizable()
-                .scaledToFit()
-        }
-    }
 }
