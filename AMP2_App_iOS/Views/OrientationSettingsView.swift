@@ -12,33 +12,16 @@ struct OrientationSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 10) {
-                HStack(spacing: 10){
-                    SelectionButton(
-                        label: "System",
-                        selected: orientationMode == .system,
-                        action: { setOrientation(.system) }
-                    )
-                    
-                    SelectionButton(
-                        label: "Portrait",
-                        selected: orientationMode == .portrait,
-                        action: { setOrientation(.portrait) }
-                    )
+            SelectionButtonRow(
+                options: OrientationMode.allCases,
+                selection: $orientationMode,
+                onSelection: { selection in
+                    orientationMode = selection
+                },
+                label: { option in
+                    option.rawValue
                 }
-                
-                HStack(spacing: 10) {
-                    SelectionButton(
-                        label: "Landscape",
-                        selected: orientationMode == .landscape,
-                        action: { setOrientation(.landscape) }
-                    )
-                    
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                        .padding(.trailing)
-                }
-            }
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top

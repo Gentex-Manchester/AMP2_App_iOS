@@ -24,7 +24,7 @@ struct TroubleshootingPopup: View {
         }
         .foregroundStyle(.accent)
         .alert(title,isPresented: $isPresented) {
-            Button("OK", role: .cancel) { }
+            Button("Continue", role: .cancel) { }
         } message: {
             Text(text)
         }

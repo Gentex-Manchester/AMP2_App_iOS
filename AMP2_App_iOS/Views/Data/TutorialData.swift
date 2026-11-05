@@ -42,7 +42,7 @@ let pairingSteps: [TutorialStep] = [
         title: "Turn on the headset",
         description: "Press and hold + to turn on the headset.",
         controls: .standard,
-        tsTitle: "My headset isn't turning on",
+        tsTitle: "My headset isn't turning on.",
         tsText: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it."
     ),
     TutorialStep(
@@ -93,7 +93,7 @@ let reconnectingSteps: [TutorialStep] = [
         title: "Turn on the headset",
         description: "Press and hold + to turn on the headset.",
         controls: .standard,
-        tsTitle: "My headset isn't turning on",
+        tsTitle: "My headset isn't turning on.",
         tsText: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it."
     ),
     TutorialStep(
@@ -101,7 +101,7 @@ let reconnectingSteps: [TutorialStep] = [
         title: "Enable Bluetooth",
         description: "Press and hold the - and ● buttons to enable Bluetooth.",
         controls: .last,
-        tsTitle: "My headset isn’t pairing to this system",
+        tsTitle: "My headset isn’t pairing to this system.",
         tsText: """
             Make sure that Bluetooth is enabled on your system. If you’ve paired your headset to \
             a different system or are attempting to use a new headset with this system, please \

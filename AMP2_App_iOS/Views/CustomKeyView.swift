@@ -20,7 +20,7 @@ struct CustomKeyView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 16)
                     .padding(.bottom, 8)
-                AppText("Once the custom encryption key has been created, the app will forget this passphrase. If you forget it, you can create a new key at any time.", style: .body)
+                AppText("Once the custom encryption key has been created, the app will forget this passphrase. If you forget it, you can create a new key at any time.", style: .subbody)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 16)
                 

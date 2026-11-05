@@ -38,7 +38,7 @@ struct RegionsView: View {
                     case .eurasia: return "Eurasia"
                     }
                 },
-                description: "Determines how LTC communications are encrypted."
+                description: "Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate."
             )
             .frame(
                 maxWidth: .infinity,
@@ -48,11 +48,11 @@ struct RegionsView: View {
                 .horizontal, 16
             )
         }
-        .navigationTitle("Region")
+        .navigationTitle("LTC Zone")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Region", style: .header3)
+                AppText("LTC Zone", style: .header3)
             }
         }
     }

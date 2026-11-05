@@ -20,8 +20,7 @@ struct AppearanceSettingsView: View {
                 },
                 label: { option in
                     option.rawValue
-                },
-                description: "Adjusts the colors used in the app's user interface."
+                }
             )
             .frame(
                 maxWidth: .infinity,
