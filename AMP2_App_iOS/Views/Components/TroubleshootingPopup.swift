@@ -18,11 +18,10 @@ struct TroubleshootingPopup: View {
             isPresented = true
         } label: {
             AppText(title, style: .body)
-                .foregroundStyle(.primary)
                 .underline()
                 .multilineTextAlignment(.leading)
         }
-        .foregroundStyle(.accent)
+        .foregroundStyle(Color("Primary"))
         .alert(title,isPresented: $isPresented) {
             Button("Continue", role: .cancel) { }
         } message: {

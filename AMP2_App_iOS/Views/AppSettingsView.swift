@@ -38,6 +38,7 @@ struct AppSettingsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("App Settings", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }

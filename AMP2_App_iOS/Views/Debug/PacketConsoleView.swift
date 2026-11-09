@@ -62,7 +62,7 @@ struct PacketConsoleView: View {
             if let lastError {
                 Text(lastError)
                     .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.accent)
+                    .foregroundStyle(Color("Primary"))
             }
 
             // The usual failure is no Bluetooth Classic connection; only the
@@ -140,7 +140,7 @@ struct PacketConsoleView: View {
                             // UUID. No manufacturer data means ASK can't find it.
                             Text(manufacturerText(headset))
                                 .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(headset.companyIdentifier == nil ? .accent : .green)
+                                .foregroundColor(headset.companyIdentifier == nil ? .red : .green)
                             Text(headset.advertisedServices.isEmpty
                                  ? "advertises: (none)"
                                  : "advertises: " + headset.advertisedServices
@@ -208,7 +208,7 @@ struct PacketConsoleView: View {
             if let failure = sync.lastFailure {
                 Text("\(failure.setting.displayName): \(String(describing: failure.reason))")
                     .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.accent)
+                    .foregroundColor(Color("Primary"))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -259,7 +259,7 @@ struct PacketConsoleView: View {
                  ? "Stop polling first, then write."
                  : "Polling stopped — writes go out alone.")
                 .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(sync.isPolling ? .accent : .green)
+                .foregroundColor(sync.isPolling ? .red : .green)
 
             HStack(spacing: 10) {
                 ForEach(LTCMode.allCases, id: \.self) { mode in
@@ -384,7 +384,7 @@ struct PacketConsoleView: View {
                 HStack(alignment: .top, spacing: 8) {
                     Text(entry.direction.rawValue)
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(entry.direction == .sent ? .accent : .green)
+                        .foregroundColor(entry.direction == .sent ? .red : .green)
                     Text(entry.hex)
                         .font(.system(size: 12, design: .monospaced))
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -414,7 +414,7 @@ struct PacketConsoleView: View {
                 .foregroundColor(.white)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
-                .background(Color.accent)
+                .background(Color("Primary"))
                 .cornerRadius(16)
         }
     }

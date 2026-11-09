@@ -53,6 +53,7 @@ struct RegionsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("LTC Zone", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }

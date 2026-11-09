@@ -63,10 +63,12 @@ private func textContent(_ step: TutorialStep) -> some View {
         AppText(step.title, style: .header2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .multilineTextAlignment(.leading)
+            .foregroundStyle(Color("OnBackground"))
 
         AppText(step.description, style: .body)
             .frame(maxWidth: .infinity, alignment: .leading)
             .multilineTextAlignment(.leading)
+            .foregroundStyle(Color("OnBackground"))
         
         if let tsTitle = step.tsTitle, let tsText = step.tsText {
             TroubleshootingPopup(

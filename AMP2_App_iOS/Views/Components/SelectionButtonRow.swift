@@ -37,6 +37,7 @@ struct SelectionButtonRow<Option: Hashable>: View {
                 AppText(description, style: .body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 16)
+                    .foregroundStyle(Color("OnBackground"))
             }
             
             ForEach(

@@ -19,23 +19,21 @@ struct LTCVolumeView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
-                SelectionSlider(
-                    level: level,
-                    range: 0...10,
-                    onSelection: { selection in
-                        if let byte = LTCLevel.byte(for: Int(selection)) {
-                            settings.write(.ltcVolume, value: byte)
-                        }
-                    },
-                    label: { selection in
-                        "\(selection)"
-                    },
-                    description: "Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.",
-                    lowLabel: "Quiet",
-                    highLabel: "Loud"
-                )
-            }
+            SelectionSlider(
+                level: level,
+                range: 0...10,
+                onSelection: { selection in
+                    if let byte = LTCLevel.byte(for: Int(selection)) {
+                        settings.write(.ltcVolume, value: byte)
+                    }
+                },
+                label: { selection in
+                    "\(selection)"
+                },
+                description: "Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.",
+                lowLabel: "Quiet",
+                highLabel: "Loud"
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top
@@ -49,6 +47,7 @@ struct LTCVolumeView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("LTC Volume", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }

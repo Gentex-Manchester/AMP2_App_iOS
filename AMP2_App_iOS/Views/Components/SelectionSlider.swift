@@ -45,6 +45,7 @@ struct SelectionSlider: View {
                 AppText(description, style: .body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 16)
+                    .foregroundStyle(Color("OnBackground"))
             }
 
             VStack(spacing: 12) {
@@ -67,12 +68,12 @@ struct SelectionSlider: View {
                         self.draftLevel = nil
                     }
                 )
-                .tint(.accent)
+                .tint(Color("Primary"))
                 .padding(.horizontal, 16)
 
                 HStack {
                     AppText(lowLabel, style: .subbody)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color("OnBackground"))
 
                     Spacer()
 
@@ -81,7 +82,7 @@ struct SelectionSlider: View {
                     Spacer()
 
                     AppText(highLabel, style: .subbody)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color("OnBackground"))
                 }
                 .padding(.horizontal, 16)
             }

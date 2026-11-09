@@ -31,10 +31,12 @@ struct DisconnectedView: View {
                 secondaryContent: {
                     VStack(spacing: 16) {
                         AppText("Connect your AMP®", style: .header2)
+                            .foregroundStyle(Color("OnBackground"))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
 
                         AppText("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.", style: .body)
+                            .foregroundStyle(Color("OnBackground"))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                         

@@ -35,6 +35,7 @@ struct OrientationSettingsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("Orientation", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }

@@ -26,11 +26,11 @@ struct SettingRow<Destination: View>: View {
 
                 Image(systemName: "chevron.right")
             }
-            .foregroundColor(.primary)
+            .foregroundColor(Color("OnSurface"))
             .padding(.vertical, 16)
             .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-            .background(Color(.systemGray4))
+            .frame(maxWidth: .infinity, minHeight: 72)
+            .background(Color("Surface"))
             .cornerRadius(16)
         }
         .padding(.horizontal)

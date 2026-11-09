@@ -24,21 +24,19 @@ struct TxPowerView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
-                SelectionSlider(
-                    level: index,
-                    range: 0...Double(TxPower.allCases.count - 1),
-                    onSelection: { selection in
-                        settings.write(.txPower, value: TxPower.allCases[Int(selection)].rawValue)
-                    },
-                    label: { selection in
-                        settings.settings.txPower?.displayName ?? "—"
-                    },
-                    description: "Determines how much power the headset gives to LTC, which impacts transmission range.",
-                    lowLabel: TxPower.minus18.displayName,
-                    highLabel: TxPower.plus10.displayName
-                )
-            }
+            SelectionSlider(
+                level: index,
+                range: 0...Double(TxPower.allCases.count - 1),
+                onSelection: { selection in
+                    settings.write(.txPower, value: TxPower.allCases[Int(selection)].rawValue)
+                },
+                label: { selection in
+                    settings.settings.txPower?.displayName ?? "—"
+                },
+                description: "Determines how much power the headset gives to LTC, which impacts transmission range.",
+                lowLabel: TxPower.minus18.displayName,
+                highLabel: TxPower.plus10.displayName
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top
@@ -52,6 +50,7 @@ struct TxPowerView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("LTC Power", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }

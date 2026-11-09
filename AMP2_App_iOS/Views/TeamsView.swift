@@ -68,11 +68,15 @@ struct TeamsView: View {
         switch headsetSettings.settings.zone {
         case .americas:
             AppText("Region: Americas (North America & South America)", style: .body)
+                .foregroundStyle(Color("OnBackground"))
         case .eurasia:
             AppText("Region: Eurasia (Europe & Asia)", style: .body)
+                .foregroundStyle(Color("OnBackground"))
             AppText("Note that team Delta is not approved for use in Japanese territories.", style: .subbody)
+                .foregroundStyle(Color("OnBackground"))
         default:
             AppText("No region detected", style: .body)
+                .foregroundStyle(Color("OnBackground"))
         }
     }
 }

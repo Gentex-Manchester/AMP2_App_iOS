@@ -64,30 +64,6 @@ struct ConnectedView: View {
         }
     }
 
-    var unusedBody: some View {
-        ScrollView {
-            
-        }
-        .navigationTitle("My AMP®")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                AppText("My AMP®", style: .header3)
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink {
-                    AppSettingsView()
-                } label: {
-                    Image("settings_24px")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                }
-            }
-        }
-    }
-
     // MARK: - Header
 
     private var headerSection: some View {
@@ -105,6 +81,7 @@ struct ConnectedView: View {
                 .frame(maxHeight: 35)
 
             AppText("AMP 2.0 Elite", style: .header1)
+                .foregroundStyle(Color("OnBackground"))
             
             Spacer()
         }
@@ -118,6 +95,7 @@ struct ConnectedView: View {
             AppText("LTC Mode", style: .header3)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
+                .foregroundStyle(Color("OnBackground"))
 
             HStack(spacing: 10) {
                 ForEach(LTCMode.allCases, id: \.self) { mode in

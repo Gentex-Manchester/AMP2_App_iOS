@@ -35,9 +35,9 @@ struct AppearanceSettingsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("Appearance", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
-        
     }
 }
 

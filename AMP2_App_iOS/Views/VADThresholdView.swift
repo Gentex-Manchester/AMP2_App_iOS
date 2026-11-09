@@ -22,23 +22,21 @@ struct VADThresholdView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
-                SelectionSlider(
-                    level: level,
-                    range: 0...10,
-                    onSelection: { selection in
-                        if let byte = LTCLevel.byte(for: Int(selection)) {
-                            settings.write(.vadThreshold, value: byte)
-                        }
-                    },
-                    label: { selection in
-                        settings.settings.vadThreshold.map(String.init) ?? "—"
-                    },
-                    description: "Determines the sensitivity of the microphone when VAD mode is enabled.",
-                    lowLabel: "Low",
-                    highLabel: "High"
-                )
-            }
+            SelectionSlider(
+                level: level,
+                range: 0...10,
+                onSelection: { selection in
+                    if let byte = LTCLevel.byte(for: Int(selection)) {
+                        settings.write(.vadThreshold, value: byte)
+                    }
+                },
+                label: { selection in
+                    settings.settings.vadThreshold.map(String.init) ?? "—"
+                },
+                description: "Determines the sensitivity of the microphone when VAD mode is enabled.",
+                lowLabel: "Low",
+                highLabel: "High"
+            )
             .frame(
                 maxWidth: .infinity,
                 alignment: .top
@@ -52,6 +50,7 @@ struct VADThresholdView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 AppText("VAD Threshold", style: .header3)
+                    .foregroundStyle(Color("OnBackground"))
             }
         }
     }
