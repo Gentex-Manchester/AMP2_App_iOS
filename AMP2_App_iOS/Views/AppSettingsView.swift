@@ -14,7 +14,7 @@ struct AppSettingsView: View {
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
-                VStack {
+                VStack(spacing: 16) {
                     SettingRow(title: "Appearance") {
                         AppearanceSettingsView()
                     }

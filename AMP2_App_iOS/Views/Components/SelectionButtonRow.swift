@@ -32,7 +32,7 @@ struct SelectionButtonRow<Option: Hashable>: View {
     private let columns = 2
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             if let description = description {
                 AppText(description, style: .body)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -45,7 +45,7 @@ struct SelectionButtonRow<Option: Hashable>: View {
                 id: \.self
             ) { index in
                 
-                HStack(spacing: 10) {
+                HStack(spacing: 12) {
                     
                     ForEach(
                         options[index..<min(index + columns, options.count)],

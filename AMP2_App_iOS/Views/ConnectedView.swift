@@ -35,8 +35,10 @@ struct ConnectedView: View {
                     }
                 },
                 secondaryContent: {
-                    ltcModeSection
-                    settingsLinks
+                    VStack(spacing: 16) {
+                        ltcModeSection
+                        settingsLinks
+                    }
                 },
                 primaryContentBg: disabledBg,
                 isLandscape: isLandscape
@@ -110,13 +112,12 @@ struct ConnectedView: View {
             }
             .padding(.horizontal)
         }
-        .padding(.bottom, 10)
     }
 
     // MARK: - Setting Links
 
     private var settingsLinks: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 16) {
             if settings.settings.ltcMode == .vad {
                 SettingRow(title: LTCSetting.vadThreshold.displayName) {
                     VADThresholdView()

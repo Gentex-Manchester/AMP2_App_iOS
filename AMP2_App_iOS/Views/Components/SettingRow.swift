@@ -34,7 +34,6 @@ struct SettingRow<Destination: View>: View {
             .cornerRadius(16)
         }
         .padding(.horizontal)
-        .padding(.bottom, 10)
     }
 }
 
