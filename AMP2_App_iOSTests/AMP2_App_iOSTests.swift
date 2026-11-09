@@ -1054,7 +1054,7 @@ struct BrandColourTests {
         var green: CGFloat = 0
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
-        UIColor(Color.accent).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        UIColor(Color("Primary")).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
 
         #expect(Int((red * 255).rounded()) == 0xE3)
         #expect(Int((green * 255).rounded()) == 0x1B)

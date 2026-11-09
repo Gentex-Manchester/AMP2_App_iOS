@@ -8,31 +8,59 @@
 import SwiftUI
 
 struct AppSettingsView: View {
+    @AppStorage("developerOptions") private var developerOptions: Bool = false
+    @State private var tapCount = 0
+    
     var body: some View {
-        ScrollView {
-            VStack {
-                SettingRow(title: "Appearance") {
-                    AppearanceSettingsView()
-                }
+        GeometryReader { geometry in
+            ScrollView {
+                VStack {
+                    SettingRow(title: "Appearance") {
+                        AppearanceSettingsView()
+                    }
 
-                SettingRow(
-                    title: "Orientation"
-                ) {
-                    OrientationSettingsView()
+                    SettingRow(
+                        title: "Orientation"
+                    ) {
+                        OrientationSettingsView()
+                    }
+            
+                    if (developerOptions) {
+                        SettingRow(
+                            title: "Developer Options"
+                        ) {
+                            PacketConsoleView()
+                        }
+                    }
+                    
+                    Spacer(minLength: 0)
+                    
+                    VStack(spacing: 12) {
+                        Button {
+                            tapCount += 1
+                            if tapCount >= 5 {
+                                developerOptions = true
+                            }
+                        } label: {
+                            AppText(appVersion, style: .body)
+                                .foregroundStyle(Color("Surface"))
+                        }
+                        
+                        Button {
+                            // Add function
+                        } label: {
+                            AppText("Legal", style: .body)
+                                .underline()
+                                .foregroundStyle(Color("Surface"))
+                        }
+                    }
                 }
-        
-                #if DEBUG
-                SettingRow(
-                    title: "DEBUG: Packet Console"
-                ) {
-                    PacketConsoleView()
-                }
-                #endif
+                .frame(minHeight: geometry.size.height)
             }
-            .frame(maxWidth: .infinity, alignment: .top)
-            .padding(.top, 20)
-            .padding(.horizontal, 10)
         }
+        .frame(maxWidth: .infinity, alignment: .top)
+        .padding(.top, 20)
+        .padding(.horizontal, 10)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -43,6 +71,13 @@ struct AppSettingsView: View {
         }
     }
 }
+
+private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+
+        return "App Version: \(version) (\(build))"
+    }
 
 #Preview {
     NavigationStack {

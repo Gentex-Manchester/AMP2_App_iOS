@@ -2,11 +2,8 @@
 //  PacketConsoleView.swift
 //  AMP2_App_iOS
 //
-//  Debug-only BLE diagnostics, like Android's Developer Options console.
-//  Not in Release builds. Monospaced on purpose, for hex.
+//  Debug BLE diagnostics, like Android's Developer Options console.
 //
-
-#if DEBUG
 
 import CoreBluetooth
 import SwiftUI
@@ -428,5 +425,3 @@ struct PacketConsoleView: View {
             .environment(HeadsetSettingsSync(transport: session))
     }
 }
-
-#endif
