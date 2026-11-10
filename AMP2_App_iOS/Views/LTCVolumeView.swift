@@ -30,9 +30,9 @@ struct LTCVolumeView: View {
                 label: { selection in
                     "\(selection)"
                 },
-                description: "Determines how loudly audio from the LTC module is played compared to other audio sources on the headset.",
-                lowLabel: "Quiet",
-                highLabel: "Loud"
+                description: String(localized: "Determines how loudly audio from the LTC module is played compared to other audio sources on the headset."),
+                lowLabel: String(localized: "Quiet"),
+                highLabel: String(localized: "Loud")
             )
             .frame(
                 maxWidth: .infinity,

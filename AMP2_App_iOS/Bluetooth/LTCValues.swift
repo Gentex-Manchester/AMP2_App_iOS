@@ -18,15 +18,11 @@ enum LTCMode: UInt8, CaseIterable, Sendable {
     case pushToTalk = 0x01
     case vad = 0x02
 
-    // 0x03 All Hands: not in the Gentex BLE doc and disabled on Android
-    // (`models/HeadsetSettings.kt`). Keep it out of the UI.
-    // case allHands = 0x03
-
     var displayName: String {
         switch self {
-        case .off: return "Off"
-        case .pushToTalk: return "PTT"
-        case .vad: return "VAD"
+        case .off: return String(localized: "Off")
+        case .pushToTalk: return String(localized: "PTT")
+        case .vad: return String(localized: "VAD")
         }
     }
 }
@@ -51,16 +47,16 @@ enum TxPower: UInt8, CaseIterable, Sendable {
     /// +6 → +10 is a 4 dBm step. Matches the doc; not a typo.
     var displayName: String {
         switch self {
-        case .minus18: return "-18dBm"
-        case .minus15: return "-15dBm"
-        case .minus12: return "-12dBm"
-        case .minus9:  return "-9dBm"
-        case .minus6:  return "-6dBm"
-        case .minus3:  return "-3dBm"
-        case .zero:    return "0dBm"
-        case .plus3:   return "+3dBm"
-        case .plus6:   return "+6dBm"
-        case .plus10:  return "+10dBm"
+        case .minus18: return String(localized: "-18dBm")
+        case .minus15: return String(localized: "-15dBm")
+        case .minus12: return String(localized: "-12dBm")
+        case .minus9:  return String(localized: "-9dBm")
+        case .minus6:  return String(localized: "-6dBm")
+        case .minus3:  return String(localized: "-3dBm")
+        case .zero:    return String(localized: "0dBm")
+        case .plus3:   return String(localized: "+3dBm")
+        case .plus6:   return String(localized: "+6dBm")
+        case .plus10:  return String(localized: "+10dBm")
         }
     }
 }
@@ -77,11 +73,11 @@ enum Team: UInt8, CaseIterable, Sendable {
 
     var displayName: String {
         switch self {
-        case .alpha: return "Alpha"
-        case .bravo: return "Bravo"
-        case .charlie: return "Charlie"
-        case .delta: return "Delta"
-        case .jointOps: return "Joint Ops"
+        case .alpha: return String(localized: "Alpha")
+        case .bravo: return String(localized: "Bravo")
+        case .charlie: return String(localized: "Charlie")
+        case .delta: return String(localized: "Delta")
+        case .jointOps: return String(localized: "Joint Ops")
         }
     }
 }

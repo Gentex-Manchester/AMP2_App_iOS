@@ -7,8 +7,8 @@ enum Region: String, CaseIterable, Codable, Sendable {
 
     var displayName: String {
         switch self {
-        case .americas: return "Americas"
-        case .eurasia: return "Eurasia"
+        case .americas: return String(localized: "Americas")
+        case .eurasia: return String(localized: "Eurasia")
         }
     }
 

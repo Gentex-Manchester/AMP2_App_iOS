@@ -33,7 +33,7 @@ struct TxPowerView: View {
                 label: { selection in
                     settings.settings.txPower?.displayName ?? "—"
                 },
-                description: "Determines how much power the headset gives to LTC, which impacts transmission range.",
+                description: String(localized: "Determines how much power the headset gives to LTC, which impacts transmission range."),
                 lowLabel: TxPower.minus18.displayName,
                 highLabel: TxPower.plus10.displayName
             )

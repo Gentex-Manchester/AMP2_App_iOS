@@ -35,40 +35,40 @@ enum LTCProtocolError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .malformedResponse(let hex):
-            return "The headset sent an unrecognized response (\(hex))."
+            return String(localized: "The headset sent an unrecognized response (\(hex)).")
         case .emptyPayload:
-            return "The headset sent a response with no value."
+            return String(localized: "The headset sent a response with no value.")
         case .headsetReportedError(let status):
             switch status {
             case .noError:
-                return "The headset reported success."
+                return String(localized: "The headset reported success.")
             case .lengthError:
-                return "The headset rejected the command's length."
+                return String(localized: "The headset rejected the command's length.")
             case .badValue:
-                return "The headset rejected the value as out of range."
+                return String(localized: "The headset rejected the value as out of range.")
             case .commFailure:
-                return "The headset reported an internal communication failure."
+                return String(localized: "The headset reported an internal communication failure.")
             }
         case .unknownStatus(let raw):
-            return String(format: "The headset returned an unrecognized status code (0x%02X).", raw)
+            return String(format: String(localized: "The device returned an unrecognized status code (0x%02X)."), raw)
         case .unreadablePartNumber(let hex):
-            return "The headset's part number could not be read (\(hex))."
+            return String(localized: "The headset's part number could not be read (\(hex)).")
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .malformedResponse, .unknownStatus, .emptyPayload:
-            return "Disconnect and reconnect the headset. If this continues, the headset may be running unsupported firmware."
+            return String(localized: "Disconnect and reconnect the headset. If this continues, the headset may be running unsupported firmware.")
         case .headsetReportedError(let status):
             switch status {
             case .badValue:
-                return "This setting may not be available on your headset in its current region."
+                return String(localized: "This setting may not be available on your headset in its current region.")
             case .lengthError, .commFailure, .noError:
-                return "Try again. If this continues, disconnect and reconnect the headset."
+                return String(localized: "Try again. If this continues, disconnect and reconnect the headset.")
             }
         case .unreadablePartNumber:
-            return "Disconnect and reconnect the headset."
+            return String(localized: "Disconnect and reconnect the headset.")
         }
     }
 }

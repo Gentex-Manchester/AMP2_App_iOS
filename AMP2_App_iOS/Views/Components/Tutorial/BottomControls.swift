@@ -24,7 +24,7 @@ struct BottomControls: View {
                 Spacer()
                     .frame(maxWidth: .infinity)
             } else {
-                SecondaryButton(label: "Back") {
+                SecondaryButton(label: String(localized: "Back")) {
                     goBack()
                 }
             }
@@ -33,7 +33,7 @@ struct BottomControls: View {
                 Spacer()
                     .frame(maxWidth: .infinity)
             } else {
-                PrimaryButton(label: "Next") {
+                PrimaryButton(label: String(localized: "Next")) {
                     goForward()
                 }
             }

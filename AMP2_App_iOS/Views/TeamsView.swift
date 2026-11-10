@@ -28,16 +28,8 @@ struct TeamsView: View {
                     onSelection: { selection in
                         headsetSettings.write(LTCSetting.team, value: selection.rawValue)
                     },
-                    label: { option in
-                        switch option {
-                        case .alpha: return "Alpha"
-                        case .bravo: return "Bravo"
-                        case .charlie: return "Charlie"
-                        case .delta: return "Delta"
-                        case .jointOps: return "Joint Ops"
-                        }
-                    },
-                    description: "Determines who you can talk to with Local Teams Comms (LTC)."
+                    label: { option in option.displayName },
+                    description: String(localized: "Determines who you can talk to with Local Teams Comms (LTC).")
                 )
                 .frame(maxWidth: .infinity)
                 
@@ -47,8 +39,8 @@ struct TeamsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 TroubleshootingPopup(
-                    title: "I’m on the same team as another user, but can’t hear them.",
-                    text: "Make sure that your LTC Key and Region settings match. These settings must match between users who want to talk using LTC. Note that commercial headsets cannot adjust the LTC Region setting."
+                    title: String(localized: "I’m on the same team as another user, but can’t hear them."),
+                    text: String(localized: "Make sure that your LTC Key and Region settings match. These settings must match between users who want to talk using LTC. Note that commercial headsets cannot adjust the LTC Region setting.")
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

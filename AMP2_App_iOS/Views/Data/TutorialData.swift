@@ -33,50 +33,50 @@ struct TutorialStep {
 let pairingSteps: [TutorialStep] = [
     TutorialStep(
         media: MediaItem(name: "bt_pairing_1", type: .gif),
-        title: "Put on the headset",
-        description: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial.",
+        title: String(localized: "Put on the headset"),
+        description: String(localized: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial."),
         controls: .first
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_2", type: .gif),
-        title: "Turn on the headset",
-        description: "Press and hold + to turn on the headset.",
+        title: String(localized: "Turn on the headset"),
+        description: String(localized: "Press and hold + to turn on the headset."),
         controls: .standard,
-        tsTitle: "My headset isn't turning on.",
-        tsText: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it."
+        tsTitle: String(localized: "My headset isn't turning on."),
+        tsText: String(localized: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it.")
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_3", type: .gif),
-        title: "Enter the menu",
-        description: "Press and hold the + and - buttons to enter the menu built into the headset.",
+        title: String(localized: "Enter the menu"),
+        description: String(localized: "Press and hold the + and - buttons to enter the menu built into the headset."),
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_4", type: .gif),
-        title: "Navigate the menu",
-        description: "Press the + or - button until the headset reads “Bluetooth Settings.”",
+        title: String(localized: "Navigate the menu"),
+        description: String(localized: "Press the + or - button until the headset reads “Bluetooth Settings.”"),
         controls: .standard
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_5", type: .gif),
-        title: "Enable pairing",
-        description: "Press ● to select Bluetooth, then press ● again to start pairing.",
+        title: String(localized: "Enable pairing"),
+        description: String(localized: "Press ● to select Bluetooth, then press ● again to start pairing."),
         controls: .standard,
-        tsTitle: "I selected the wrong option.",
-        tsText: """
+        tsTitle: String(localized: "I selected the wrong option."),
+        tsText: String(localized: """
             The +, -, and ● buttons can be used to navigate backwards through the menu. \
             Press + or - to find the \"Back\" option, then press ● to go to the previous menu. Continue \
             to navigate through the menu until you find “Bluetooth Settings”. \
             Check the user manual for a map of all available options.
-            """
+            """)
     ),
     TutorialStep(
         media: MediaItem(name: "headset_silhouette", type: .image),
-        title: "Go to Settings",
-        description: """
+        title: String(localized: "Go to Settings"),
+        description: String(localized: """
             Leave this app open, then open Settings › Bluetooth on your iPhone and \
             click on the headset with your serial number. Once it has connected, return to this app.
-            """,
+            """),
         controls: .last
     ),
 ]
@@ -84,28 +84,28 @@ let pairingSteps: [TutorialStep] = [
 let reconnectingSteps: [TutorialStep] = [
     TutorialStep(
         media: MediaItem(name: "bt_pairing_1", type: .gif),
-        title: "Put on the headset",
-        description: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial.",
+        title: String(localized: "Put on the headset"),
+        description: String(localized: "Listen to audio cues inside of the headset and use the buttons on the left earcup to walk through this tutorial."),
         controls: .first
     ),
     TutorialStep(
         media: MediaItem(name: "bt_pairing_2", type: .gif),
-        title: "Turn on the headset",
-        description: "Press and hold + to turn on the headset.",
+        title: String(localized: "Turn on the headset"),
+        description: String(localized: "Press and hold + to turn on the headset."),
         controls: .standard,
-        tsTitle: "My headset isn't turning on.",
-        tsText: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it."
+        tsTitle: String(localized: "My headset isn't turning on."),
+        tsText: String(localized: "Make sure that a lithium or alkaline AA battery has been inserted into the battery cap. If a battery is already inserted, try replacing it.")
     ),
     TutorialStep(
         media: MediaItem(name: "bt_reconnection", type: .gif),
-        title: "Enable Bluetooth",
-        description: "Press and hold the - and ● buttons to enable Bluetooth.",
+        title: String(localized: "Enable Bluetooth"),
+        description: String(localized: "Press and hold the - and ● buttons to enable Bluetooth."),
         controls: .last,
-        tsTitle: "My headset isn’t pairing to this system.",
-        tsText: """
+        tsTitle: String(localized: "My headset isn’t pairing to this system."),
+        tsText: String(localized: """
             Make sure that Bluetooth is enabled on your system. If you’ve paired your headset to \
             a different system or are attempting to use a new headset with this system, please \
             unpair your headset from this system’s Bluetooth Settings and then go through the pairing process again.
-            """
+            """)
     ),
 ]

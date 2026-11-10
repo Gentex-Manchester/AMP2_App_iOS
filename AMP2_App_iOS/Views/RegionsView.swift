@@ -32,13 +32,8 @@ struct RegionsView: View {
                 onSelection: { selection in
                     headsetSettings.write(LTCSetting.zone, value: selection.ltcByte)
                 },
-                label: { option in
-                    switch option {
-                    case .americas: return "Americas"
-                    case .eurasia: return "Eurasia"
-                    }
-                },
-                description: "Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate."
+                label: { option in option.displayName },
+                description: String(localized: "Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
             )
             .frame(
                 maxWidth: .infinity,

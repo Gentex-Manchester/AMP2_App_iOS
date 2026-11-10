@@ -15,19 +15,19 @@ struct AppSettingsView: View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(spacing: 16) {
-                    SettingRow(title: "Appearance") {
+                    SettingRow(title: String(localized: "Appearance")) {
                         AppearanceSettingsView()
                     }
 
                     SettingRow(
-                        title: "Orientation"
+                        title: String(localized: "Orientation")
                     ) {
                         OrientationSettingsView()
                     }
             
                     if (developerOptions) {
                         SettingRow(
-                            title: "Developer Options"
+                            title: String(localized: "Developer Options")
                         ) {
                             PacketConsoleView()
                         }
@@ -63,7 +63,7 @@ struct AppSettingsView: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .padding(.top, 20)
         .padding(.horizontal, 10)
-        .navigationTitle("Settings")
+        .navigationTitle("App Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -79,7 +79,7 @@ private var appVersion: String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
 
-        return "App Version: \(version) (\(build))"
+        return String(localized: "App Version: \(version) (\(build))")
     }
 
 #Preview {

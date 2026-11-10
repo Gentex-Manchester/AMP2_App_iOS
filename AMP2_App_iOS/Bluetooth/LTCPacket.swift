@@ -3,7 +3,6 @@
 //  AMP2_App_iOS
 //
 //  Encodes LTC configuration commands for the AMP 2.0 headset.
-//  Wire format: Gentex's "LTC Configuration Commands (BLE)" document (July 27, 2026)
 //
 //  Not the Android format. Android frames each packet for SPP (`FF 03 01 <len>`
 //  header, XOR checksum); over BLE GATT the headset wants the bare packet.
@@ -36,14 +35,14 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
     /// On-screen label, matching the Headset screen. Names the setting in failure messages.
     var displayName: String {
         switch self {
-        case .team:              return "Team"
-        case .securityKey:       return "Security Key"
-        case .customSecurityKey: return "Custom Security Key"
-        case .ltcMode:           return "LTC Mode"
-        case .vadThreshold:      return "VAD Threshold"
-        case .txPower:           return "LTC Power"
-        case .ltcVolume:         return "LTC Volume"
-        case .zone:              return "Region"
+        case .team:              return String(localized: "Team")
+        case .securityKey:       return String(localized: "Security Key")
+        case .customSecurityKey: return String(localized: "Custom Security Key")
+        case .ltcMode:           return String(localized: "LTC Mode")
+        case .vadThreshold:      return String(localized: "VAD Threshold")
+        case .txPower:           return String(localized: "LTC Power")
+        case .ltcVolume:         return String(localized: "LTC Volume")
+        case .zone:              return String(localized: "Region")
         }
     }
 }

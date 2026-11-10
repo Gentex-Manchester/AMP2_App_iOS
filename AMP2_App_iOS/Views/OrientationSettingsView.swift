@@ -19,9 +19,9 @@ struct OrientationSettingsView: View {
                     orientationMode = selection
                 },
                 label: { option in
-                    option.rawValue
+                    option.displayName
                 },
-                description: "Choose the way you’d prefer to view the user interface."
+                description: String(localized: "Choose the way you’d prefer to view the user interface.")
             )
             .frame(
                 maxWidth: .infinity,

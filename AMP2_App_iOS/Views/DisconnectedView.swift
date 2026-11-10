@@ -129,8 +129,8 @@ struct DisconnectedView: View {
     }
 
     private var buttonTitle: String {
-        if radioFault != nil { return "Bluetooth unavailable" }
-        return "Connect over Bluetooth"
+        if radioFault != nil { return String(localized: "Bluetooth unavailable") }
+        return String(localized: "Connect over Bluetooth")
     }
 }
 

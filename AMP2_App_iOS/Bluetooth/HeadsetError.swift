@@ -26,59 +26,59 @@ enum HeadsetError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .bluetoothUnauthorized:
-            return "Bluetooth access is not allowed."
+            return String(localized: "Bluetooth access is not allowed.")
         case .bluetoothPoweredOff:
-            return "Bluetooth is turned off."
+            return String(localized: "Bluetooth is turned off.")
         case .bluetoothUnsupported:
-            return "This device does not support Bluetooth LE."
+            return String(localized: "This device does not support Bluetooth LE.")
         case .noHeadsetFound:
-            return "No AMP 2.0 headset was found."
+            return String(localized: "No AMP 2.0 headset was found.")
         case .connectionFailed(let detail):
-            return "Could not connect to the headset: \(detail)"
+            return String(localized: "Could not connect to the headset: \(detail)")
         case .disconnected(let detail):
-            return "The headset disconnected: \(detail)"
+            return String(localized: "The headset disconnected: \(detail)")
         case .serviceNotFound:
-            return "The headset did not report the expected Bluetooth service."
+            return String(localized: "The headset did not report the expected Bluetooth service.")
         case .characteristicsNotFound:
-            return "The headset's Bluetooth service is missing its command channels."
+            return String(localized: "The headset's Bluetooth service is missing its command channels.")
         case .notConnected:
-            return "No headset is connected."
+            return String(localized: "No headset is connected.")
         case .writeFailed(let detail):
-            return "Could not send the command to the headset: \(detail)"
+            return String(localized: "Could not send the command to the headset: \(detail)")
         case .partNumberTimeout:
-            return "The headset did not report its model."
+            return String(localized: "The headset did not report its model.")
         case .partNumberRequestInFlight:
-            return "The headset's model is already being requested."
+            return String(localized: "The headset's model is already being requested.")
         case .firmwareVersionTimeout:
-            return "The headset did not report its firmware version."
+            return String(localized: "The headset did not report its firmware version.")
         case .firmwareVersionRequestInFlight:
-            return "The headset's firmware version is already being requested."
+            return String(localized: "The headset's firmware version is already being requested.")
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .bluetoothUnauthorized:
-            return "Enable Bluetooth for this app in Settings ▸ Privacy & Security ▸ Bluetooth."
+            return String(localized: "Enable Bluetooth for this app in Settings ▸ Privacy & Security ▸ Bluetooth.")
         case .bluetoothPoweredOff:
-            return "Turn on Bluetooth in Settings or Control Center."
+            return String(localized: "Turn on Bluetooth in Settings or Control Center.")
         case .bluetoothUnsupported:
             return nil
         case .noHeadsetFound, .serviceNotFound:
             // No BLE service until the headset is Connected over Bluetooth
             // Classic, which only the user can do, from the Settings app.
-            return "Pair the headset in Settings ▸ Bluetooth first, then return to this app."
+            return String(localized: "Pair the headset in Settings ▸ Bluetooth first, then return to this app.")
         case .characteristicsNotFound:
-            return "Disconnect and reconnect the headset. If this continues, the headset may need a firmware update."
+            return String(localized: "Disconnect and reconnect the headset. If this continues, the headset may need a firmware update.")
         case .connectionFailed, .disconnected:
-            return "Make sure the headset is powered on and within range, then try again."
+            return String(localized: "Make sure the headset is powered on and within range, then try again.")
         case .notConnected:
-            return "Connect a headset before changing its settings."
+            return String(localized: "Connect a headset before changing its settings.")
         case .writeFailed:
-            return "Check that the headset is still connected, then try again."
+            return String(localized: "Check that the headset is still connected, then try again.")
         case .partNumberTimeout, .partNumberRequestInFlight,
                 .firmwareVersionTimeout, .firmwareVersionRequestInFlight:
-            return "Disconnect and reconnect the headset, then try again."
+            return String(localized: "Disconnect and reconnect the headset, then try again.")
         }
     }
 }

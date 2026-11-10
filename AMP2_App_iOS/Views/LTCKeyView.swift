@@ -30,7 +30,7 @@ struct LTCKeyView: View {
                 label: { option in
                     option.rawValue
                 },
-                description: "Determines how LTC communications are encrypted."
+                description: String(localized: "Determines how LTC communications are encrypted.")
             )
             .frame(
                 maxWidth: .infinity,

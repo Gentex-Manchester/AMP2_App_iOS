@@ -26,8 +26,8 @@ struct SelectionSlider: View {
         onSelection: @escaping (Double) -> Void,
         label: @escaping (Double) -> String,
         description: String? = nil,
-        lowLabel: String = "Low",
-        highLabel: String = "High"
+        lowLabel: String = String(localized: "Low"),
+        highLabel: String = String(localized: "High")
     ) {
         self.level = level
         self.range = range

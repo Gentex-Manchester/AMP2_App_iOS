@@ -33,9 +33,9 @@ struct VADThresholdView: View {
                 label: { selection in
                     settings.settings.vadThreshold.map(String.init) ?? "—"
                 },
-                description: "Determines the sensitivity of the microphone when VAD mode is enabled.",
-                lowLabel: "Low",
-                highLabel: "High"
+                description: String(localized: "Determines the sensitivity of the microphone when VAD mode is enabled."),
+                lowLabel: String(localized: "Low"),
+                highLabel: String(localized: "High")
             )
             .frame(
                 maxWidth: .infinity,

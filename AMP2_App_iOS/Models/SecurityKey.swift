@@ -17,17 +17,17 @@ enum SecurityKey: CaseIterable, Codable, Sendable {
 
     var rawValue: String {
         switch self {
-        case .MIKE:     return "Mike"
-        case .NOVEMBER: return "November"
-        case .OSCAR:    return "Oscar"
-        case .PAPA:     return "Papa"
-        case .QUEBEC:   return "Quebec"
-        case .ROMEO:    return "Romeo"
-        case .SIERRA:   return "Sierra"
-        case .TANGO:    return "Tango"
-        case .UNIFORM:  return "Uniform"
-        case .VICTOR:   return "Victor"
-        case .CUSTOM:   return "Custom"
+        case .MIKE:     return String(localized: "Mike")
+        case .NOVEMBER: return String(localized: "November")
+        case .OSCAR:    return String(localized: "Oscar")
+        case .PAPA:     return String(localized: "Papa")
+        case .QUEBEC:   return String(localized: "Quebec")
+        case .ROMEO:    return String(localized: "Romeo")
+        case .SIERRA:   return String(localized: "Sierra")
+        case .TANGO:    return String(localized: "Tango")
+        case .UNIFORM:  return String(localized: "Uniform")
+        case .VICTOR:   return String(localized: "Victor")
+        case .CUSTOM:   return String(localized: "Custom")
         }
     }
 

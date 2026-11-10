@@ -455,25 +455,5 @@ struct WriteFailure: Equatable, Sendable {
     let reason: Reason
     /// Value now on screen; `nil` if the headset never reported one.
     let revertedTo: String?
-
-    var message: String {
-        let name = setting.displayName
-        switch reason {
-        case .rejected:
-            return "The headset rejected \(name)."
-        case .notApplied:
-            return "The headset accepted \(name) but didn't apply it."
-        case .noResponse:
-            return "The headset didn't respond when changing \(name)."
-        case .couldNotSend:
-            return "\(name) couldn't be sent to the headset."
-        case .unreadableReply:
-            return "The headset sent an unrecognized reply when changing \(name)."
-        }
-    }
-
-    var revertedNotice: String? {
-        revertedTo.map { "It's still set to \($0)." }
-    }
 }
 

@@ -8,9 +8,20 @@
 import SwiftUI
 
 enum OrientationMode: String, CaseIterable, Codable {
-    case system = "System"
-    case portrait = "Portrait"
-    case landscape = "Landscape"
+    case system
+    case portrait
+    case landscape
+    
+    var displayName: String {
+        switch self {
+        case .system:
+            String(localized: "System")
+        case .portrait:
+            String(localized: "Portrait")
+        case .landscape:
+            String(localized: "Landscape")
+        }
+    }
     
     var supportedOrientations: UIInterfaceOrientationMask {
         switch self {

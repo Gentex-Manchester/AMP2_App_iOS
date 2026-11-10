@@ -19,9 +19,9 @@ struct AppearanceSettingsView: View {
                     appearanceMode = selection
                 },
                 label: { option in
-                    option.rawValue
+                    option.displayName
                 },
-                description: "Choose the colors you’d prefer the user interface use."
+                description: String(localized: "Choose the colors you’d prefer the user interface use.")
             )
             .frame(
                 maxWidth: .infinity,

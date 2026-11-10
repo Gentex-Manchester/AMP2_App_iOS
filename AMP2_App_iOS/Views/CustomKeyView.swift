@@ -48,7 +48,7 @@ struct CustomKeyView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
                 PrimaryButton(
-                    label: "Set",
+                    label: String(localized: "Set"),
                     enabled: password.isEmpty == false && session.state.isConnected,
                     action: {
                         guard !password.isEmpty else { return }

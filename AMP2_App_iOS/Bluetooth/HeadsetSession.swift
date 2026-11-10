@@ -273,7 +273,7 @@ final class HeadsetSession: NSObject {
 
         guard let target = headset.peripheral else {
             // Preview/test instance only.
-            state = .failed(.connectionFailed(detail: "This headset is not backed by a real device."))
+            state = .failed(.connectionFailed(detail: String(localized: "This headset is not backed by a real device.")))
             return
         }
 
@@ -297,7 +297,7 @@ final class HeadsetSession: NSObject {
         guard case .connecting = state, peripheral === target else { return }
 
         centralManager.cancelPeripheralConnection(target)
-        state = .failed(.connectionFailed(detail: "The headset did not answer in time."))
+        state = .failed(.connectionFailed(detail: String(localized: "The headset did not answer in time.")))
         resetConnectionState()
         scheduleRediscovery()
     }
@@ -520,7 +520,7 @@ extension HeadsetSession: CBCentralManagerDelegate {
         error: Error?
     ) {
         MainActor.assumeIsolated {
-            state = .failed(.connectionFailed(detail: error?.localizedDescription ?? "Unknown error."))
+            state = .failed(.connectionFailed(detail: error?.localizedDescription ?? String(localized: "Unknown error.")))
             resetConnectionState()
             scheduleRediscovery()
         }

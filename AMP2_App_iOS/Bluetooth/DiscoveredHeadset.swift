@@ -86,7 +86,7 @@ struct DiscoveredHeadset: Identifiable, Equatable {
 extension DiscoveredHeadset {
     init(peripheral: CBPeripheral, source: Source) {
         self.id = peripheral.identifier
-        self.name = peripheral.name ?? "Unnamed device"
+        self.name = peripheral.name ?? String(localized: "Unnamed device")
         self.source = source
         self.peripheral = peripheral
     }

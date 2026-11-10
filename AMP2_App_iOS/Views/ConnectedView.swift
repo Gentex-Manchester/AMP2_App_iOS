@@ -69,6 +69,7 @@ struct ConnectedView: View {
 
     // MARK: - Header
 
+    // TODO: Adjust content based on current headset PN
     private var headerSection: some View {
         VStack(spacing: 0) {
             Image("headset_tan")
@@ -127,22 +128,22 @@ struct ConnectedView: View {
                 }
             }
             
-            SettingRow(title: "LTC Team") {
+            SettingRow(title: String(localized: "LTC Team")) {
                 TeamsView()
             }
-            SettingRow(title: "LTC Key") {
+            SettingRow(title: String(localized: "LTC Key")) {
                 LTCKeyView()
             }
-            SettingRow(title: "LTC Volume") {
+            SettingRow(title: String(localized: "LTC Volume")) {
                 LTCVolumeView()
             }
-            SettingRow(title: "LTC Power") {
+            SettingRow(title: String(localized: "LTC Power")) {
                 TxPowerView()
             }
 
             // Hidden on region-locked headsets, which reject zone changes.
             if session.regionLock == nil {
-                SettingRow(title: "LTC Zone") {
+                SettingRow(title: String(localized: "LTC Zone")) {
                     RegionsView()
                 }
             }
