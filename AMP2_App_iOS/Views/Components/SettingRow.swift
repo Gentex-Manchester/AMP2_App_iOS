@@ -25,7 +25,7 @@ struct SettingRow<Destination: View>: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
             }
             .foregroundColor(Color("OnSurface"))
             .padding(.vertical, 16)
