@@ -36,7 +36,7 @@ enum LTCSetting: UInt8, CaseIterable, Sendable {
     /// On-screen label, matching the Headset screen. Names the setting in failure messages.
     var displayName: String {
         switch self {
-        case .team:    return "Team"
+        case .team:              return "Team"
         case .securityKey:       return "Security Key"
         case .customSecurityKey: return "Custom Security Key"
         case .ltcMode:           return "LTC Mode"
@@ -73,6 +73,16 @@ enum LTCPacket {
 
     // MARK: - Headset Identity
 
-    /// Part-number query. Separate command family (`0x0c`) with fixed trailing bytes.
-    static let identityQuery = Data([0x00, 0x1d, 0x40, 0x0c, 0x00, 0x00, 0x00, 0x2f])
+    /// Part number query. Separate command family (`0x0c`) with fixed trailing bytes.
+    /// Response will be a set of bytes to translate into ASCII.
+    static let partNumberQuery = Data([0x00, 0x1d, 0x40, 0x0c, 0x00, 0x00, 0x00, 0x2f])
+    
+    /// Firmware version query.
+    /// Response will be a set of bytes to translate into ASCII.
+    static let firmwareVersionQuery = Data([0x00, 0x1d, 0x40, 0x01])
+    
+    /// LTC version query. Only returns a valid value when LTC is enabled.
+    /// Response will be a set of four bytes, representing the version 01.02.03.04.
+    /// HeadsetSession is currently not capable of supporting this query, so it remains unused.
+    static let ltcVersionQuery = Data([0x00, 0x1d, 0x40, 0x2c, 0x00, 0x0d, 0x04])
 }

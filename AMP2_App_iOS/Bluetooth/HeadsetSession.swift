@@ -49,10 +49,13 @@ final class HeadsetSession: NSObject {
     private(set) var isDiscovering = false
 
     /// Part number, requested once GATT resolves. `nil` until it answers.
-    private(set) var identity: HeadsetIdentity?
+    private(set) var partNumber: PartNumber?
 
     /// Non-nil means hide the region selector; the headset rejects zone changes.
-    var regionLock: HeadsetIdentity.RegionLock? { identity?.regionLock }
+    var regionLock: PartNumber.RegionLock? { partNumber?.regionLock }
+    
+    /// Firmware version, requested once GATT resolves. `nil` until it answers.
+    private(set) var firmwareVersion: FirmwareVersion?
 
     /// Bounded, newest-last. Cleared on each new connection.
     private(set) var packetLog: [HeadsetPacketLogEntry] = []
@@ -79,8 +82,10 @@ final class HeadsetSession: NSObject {
     private var scanTimeoutTask: Task<Void, Never>?
     private var connectTimeoutTask: Task<Void, Never>?
     private var rediscoveryTask: Task<Void, Never>?
-    private var identityContinuation: CheckedContinuation<HeadsetIdentity, Error>?
-    private var identityTimeoutTask: Task<Void, Never>?
+    private var partNumberContinuation: CheckedContinuation<PartNumber, Error>?
+    private var partNumberTimeoutTask: Task<Void, Never>?
+    private var firmwareVersionContinuation: CheckedContinuation<FirmwareVersion, Error>?
+    private var firmwareVersionTimeoutTask: Task<Void, Never>?
 
     /// Discovery requested before power-on; replayed once Bluetooth is ready.
     private var discoveryPending = false
@@ -314,30 +319,58 @@ final class HeadsetSession: NSObject {
     /// Matched by header (`00 1d 41 0c`, unused by config responses). One request
     /// at a time; cached after the first success.
     @discardableResult
-    func requestIdentity(timeout: Duration = .seconds(5)) async throws -> HeadsetIdentity {
-        if let identity { return identity }
+    func requestPartNumber(timeout: Duration = .seconds(5)) async throws -> PartNumber {
+        if let partNumber { return partNumber }
         guard state.isConnected else { throw HeadsetError.notConnected }
-        guard identityContinuation == nil else { throw HeadsetError.identityRequestInFlight }
+        guard partNumberContinuation == nil else { throw HeadsetError.partNumberRequestInFlight }
 
-        try send(LTCPacket.identityQuery)
+        try send(LTCPacket.partNumberQuery)
 
         // No suspension before storing the continuation, so the reply can't beat it.
         return try await withCheckedThrowingContinuation { continuation in
-            identityContinuation = continuation
-            identityTimeoutTask = Task { [weak self] in
+            partNumberContinuation = continuation
+            partNumberTimeoutTask = Task { [weak self] in
                 try? await Task.sleep(for: timeout)
                 guard !Task.isCancelled else { return }
-                self?.completeIdentityRequest(.failure(HeadsetError.identityTimedOut))
+                self?.completePartNumberRequest(.failure(HeadsetError.partNumberTimeout))
             }
         }
     }
 
-    private func completeIdentityRequest(_ result: Result<HeadsetIdentity, Error>) {
-        identityTimeoutTask?.cancel()
-        identityTimeoutTask = nil
-        guard let continuation = identityContinuation else { return }
-        identityContinuation = nil
-        if case .success(let identity) = result { self.identity = identity }
+    private func completePartNumberRequest(_ result: Result<PartNumber, Error>) {
+        partNumberTimeoutTask?.cancel()
+        partNumberTimeoutTask = nil
+        guard let continuation = partNumberContinuation else { return }
+        partNumberContinuation = nil
+        if case .success(let identity) = result { self.partNumber = identity }
+        continuation.resume(with: result)
+    }
+    
+    @discardableResult
+    func requestFirmwareVersion(timeout: Duration = .seconds(5)) async throws -> FirmwareVersion {
+        if let firmwareVersion { return firmwareVersion }
+        guard state.isConnected else { throw HeadsetError.notConnected }
+        guard firmwareVersionContinuation == nil else { throw HeadsetError.firmwareVersionRequestInFlight }
+
+        try send(LTCPacket.firmwareVersionQuery)
+
+        // No suspension before storing the continuation, so the reply can't beat it.
+        return try await withCheckedThrowingContinuation { continuation in
+            firmwareVersionContinuation = continuation
+            firmwareVersionTimeoutTask = Task { [weak self] in
+                try? await Task.sleep(for: timeout)
+                guard !Task.isCancelled else {return}
+                self?.completeFirmwareVersionRequest(.failure(HeadsetError.firmwareVersionTimeout))
+            }
+        }
+    }
+
+    private func completeFirmwareVersionRequest(_ result: Result<FirmwareVersion, Error>) {
+        firmwareVersionTimeoutTask?.cancel()
+        firmwareVersionTimeoutTask = nil
+        guard let continuation = firmwareVersionContinuation else { return }
+        firmwareVersionContinuation = nil
+        if case .success(let identity) = result { self.firmwareVersion = identity }
         continuation.resume(with: result)
     }
 
@@ -381,12 +414,14 @@ final class HeadsetSession: NSObject {
         cancelConnectTimeout()
 
         // Don't leave an identity caller suspended.
-        completeIdentityRequest(.failure(HeadsetError.notConnected))
+        completePartNumberRequest(.failure(HeadsetError.notConnected))
+        completeFirmwareVersionRequest(.failure(HeadsetError.notConnected))
 
         peripheral = nil
         writeCharacteristic = nil
         notifyCharacteristic = nil
-        identity = nil
+        partNumber = nil
+        firmwareVersion = nil
 
         // Stale candidates would look like "user is choosing" and block rediscovery.
         discoveredHeadsets.removeAll()
@@ -557,8 +592,9 @@ extension HeadsetSession: CBPeripheralDelegate {
             // GAIA confirmed; remember it only now.
             rememberedIdentifier = savedHeadset?.id
 
-            // Non-fatal: on failure the region selector stays visible, the safe default.
-            Task { [weak self] in try? await self?.requestIdentity() }
+            // Request part number and firmware version on connection
+            Task { [weak self] in try? await self?.requestPartNumber() }
+            Task { [weak self] in try? await self?.requestFirmwareVersion() }
         }
     }
 
@@ -574,8 +610,12 @@ extension HeadsetSession: CBPeripheralDelegate {
             appendToLog(direction: .received, bytes: data)
 
             // Identity replies go to their waiting request, not the packet handler.
-            if data.starts(with: HeadsetIdentity.responseHeader) {
-                completeIdentityRequest(Result { try HeadsetIdentity.parse(data) })
+            if data.starts(with: PartNumber.responseHeader) {
+                completePartNumberRequest(Result { try PartNumber.parse(data) })
+                return
+            }
+            else if data.starts(with: FirmwareVersion.responseHeader) {
+                completeFirmwareVersionRequest(Result { try FirmwareVersion.parse(data) })
                 return
             }
 

@@ -18,8 +18,10 @@ enum HeadsetError: LocalizedError, Equatable {
     case characteristicsNotFound
     case notConnected
     case writeFailed(detail: String)
-    case identityTimedOut
-    case identityRequestInFlight
+    case partNumberTimeout
+    case partNumberRequestInFlight
+    case firmwareVersionTimeout
+    case firmwareVersionRequestInFlight
 
     var errorDescription: String? {
         switch self {
@@ -43,10 +45,14 @@ enum HeadsetError: LocalizedError, Equatable {
             return "No headset is connected."
         case .writeFailed(let detail):
             return "Could not send the command to the headset: \(detail)"
-        case .identityTimedOut:
+        case .partNumberTimeout:
             return "The headset did not report its model."
-        case .identityRequestInFlight:
+        case .partNumberRequestInFlight:
             return "The headset's model is already being requested."
+        case .firmwareVersionTimeout:
+            return "The headset did not report its firmware version."
+        case .firmwareVersionRequestInFlight:
+            return "The headset's firmware version is already being requested."
         }
     }
 
@@ -70,7 +76,8 @@ enum HeadsetError: LocalizedError, Equatable {
             return "Connect a headset before changing its settings."
         case .writeFailed:
             return "Check that the headset is still connected, then try again."
-        case .identityTimedOut, .identityRequestInFlight:
+        case .partNumberTimeout, .partNumberRequestInFlight,
+                .firmwareVersionTimeout, .firmwareVersionRequestInFlight:
             return "Disconnect and reconnect the headset, then try again."
         }
     }

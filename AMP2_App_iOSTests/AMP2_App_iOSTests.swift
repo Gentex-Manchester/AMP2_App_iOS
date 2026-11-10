@@ -140,7 +140,7 @@ struct LTCProtocolTests {
 
     @Test("Identity query matches the documented example")
     func identityQueryMatchesDoc() {
-        #expect(LTCPacket.identityQuery == Data([0x00, 0x1d, 0x40, 0x0c, 0x00, 0x00, 0x00, 0x2f]))
+        #expect(LTCPacket.partNumberQuery == Data([0x00, 0x1d, 0x40, 0x0c, 0x00, 0x00, 0x00, 0x2f]))
     }
 
     @Test("Multi-byte writes set the length byte from the payload")
@@ -212,7 +212,7 @@ struct LTCProtocolTests {
             0x31, 0x32, 0x30, 0x31, 0x2d, 0x31, 0x32, 0x30,
             0x31, 0x00
         ])
-        let identity = try HeadsetIdentity.parse(raw)
+        let identity = try PartNumber.parse(raw)
         #expect(identity.partNumber == "1004257-1201-1201")
         // Kit digit 2 (from 12011201): unlocked.
         #expect(identity.regionLock == nil)
@@ -220,20 +220,20 @@ struct LTCProtocolTests {
 
     @Test("Kit digit drives the region lock")
     func regionLockFromKitDigit() {
-        #expect(HeadsetIdentity(partNumber: "1004257-1201-1001").regionLock == .northAmerica)
-        #expect(HeadsetIdentity(partNumber: "1004257-1201-1301").regionLock == .europe)
-        #expect(HeadsetIdentity(partNumber: "1004257-1201-1101").regionLock == nil)
-        #expect(HeadsetIdentity(partNumber: "1004257-1201-1201").regionLock == nil)
+        #expect(PartNumber(partNumber: "1004257-1201-1001").regionLock == .northAmerica)
+        #expect(PartNumber(partNumber: "1004257-1201-1301").regionLock == .europe)
+        #expect(PartNumber(partNumber: "1004257-1201-1101").regionLock == nil)
+        #expect(PartNumber(partNumber: "1004257-1201-1201").regionLock == nil)
     }
 
     @Test("Malformed identity responses are rejected")
     func malformedIdentityRejected() {
         #expect(throws: LTCProtocolError.self) {
-            _ = try HeadsetIdentity.parse(Data([0x00, 0x1d, 0x41, 0x2c, 0x00]))
+            _ = try PartNumber.parse(Data([0x00, 0x1d, 0x41, 0x2c, 0x00]))
         }
         // Header, no part number.
         #expect(throws: LTCProtocolError.self) {
-            _ = try HeadsetIdentity.parse(Data([0x00, 0x1d, 0x41, 0x0c, 0x00, 0x00, 0x00, 0x2f, 0x00]))
+            _ = try PartNumber.parse(Data([0x00, 0x1d, 0x41, 0x0c, 0x00, 0x00, 0x00, 0x2f, 0x00]))
         }
     }
 

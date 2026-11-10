@@ -52,9 +52,12 @@ struct PacketConsoleView: View {
                 row("Headset", headset.name)
                 row("Found via", headset.source == .systemConnected ? "system connection" : "scan")
             }
-            if let identity = session.identity {
-                row("Part number", identity.partNumber)
-                row("Region lock", regionLockText(identity.regionLock))
+            if let partNumber = session.partNumber {
+                row("Part number", partNumber.partNumber)
+                row("Region lock", regionLockText(partNumber.regionLock))
+            }
+            if let firmwareVersion = session.firmwareVersion {
+                row("Firmware version", firmwareVersion.versionNumber)
             }
             if let lastError {
                 Text(lastError)
@@ -84,7 +87,7 @@ struct PacketConsoleView: View {
         }
     }
 
-    private func regionLockText(_ lock: HeadsetIdentity.RegionLock?) -> String {
+    private func regionLockText(_ lock: PartNumber.RegionLock?) -> String {
         switch lock {
         case .northAmerica: return "North America (selector hidden)"
         case .europe: return "Europe (selector hidden)"
@@ -165,13 +168,26 @@ struct PacketConsoleView: View {
     // MARK: - Identity
 
     private var identitySection: some View {
-        consoleButton("Query part number") {
-            Task {
-                do {
-                    _ = try await session.requestIdentity()
-                    lastError = nil
-                } catch {
-                    lastError = error.localizedDescription
+        VStack {
+            consoleButton("Query part number") {
+                Task {
+                    do {
+                        _ = try await session.requestPartNumber()
+                        lastError = nil
+                    } catch {
+                        lastError = error.localizedDescription
+                    }
+                }
+            }
+            
+            consoleButton("Query firmware version") {
+                Task {
+                    do {
+                        _ = try await session.requestFirmwareVersion()
+                        lastError = nil
+                    } catch {
+                        lastError = error.localizedDescription
+                    }
                 }
             }
         }

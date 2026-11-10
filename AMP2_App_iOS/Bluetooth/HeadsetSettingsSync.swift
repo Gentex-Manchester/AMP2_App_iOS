@@ -4,155 +4,9 @@
 //
 //  Caches the headset's nine LTC settings and applies user changes.
 //
-//  Mirrors Android's `HeadsetManager`. The timings and queueing exist because
-//  the headset drops fast commands and reports stale values right after a write.
-//  They were tuned for SPP, so treat them as a BLE starting point.
-//  Transport lives in HeadsetSession; see requirements/ble-parity-plan.md 0.4.
-//
 
 import Foundation
 import Observation
-
-// MARK: - Cached State
-
-/// Last-reported headset config. `nil` means "not read yet", never "off" or zero.
-struct HeadsetSettingsState: Equatable, Sendable {
-    var team: Team?
-    var securityKey: SecurityKey?
-    var customSecurityKey: [UInt8]?
-    var ltcMode: LTCMode?
-    var vadThreshold: Int?
-    var txPower: TxPower?
-    var ltcVolume: Int?
-    var zone: Region?
-
-    /// Raw bytes the app doesn't recognize (e.g. LTC mode `0x04`), so an unknown
-    /// value doesn't look like "not read yet".
-    var unrecognized: [LTCSetting: [UInt8]] = [:]
-
-    var isComplete: Bool {
-        team != nil && securityKey != nil && ltcMode != nil && vadThreshold != nil
-            && txPower != nil && ltcVolume != nil && zone != nil
-    }
-
-    // MARK: Decoding
-
-    /// Shared by poll responses and the optimistic overlay so both decode bytes the same way.
-    mutating func apply(_ bytes: [UInt8], to setting: LTCSetting) {
-        var recognized = true
-
-        switch setting {
-        case .team:
-            team = Team(rawValue: bytes[0])
-            recognized = team != nil
-        case .securityKey:
-            securityKey = SecurityKey(ltcByte: bytes[0])
-            recognized = securityKey != nil
-        case .ltcMode:
-            ltcMode = LTCMode(rawValue: bytes[0])
-            recognized = ltcMode != nil
-        case .vadThreshold:
-            vadThreshold = LTCLevel.level(forByte: bytes[0])
-            recognized = vadThreshold != nil
-        case .txPower:
-            txPower = TxPower(rawValue: bytes[0])
-            recognized = txPower != nil
-        case .ltcVolume:
-            ltcVolume = LTCLevel.level(forByte: bytes[0])
-            recognized = ltcVolume != nil
-        case .zone:
-            zone = Region(ltcByte: bytes[0])
-            recognized = zone != nil
-        case .customSecurityKey:
-            customSecurityKey = bytes
-            recognized = true
-        }
-
-        if recognized {
-            unrecognized[setting] = nil
-        } else {
-            unrecognized[setting] = bytes
-        }
-    }
-
-    /// UI-formatted value, or `nil` if not read yet.
-    func displayValue(for setting: LTCSetting) -> String? {
-        switch setting {
-        case .team:              return team?.displayName
-        case .securityKey:       return securityKey?.rawValue.capitalized
-        case .ltcMode:           return ltcMode?.displayName
-        case .vadThreshold:      return vadThreshold.map(String.init)
-        case .txPower:           return txPower?.displayName
-        case .ltcVolume:         return ltcVolume.map(String.init)
-        case .zone:              return zone?.displayName
-        case .customSecurityKey: return customSecurityKey?.description
-        }
-    }
-}
-
-// MARK: - Write Failure
-
-/// A change the headset refused or failed to apply.
-struct WriteFailure: Equatable, Sendable {
-
-    /// A case, not a string, so tests assert on behavior rather than copy.
-    enum Reason: Equatable, Sendable {
-        /// Error status in reply to the write.
-        case rejected
-        /// ACKed, then read back as something else. See docs/ble-protocol.md §7.
-        case notApplied
-        /// No reply within `responseTimeout`.
-        case noResponse
-        case couldNotSend
-        case unreadableReply
-    }
-
-    let setting: LTCSetting
-    let reason: Reason
-    /// Value now on screen; `nil` if the headset never reported one.
-    let revertedTo: String?
-
-    var message: String {
-        let name = setting.displayName
-        switch reason {
-        case .rejected:
-            return "The headset rejected \(name)."
-        case .notApplied:
-            return "The headset accepted \(name) but didn't apply it."
-        case .noResponse:
-            return "The headset didn't respond when changing \(name)."
-        case .couldNotSend:
-            return "\(name) couldn't be sent to the headset."
-        case .unreadableReply:
-            return "The headset sent an unrecognized reply when changing \(name)."
-        }
-    }
-
-    var revertedNotice: String? {
-        revertedTo.map { "It's still set to \($0)." }
-    }
-}
-
-// MARK: - Queue Work
-
-private enum HeadsetTask: Equatable {
-    /// Heartbeat read. Droppable.
-    case poll(LTCSetting)
-    /// User write. Preempts polls, never dropped.
-    case write(LTCSetting, value: [UInt8])
-
-    var setting: LTCSetting {
-        switch self {
-        case .poll(let setting): return setting
-        case .write(let setting, _): return setting
-        }
-    }
-
-    var isWrite: Bool {
-        if case .write = self { return true }
-        return false
-    }
-}
 
 // MARK: - Settings Sync
 
@@ -160,9 +14,6 @@ private enum HeadsetTask: Equatable {
 final class HeadsetSettingsSync {
 
     // MARK: Timings
-    //
-    // From Android's `protocol/Packet.kt` and `HeadsetManager`. The hardware
-    // misbehaves without them; don't shorten them to speed up tests.
 
     /// Keeps the headset's buffer from overrunning.
     static let interPacketDelay: Duration = .milliseconds(200)
@@ -490,3 +341,139 @@ final class HeadsetSettingsSync {
         confirmed = HeadsetSettingsState()
     }
 }
+
+/// Last-reported headset config. `nil` means "not read yet", never "off" or zero.
+struct HeadsetSettingsState: Equatable, Sendable {
+    var team: Team?
+    var securityKey: SecurityKey?
+    var customSecurityKey: [UInt8]?
+    var ltcMode: LTCMode?
+    var vadThreshold: Int?
+    var txPower: TxPower?
+    var ltcVolume: Int?
+    var zone: Region?
+
+    /// Raw bytes the app doesn't recognize (e.g. LTC mode `0x04`), so an unknown
+    /// value doesn't look like "not read yet".
+    var unrecognized: [LTCSetting: [UInt8]] = [:]
+
+    var isComplete: Bool {
+        team != nil && securityKey != nil && ltcMode != nil && vadThreshold != nil
+            && txPower != nil && ltcVolume != nil && zone != nil
+    }
+
+    // MARK: Decoding
+
+    /// Shared by poll responses and the optimistic overlay so both decode bytes the same way.
+    mutating func apply(_ bytes: [UInt8], to setting: LTCSetting) {
+        var recognized = true
+
+        switch setting {
+        case .team:
+            team = Team(rawValue: bytes[0])
+            recognized = team != nil
+        case .securityKey:
+            securityKey = SecurityKey(ltcByte: bytes[0])
+            recognized = securityKey != nil
+        case .ltcMode:
+            ltcMode = LTCMode(rawValue: bytes[0])
+            recognized = ltcMode != nil
+        case .vadThreshold:
+            vadThreshold = LTCLevel.level(forByte: bytes[0])
+            recognized = vadThreshold != nil
+        case .txPower:
+            txPower = TxPower(rawValue: bytes[0])
+            recognized = txPower != nil
+        case .ltcVolume:
+            ltcVolume = LTCLevel.level(forByte: bytes[0])
+            recognized = ltcVolume != nil
+        case .zone:
+            zone = Region(ltcByte: bytes[0])
+            recognized = zone != nil
+        case .customSecurityKey:
+            customSecurityKey = bytes
+            recognized = true
+        }
+
+        if recognized {
+            unrecognized[setting] = nil
+        } else {
+            unrecognized[setting] = bytes
+        }
+    }
+
+    /// UI-formatted value, or `nil` if not read yet.
+    func displayValue(for setting: LTCSetting) -> String? {
+        switch setting {
+        case .team:              return team?.displayName
+        case .securityKey:       return securityKey?.rawValue.capitalized
+        case .ltcMode:           return ltcMode?.displayName
+        case .vadThreshold:      return vadThreshold.map(String.init)
+        case .txPower:           return txPower?.displayName
+        case .ltcVolume:         return ltcVolume.map(String.init)
+        case .zone:              return zone?.displayName
+        case .customSecurityKey: return customSecurityKey?.description
+        }
+    }
+}
+
+enum HeadsetTask: Equatable {
+    /// Heartbeat read. Droppable.
+    case poll(LTCSetting)
+    /// User write. Preempts polls, never dropped.
+    case write(LTCSetting, value: [UInt8])
+
+    var setting: LTCSetting {
+        switch self {
+        case .poll(let setting): return setting
+        case .write(let setting, _): return setting
+        }
+    }
+
+    var isWrite: Bool {
+        if case .write = self { return true }
+        return false
+    }
+}
+
+/// A change the headset refused or failed to apply.
+struct WriteFailure: Equatable, Sendable {
+
+    /// A case, not a string, so tests assert on behavior rather than copy.
+    enum Reason: Equatable, Sendable {
+        /// Error status in reply to the write.
+        case rejected
+        /// ACKed, then read back as something else. See docs/ble-protocol.md §7.
+        case notApplied
+        /// No reply within `responseTimeout`.
+        case noResponse
+        case couldNotSend
+        case unreadableReply
+    }
+
+    let setting: LTCSetting
+    let reason: Reason
+    /// Value now on screen; `nil` if the headset never reported one.
+    let revertedTo: String?
+
+    var message: String {
+        let name = setting.displayName
+        switch reason {
+        case .rejected:
+            return "The headset rejected \(name)."
+        case .notApplied:
+            return "The headset accepted \(name) but didn't apply it."
+        case .noResponse:
+            return "The headset didn't respond when changing \(name)."
+        case .couldNotSend:
+            return "\(name) couldn't be sent to the headset."
+        case .unreadableReply:
+            return "The headset sent an unrecognized reply when changing \(name)."
+        }
+    }
+
+    var revertedNotice: String? {
+        revertedTo.map { "It's still set to \($0)." }
+    }
+}
+
