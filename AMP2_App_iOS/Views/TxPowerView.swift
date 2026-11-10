@@ -49,7 +49,8 @@ struct TxPowerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("LTC Power", style: .header3)
+                Text("LTC Power")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

@@ -34,7 +34,8 @@ struct PairingTutorialView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Bluetooth Pairing", style: .header3)
+                Text("Bluetooth Pairing")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
             ToolbarItem(placement: .topBarLeading) {

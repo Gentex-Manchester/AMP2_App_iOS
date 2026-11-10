@@ -60,12 +60,14 @@ private func landscapeLayout(_ step: TutorialStep) -> some View {
 
 private func textContent(_ step: TutorialStep) -> some View {
     Group {
-        AppText(step.title, style: .header2)
+        Text(step.title)
+            .appTextStyle(.header2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .multilineTextAlignment(.leading)
             .foregroundStyle(Color("OnBackground"))
 
-        AppText(step.description, style: .body)
+        Text(step.description)
+            .appTextStyle(.body)
             .frame(maxWidth: .infinity, alignment: .leading)
             .multilineTextAlignment(.leading)
             .foregroundStyle(Color("OnBackground"))

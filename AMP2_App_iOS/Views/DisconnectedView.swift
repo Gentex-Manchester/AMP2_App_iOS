@@ -30,12 +30,14 @@ struct DisconnectedView: View {
                 },
                 secondaryContent: {
                     VStack(spacing: 16) {
-                        AppText("Connect your AMP®", style: .header2)
+                        Text("Connect your AMP®")
+                            .appTextStyle(.header2)
                             .foregroundStyle(Color("OnBackground"))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
 
-                        AppText("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.", style: .body)
+                        Text("To use this app, you must connect to an AMP® 2.0 headset, like the AMP® 2.0 Elite headset.")
+                            .appTextStyle(.body)
                             .foregroundStyle(Color("OnBackground"))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
@@ -66,7 +68,8 @@ struct DisconnectedView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 // Not visible to user but needed for navigation
-                AppText("Home", style: .header3)
+                Text("Home")
+                    .appTextStyle(.header3)
                     .foregroundStyle(.clear)
             }
             ToolbarItem(placement: .navigationBarTrailing) {

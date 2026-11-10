@@ -46,7 +46,8 @@ struct LTCVolumeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("LTC Volume", style: .header3)
+                Text("LTC Volume")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

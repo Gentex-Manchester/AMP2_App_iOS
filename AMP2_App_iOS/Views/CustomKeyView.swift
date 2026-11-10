@@ -16,12 +16,14 @@ struct CustomKeyView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                AppText("By setting LTC Key to “Custom”, a custom AES-256 key will be used to encrypt LTC. Enter a passphrase below to create this key.", style: .body)
+                Text("By setting LTC Key to “Custom”, a custom AES-256 key will be used to encrypt LTC. Enter a passphrase below to create this key.")
+                    .appTextStyle(.body)
                     .foregroundStyle(Color("OnBackground"))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 16)
                     .padding(.bottom, 8)
-                AppText("Once the custom encryption key has been created, the app will forget this passphrase. If you forget it, you can create a new key at any time.", style: .subbody)
+                Text("Once the custom encryption key has been created, the app will forget this passphrase. If you forget it, you can create a new key at any time.")
+                    .appTextStyle(.subbody)
                     .foregroundStyle(Color("OnBackground"))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 16)
@@ -60,7 +62,8 @@ struct CustomKeyView: View {
                 .padding(.vertical, 12)
                 
                 let customKeyString = headsetSettings.settings.customSecurityKey?.prefix(4).map { String(format: "%02X ", $0) }.joined() ?? "—"
-                AppText("Current custom key: " + customKeyString + "...", style: .subbody)
+                Text("Current custom key: " + customKeyString + "...")
+                    .appTextStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color("OnBackground"))
             }
@@ -76,7 +79,8 @@ struct CustomKeyView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Edit Custom Key", style: .header3)
+                Text("Edit Custom Key")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

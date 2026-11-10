@@ -24,7 +24,8 @@ struct PrimaryButton: View {
     
     var body : some View {
         Button(action: action) {
-            AppText(label, style: .body)
+            Text(label)
+                .appTextStyle(.body)
                 .foregroundColor(enabled ? Color("OnPrimary") : Color("OnError"))
                 .frame(maxWidth: .infinity, minHeight: 72)
                 .background(enabled ? Color("Primary") : Color("Error"))
@@ -52,7 +53,8 @@ struct SecondaryButton: View {
     
     var body : some View {
         Button(action: action) {
-            AppText(label, style: .body)
+            Text(label)
+                .appTextStyle(.body)
                 .foregroundColor(Color("OnSurface"))
                 .frame(maxWidth: .infinity, minHeight: 72)
                 .background(Color("Surface"))
@@ -83,7 +85,8 @@ struct SelectionButton: View {
     
     var body : some View {
         Button(action: action) {
-            AppText(label, style: .body)
+            Text(label)
+                .appTextStyle(.body)
                 .foregroundColor(selected ? Color("OnPrimary") : Color("OnSecondary"))
                 .frame(maxWidth: .infinity, minHeight: 72)
                 .background(selected ? Color("Primary") : Color("Secondary"))

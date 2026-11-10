@@ -34,7 +34,8 @@ struct ReconnectingTutorialView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Reconnect Bluetooth", style: .header3)
+                Text("Reconnect Bluetooth")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
             ToolbarItem(placement: .topBarLeading) {

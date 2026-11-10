@@ -42,14 +42,16 @@ struct AppSettingsView: View {
                                 developerOptions = true
                             }
                         } label: {
-                            AppText(appVersion, style: .body)
+                            Text(appVersion)
+                                .appTextStyle(.body)
                                 .foregroundStyle(Color("Surface"))
                         }
                         
                         Button {
                             // Add function
                         } label: {
-                            AppText("Legal", style: .body)
+                            Text("Legal")
+                                .appTextStyle(.body)
                                 .underline()
                                 .foregroundStyle(Color("Surface"))
                         }
@@ -65,7 +67,8 @@ struct AppSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("App Settings", style: .header3)
+                Text("App Settings")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

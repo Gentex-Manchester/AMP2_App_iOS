@@ -52,7 +52,8 @@ struct RegionsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("LTC Zone", style: .header3)
+                Text("LTC Zone")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

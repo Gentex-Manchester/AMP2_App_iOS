@@ -20,7 +20,8 @@ struct AppearanceSettingsView: View {
                 },
                 label: { option in
                     option.rawValue
-                }
+                },
+                description: "Choose the colors you’d prefer the user interface use."
             )
             .frame(
                 maxWidth: .infinity,
@@ -34,7 +35,8 @@ struct AppearanceSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Appearance", style: .header3)
+                Text("Appearance")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

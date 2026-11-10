@@ -20,7 +20,8 @@ struct OrientationSettingsView: View {
                 },
                 label: { option in
                     option.rawValue
-                }
+                },
+                description: "Choose the way you’d prefer to view the user interface."
             )
             .frame(
                 maxWidth: .infinity,
@@ -34,7 +35,8 @@ struct OrientationSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Orientation", style: .header3)
+                Text("Orientation")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

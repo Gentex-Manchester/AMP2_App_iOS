@@ -49,7 +49,8 @@ struct VADThresholdView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("VAD Threshold", style: .header3)
+                Text("VAD Threshold")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
         }

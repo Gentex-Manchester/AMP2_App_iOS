@@ -42,7 +42,8 @@ struct SelectionSlider: View {
         VStack(spacing: 10) {
 
             if let description = description {
-                AppText(description, style: .body)
+                Text(description)
+                    .appTextStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 16)
                     .foregroundStyle(Color("OnBackground"))
@@ -72,16 +73,19 @@ struct SelectionSlider: View {
                 .padding(.horizontal, 16)
 
                 HStack {
-                    AppText(lowLabel, style: .subbody)
+                    Text(lowLabel)
+                        .appTextStyle(.subbody)
                         .foregroundColor(Color("OnBackground"))
 
                     Spacer()
 
-                    AppText(label(draftLevel ?? level), style: .body)
+                    Text(label(draftLevel ?? level))
+                        .appTextStyle(.body)
 
                     Spacer()
 
-                    AppText(highLabel, style: .subbody)
+                    Text(highLabel)
+                        .appTextStyle(.subbody)
                         .foregroundColor(Color("OnBackground"))
                 }
                 .padding(.horizontal, 16)

@@ -30,30 +30,21 @@ enum AppTextStyle {
     }
 }
 
-struct AppText: View {
-
-    let string: String
-    let style: AppTextStyle
-
-    init(_ string: String, style: AppTextStyle) {
-        self.string = string
-        self.style = style
-    }
-
-    var body: some View {
-        Text(string)
-            .font(font)
-    }
-
-    private var font: Font {
-        return style.font
+extension View {
+    func appTextStyle(_ style: AppTextStyle) -> some View {
+        self.font(style.font)
     }
 }
 
 #Preview {
-    AppText("Header 1", style: .header1)
-    AppText("Header 2", style: .header2)
-    AppText("Header 3", style: .header3)
-    AppText("Body", style: .body)
-    AppText("Subbody", style: .subbody)
+    Text("Header 1")
+        .appTextStyle(.header1)
+    Text("Header 2")
+        .appTextStyle(.header2)
+    Text("Header 3")
+        .appTextStyle(.header3)
+    Text("Body")
+        .appTextStyle(.body)
+    Text("Subbody")
+        .appTextStyle(.subbody)
 }

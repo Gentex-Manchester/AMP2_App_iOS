@@ -49,7 +49,8 @@ struct ConnectedView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 // Not visible to user but needed for navigation
-                AppText("My AMP®", style: .header3)
+                Text("My AMP®")
+                    .appTextStyle(.header3)
                     .foregroundStyle(.clear)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -82,7 +83,8 @@ struct ConnectedView: View {
                 .scaledToFit()
                 .frame(maxHeight: 35)
 
-            AppText("AMP 2.0 Elite", style: .header1)
+            Text("AMP 2.0 Elite")
+                .appTextStyle(.header1)
                 .foregroundStyle(Color("OnBackground"))
             
             Spacer()
@@ -94,7 +96,8 @@ struct ConnectedView: View {
     /// Inline per the 07/07 mock-ups.
     private var ltcModeSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            AppText("LTC Mode", style: .header3)
+            Text("LTC Mode")
+                .appTextStyle(.header3)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
                 .foregroundStyle(Color("OnBackground"))

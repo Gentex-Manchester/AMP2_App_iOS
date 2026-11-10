@@ -44,7 +44,8 @@ struct LTCKeyView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("LTC Key", style: .header3)
+                Text("LTC Key")
+                    .appTextStyle(.header3)
                     .foregroundStyle(Color("OnBackground"))
             }
             

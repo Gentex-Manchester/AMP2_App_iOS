@@ -58,7 +58,8 @@ struct TeamsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                AppText("Teams", style: .header3)
+                Text("Teams")
+                    .appTextStyle(.header3)
             }
         }
     }
@@ -67,15 +68,19 @@ struct TeamsView: View {
     var regionView: some View {
         switch headsetSettings.settings.zone {
         case .americas:
-            AppText("Region: Americas (North America & South America)", style: .body)
+            Text("Region: Americas (North America & South America)")
+                .appTextStyle(.body)
                 .foregroundStyle(Color("OnBackground"))
         case .eurasia:
-            AppText("Region: Eurasia (Europe & Asia)", style: .body)
+            Text("Region: Eurasia (Europe & Asia)")
+                .appTextStyle(.body)
                 .foregroundStyle(Color("OnBackground"))
-            AppText("Note that team Delta is not approved for use in Japanese territories.", style: .subbody)
+            Text("Note that team Delta is not approved for use in Japanese territories.")
+                .appTextStyle(.subbody)
                 .foregroundStyle(Color("OnBackground"))
         default:
-            AppText("No region detected", style: .body)
+            Text("No region detected")
+                .appTextStyle(.body)
                 .foregroundStyle(Color("OnBackground"))
         }
     }

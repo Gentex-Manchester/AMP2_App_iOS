@@ -20,7 +20,8 @@ struct SettingRow<Destination: View>: View {
             view
         } label: {
             HStack {
-                AppText(title, style: .body)
+                Text(title)
+                    .appTextStyle(.body)
 
                 Spacer()
 

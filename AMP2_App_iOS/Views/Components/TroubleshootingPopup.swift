@@ -17,7 +17,8 @@ struct TroubleshootingPopup: View {
         Button {
             isPresented = true
         } label: {
-            AppText(title, style: .body)
+            Text(title)
+                .appTextStyle(.body)
                 .underline()
                 .multilineTextAlignment(.leading)
         }
