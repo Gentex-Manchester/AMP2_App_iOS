@@ -52,11 +52,11 @@ struct PacketConsoleView: View {
                 row("Headset", headset.name)
                 row("Found via", headset.source == .systemConnected ? "system connection" : "scan")
             }
-            if let partNumber = session.compatibleProduct {
+            if let partNumber = session.productDetails {
                 row("Part number", partNumber.partNumber)
                 row("Region lock", regionLockText(partNumber.regionLock))
             }
-            if let firmwareVersion = session.firmwareVersion {
+            if let firmwareVersion = session.firmwareDetails {
                 row("Firmware version", firmwareVersion.versionNumber)
             }
             if let lastError {

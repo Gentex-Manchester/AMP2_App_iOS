@@ -75,8 +75,7 @@ struct AMP2_App_iOSApp: App {
                     guard phase == .active,
                           headsetSession.state != .connected,
                           headsetSession.state != .connecting,
-                          !headsetSession.isDiscovering,
-                          !headsetSession.isIntentionallyDisconnected
+                          !headsetSession.isDiscovering
                     else { return }
                     headsetSession.startDiscovery()
                 }

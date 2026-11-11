@@ -72,8 +72,8 @@ struct ConnectedView: View {
     // TODO: Adjust content based on current headset PN
     private var headerSection: some View {
         VStack(spacing: 12) {
-            let imageAsset = session.compatibleProduct?.imageAsset ?? "headset_tan"
-            let displayName = session.compatibleProduct?.displayName ?? String(localized: "No name detected")
+            let imageAsset = session.productDetails?.imageAsset ?? "headset_tan"
+            let displayName = session.productDetails?.displayName ?? String(localized: "No name detected")
             
             Image(imageAsset)
                 .resizable()
@@ -90,7 +90,7 @@ struct ConnectedView: View {
                     .appTextStyle(.header1)
                     .foregroundStyle(Color("OnBackground"))
                 
-                Text(session.compatibleProduct?.partNumber ?? String(localized: "No serial number detected"))
+                Text(session.productDetails?.partNumber ?? String(localized: "No serial number detected"))
                     .appTextStyle(.subbody)
                     .foregroundStyle(Color("OnBackground"))
                     .opacity(0.5)
@@ -152,7 +152,7 @@ struct ConnectedView: View {
             }
 
             // Hidden on region-locked headsets, which reject zone changes.
-            if session.regionLock == nil {
+            if session.productDetails?.regionLock == nil {
                 SettingRow(title: String(localized: "LTC Zone")) {
                     RegionsView()
                 }

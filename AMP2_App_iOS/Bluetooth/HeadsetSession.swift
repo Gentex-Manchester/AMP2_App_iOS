@@ -5,9 +5,6 @@
 //  BLE transport for the AMP 2.0: discovery, connection, GATT, raw bytes in/out.
 //  Knows nothing about LTC; see LTCPacket, LTCResponse, HeadsetSettingsSync.
 //
-//  One of the app's two observable objects (requirements/ble-parity-plan.md 0.4).
-//  Not a precedent for ViewModels elsewhere.
-//
 
 import CoreBluetooth
 import Foundation
@@ -17,15 +14,17 @@ import Foundation
 /// Owns the `CBCentralManager` and the connection to one headset.
 @Observable
 final class HeadsetSession: NSObject {
-
-    // MARK: - GATT Identifiers
+    
+    // MARK: - Discovery
 
     /// GAIA. Exposed only while the headset is Connected over Bluetooth Classic.
     static let serviceUUID = CBUUID(string: "00001100-d102-11e1-9b23-00025b00a5a5")
+    
     static let writeCharacteristicUUID = CBUUID(string: "00001101-d102-11e1-9b23-00025b00a5a5")
+    
     /// Responses arrive as notifications.
     static let notifyCharacteristicUUID = CBUUID(string: "00001102-d102-11e1-9b23-00025b00a5a5")
-
+    
     private static let scanTimeout: Duration = .seconds(10)
 
     /// Retry interval after an empty pass or a drop. iOS has no equivalent of
@@ -37,32 +36,19 @@ final class HeadsetSession: NSObject {
     /// when powered off. Covers service and characteristic discovery too.
     private static let connectTimeout: Duration = .seconds(10)
 
-    private static let packetLogLimit = 500
-
-    // MARK: - Observable State
-
     /// Results of the last pass.
     private(set) var discoveredHeadsets: [DiscoveredHeadset] = []
 
     private(set) var savedHeadset: DiscoveredHeadset?
-
-    private(set) var isDiscovering = false
-
-    /// Product details, requested once GATT resolves and determined using part number. `nil` until it answers.
-    private(set) var compatibleProduct: CompatibleProduct?
-
-    /// Non-nil means hide the region selector; the headset rejects zone changes.
-    var regionLock: CompatibleProduct.RegionLock? { compatibleProduct?.regionLock }
     
-    /// Firmware version, requested once GATT resolves. `nil` until it answers.
-    private(set) var firmwareVersion: FirmwareVersion?
+    // If true, discovery is waiting on Bluetooth to start
+    private var waitingForBluetooth = false
 
-    /// Bounded, newest-last. Cleared on each new connection.
-    private(set) var packetLog: [HeadsetPacketLogEntry] = []
+    private var discoveryMode: DiscoveredHeadset.DiscoveryMode = .headsetsOnly
 
-    /// Main actor. Every inbound packet except identity responses.
-    var onPacketReceived: ((Data) -> Void)?
-
+    // If true, discovery is active
+    private(set) var isDiscovering = false
+    
     /// Main actor. Lets the settings layer halt and clear on a drop.
     var onConnectionStateChanged: ((HeadsetConnectionState) -> Void)?
 
@@ -72,30 +58,26 @@ final class HeadsetSession: NSObject {
             onConnectionStateChanged?(state)
         }
     }
-
-    // MARK: - Private State
-
+    
+    /// Used to discover, connect to, and communicate with nearby Bluetooth devices
     private var centralManager: CBCentralManager!
+    
     private var peripheral: CBPeripheral?
+    
     private var writeCharacteristic: CBCharacteristic?
+    
     private var notifyCharacteristic: CBCharacteristic?
+    
     private var scanTimeoutTask: Task<Void, Never>?
+    
     private var connectTimeoutTask: Task<Void, Never>?
+    
     private var rediscoveryTask: Task<Void, Never>?
-    private var partNumberContinuation: CheckedContinuation<CompatibleProduct, Error>?
-    private var partNumberTimeoutTask: Task<Void, Never>?
-    private var firmwareVersionContinuation: CheckedContinuation<FirmwareVersion, Error>?
-    private var firmwareVersionTimeoutTask: Task<Void, Never>?
-
-    /// Discovery requested before power-on; replayed once Bluetooth is ready.
-    private var discoveryPending = false
-
-    private var discoveryMode: DiscoveredHeadset.DiscoveryMode = .headsetsOnly
 
     /// Last successful headset, so launches skip scanning. A per-app UUID, not a
     /// hardware address, so plain UserDefaults is fine.
     private static let rememberedHeadsetKey = "lastConnectedHeadsetIdentifier"
-
+    
     private var rememberedIdentifier: UUID? {
         get {
             UserDefaults.standard.string(forKey: Self.rememberedHeadsetKey).flatMap(UUID.init(uuidString:))
@@ -104,6 +86,32 @@ final class HeadsetSession: NSObject {
             UserDefaults.standard.set(newValue?.uuidString, forKey: Self.rememberedHeadsetKey)
         }
     }
+    
+    // MARK: - Device Information
+
+    /// Product details, requested once GATT resolves and determined using part number. `nil` until it answers.
+    private(set) var productDetails: CompatibleProduct?
+    
+    private var partNumberContinuation: CheckedContinuation<CompatibleProduct, Error>?
+    
+    private var partNumberTimeoutTask: Task<Void, Never>?
+    
+    /// Firmware version, requested once GATT resolves. `nil` until it answers.
+    private(set) var firmwareDetails: FirmwareVersion?
+    
+    private var firmwareVersionContinuation: CheckedContinuation<FirmwareVersion, Error>?
+    
+    private var firmwareVersionTimeoutTask: Task<Void, Never>?
+    
+    // MARK: - Packet Management
+
+    /// Bounded, newest-last. Cleared on each new connection.
+    private(set) var packetLog: [HeadsetPacketLogEntry] = []
+    
+    private static let packetLogLimit = 500
+
+    /// Main actor. Every inbound packet except identity responses.
+    var onPacketReceived: ((Data) -> Void)?
 
     // MARK: - Init
 
@@ -126,19 +134,15 @@ final class HeadsetSession: NSObject {
     /// after connecting with `.serviceNotFound`.
     func startDiscovery(mode: DiscoveredHeadset.DiscoveryMode = .headsetsOnly) {
         guard centralManager.state == .poweredOn else {
-            discoveryPending = true
+            waitingForBluetooth = true
             if let error = Self.error(for: centralManager.state) {
                 state = .failed(error)
             }
             return
         }
 
-        discoveryPending = false
+        waitingForBluetooth = false
         cancelRediscovery()
-
-        // Asking to discover overrides an earlier Disconnect; otherwise the flag
-        // blocked rediscovery for the rest of the session.
-        isIntentionallyDisconnected = false
 
         isDiscovering = true
         discoveryMode = mode
@@ -208,8 +212,6 @@ final class HeadsetSession: NSObject {
 
     /// Checked before scheduling and again on waking; state can change in 5s.
     private var shouldKeepLooking: Bool {
-        // Retrying would make Disconnect look broken.
-        guard !isIntentionallyDisconnected else { return false }
         // The unfiltered scan is driven by hand from the packet console.
         guard discoveryMode == .headsetsOnly else { return false }
         guard !isDiscovering else { return false }
@@ -262,12 +264,7 @@ final class HeadsetSession: NSObject {
 
     // MARK: - Connection
 
-    /// Stops auto-reconnect after a deliberate Disconnect. Mirrors Android's
-    /// `_isIntentionallyDisconnected`.
-    private(set) var isIntentionallyDisconnected = false
-
     func connect(_ headset: DiscoveredHeadset) {
-        isIntentionallyDisconnected = false
         cancelRediscovery()
         stopDiscovery()
 
@@ -303,7 +300,6 @@ final class HeadsetSession: NSObject {
     }
 
     func disconnect() {
-        isIntentionallyDisconnected = true
         cancelRediscovery()
         cancelConnectTimeout()
         stopDiscovery()
@@ -320,7 +316,7 @@ final class HeadsetSession: NSObject {
     /// at a time; cached after the first success.
     @discardableResult
     func requestPartNumber(timeout: Duration = .seconds(5)) async throws -> CompatibleProduct {
-        if let compatibleProduct { return compatibleProduct }
+        if let productDetails { return productDetails }
         guard state.isConnected else { throw HeadsetError.notConnected }
         guard partNumberContinuation == nil else { throw HeadsetError.partNumberRequestInFlight }
 
@@ -342,13 +338,13 @@ final class HeadsetSession: NSObject {
         partNumberTimeoutTask = nil
         guard let continuation = partNumberContinuation else { return }
         partNumberContinuation = nil
-        if case .success(let identity) = result { self.compatibleProduct = identity }
+        if case .success(let identity) = result { self.productDetails = identity }
         continuation.resume(with: result)
     }
     
     @discardableResult
     func requestFirmwareVersion(timeout: Duration = .seconds(5)) async throws -> FirmwareVersion {
-        if let firmwareVersion { return firmwareVersion }
+        if let firmwareDetails { return firmwareDetails }
         guard state.isConnected else { throw HeadsetError.notConnected }
         guard firmwareVersionContinuation == nil else { throw HeadsetError.firmwareVersionRequestInFlight }
 
@@ -370,7 +366,7 @@ final class HeadsetSession: NSObject {
         firmwareVersionTimeoutTask = nil
         guard let continuation = firmwareVersionContinuation else { return }
         firmwareVersionContinuation = nil
-        if case .success(let identity) = result { self.firmwareVersion = identity }
+        if case .success(let identity) = result { self.firmwareDetails = identity }
         continuation.resume(with: result)
     }
 
@@ -420,8 +416,8 @@ final class HeadsetSession: NSObject {
         peripheral = nil
         writeCharacteristic = nil
         notifyCharacteristic = nil
-        compatibleProduct = nil
-        firmwareVersion = nil
+        productDetails = nil
+        firmwareDetails = nil
 
         // Stale candidates would look like "user is choosing" and block rediscovery.
         discoveredHeadsets.removeAll()
@@ -453,7 +449,7 @@ extension HeadsetSession: CBCentralManagerDelegate {
             switch central.state {
             case .poweredOn:
                 if case .failed = state { state = .disconnected }
-                if discoveryPending { startDiscovery() }
+                if waitingForBluetooth { startDiscovery() }
             default:
                 if let error = Self.error(for: central.state) {
                     state = .failed(error)

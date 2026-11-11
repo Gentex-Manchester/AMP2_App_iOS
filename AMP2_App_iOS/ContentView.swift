@@ -53,7 +53,6 @@ struct ContentView: View {
         to current: HeadsetConnectionState
     ) {
         guard previous.isConnected, !current.isConnected else { return }
-        guard !headsetSession.isIntentionallyDisconnected else { return }
         
         showDisconnectedAlert = true
     }
