@@ -71,24 +71,27 @@ struct ConnectedView: View {
 
     // TODO: Adjust content based on current headset PN
     private var headerSection: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 12) {
             Image("headset_tan")
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 250)
             
-            Spacer()
-            
             Image("ops_core_logo")
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 35)
-
-            Text("AMP 2.0 Elite")
-                .appTextStyle(.header1)
-                .foregroundStyle(Color("OnBackground"))
             
-            Spacer()
+            VStack(spacing: 4) {
+                Text("AMP 2.0 Elite")
+                    .appTextStyle(.header1)
+                    .foregroundStyle(Color("OnBackground"))
+                
+                Text(session.partNumber?.partNumber ?? "No serial number detected")
+                    .appTextStyle(.subbody)
+                    .foregroundStyle(Color("OnBackground"))
+                    .opacity(0.5)
+            }
         }
     }
 
