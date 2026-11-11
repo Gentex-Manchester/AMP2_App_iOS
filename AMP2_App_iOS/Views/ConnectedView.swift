@@ -72,7 +72,10 @@ struct ConnectedView: View {
     // TODO: Adjust content based on current headset PN
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Image("headset_tan")
+            let imageAsset = session.compatibleProduct?.imageAsset ?? "headset_tan"
+            let displayName = session.compatibleProduct?.displayName ?? String(localized: "No name detected")
+            
+            Image(imageAsset)
                 .resizable()
                 .scaledToFit()
                 .frame(maxHeight: 250)
@@ -83,11 +86,11 @@ struct ConnectedView: View {
                 .frame(maxHeight: 35)
             
             VStack(spacing: 4) {
-                Text("AMP 2.0 Elite")
+                Text(displayName)
                     .appTextStyle(.header1)
                     .foregroundStyle(Color("OnBackground"))
                 
-                Text(session.partNumber?.partNumber ?? "No serial number detected")
+                Text(session.compatibleProduct?.partNumber ?? String(localized: "No serial number detected"))
                     .appTextStyle(.subbody)
                     .foregroundStyle(Color("OnBackground"))
                     .opacity(0.5)

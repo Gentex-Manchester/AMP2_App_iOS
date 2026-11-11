@@ -1,5 +1,5 @@
 //
-//  PartNumber.swift
+//  CompatibleProduct.swift
 //  AMP2_App_iOS
 //
 //  Created by Peter Sargent on 11/10/26.
@@ -9,13 +9,37 @@ import Foundation
 
 /// Part number, parsed for region lock. Variant (`1004257` Flagship, `1004058` Base)
 /// is not branched on — custom teams work on every headset.
-struct PartNumber: Equatable, Sendable {
+struct CompatibleProduct: Equatable, Sendable {
 
     /// Echoes the query's trailing bytes.
     static let responseHeader: [UInt8] = [0x00, 0x1d, 0x41, 0x0c, 0x00, 0x00, 0x00, 0x2f]
 
     /// e.g. `1004257-1201-1201`
     let partNumber: String
+    
+    var displayName: String? {
+        switch partNumber {
+        case "1004257-2201-1211": return String(localized: "AMP® 2.0 Elite")
+        case "1004257-2211-1211": return String(localized: "AMP® 2.0 Elite")
+        case "1004257-2261-1211": return String(localized: "AMP® 2.0 Elite")
+        case "1004257-2271-1211": return String(localized: "AMP® 2.0 Elite")
+        case "1004257-1201-1201": return String(localized: "Elite Test Unit")
+        default: return nil
+        // TODO: Add remaining known part numbers
+        }
+    }
+    
+    var imageAsset: String? {
+        switch partNumber {
+        case "1004257-2201-1211": return "headset_tan"
+        case "1004257-2211-1211": return "headset_black"
+        case "1004257-2261-1211": return "headset_rangergreen"
+        case "1004257-2271-1211": return "headset_coyotebrown"
+        case "1004257-1201-1201": return "headset_tan"
+        default: return nil
+        // TODO: Add remaining known part numbers
+        }
+    }
 
     enum RegionLock: Equatable, Sendable {
         case northAmerica
@@ -39,7 +63,7 @@ struct PartNumber: Equatable, Sendable {
     }
 
     /// Fixed header, then a NUL-terminated ASCII part number.
-    static func parse(_ data: Data) throws -> PartNumber {
+    static func parse(_ data: Data) throws -> CompatibleProduct {
         let bytes = [UInt8](data)
         guard bytes.count > responseHeader.count,
               Array(bytes.prefix(responseHeader.count)) == responseHeader else {
@@ -56,6 +80,6 @@ struct PartNumber: Equatable, Sendable {
             throw LTCProtocolError.unreadablePartNumber(hex: data.ltcHexString)
         }
 
-        return PartNumber(partNumber: partNumber)
+        return CompatibleProduct(partNumber: partNumber)
     }
 }

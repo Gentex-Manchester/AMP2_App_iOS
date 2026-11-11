@@ -48,11 +48,11 @@ final class HeadsetSession: NSObject {
 
     private(set) var isDiscovering = false
 
-    /// Part number, requested once GATT resolves. `nil` until it answers.
-    private(set) var partNumber: PartNumber?
+    /// Product details, requested once GATT resolves and determined using part number. `nil` until it answers.
+    private(set) var compatibleProduct: CompatibleProduct?
 
     /// Non-nil means hide the region selector; the headset rejects zone changes.
-    var regionLock: PartNumber.RegionLock? { partNumber?.regionLock }
+    var regionLock: CompatibleProduct.RegionLock? { compatibleProduct?.regionLock }
     
     /// Firmware version, requested once GATT resolves. `nil` until it answers.
     private(set) var firmwareVersion: FirmwareVersion?
@@ -82,7 +82,7 @@ final class HeadsetSession: NSObject {
     private var scanTimeoutTask: Task<Void, Never>?
     private var connectTimeoutTask: Task<Void, Never>?
     private var rediscoveryTask: Task<Void, Never>?
-    private var partNumberContinuation: CheckedContinuation<PartNumber, Error>?
+    private var partNumberContinuation: CheckedContinuation<CompatibleProduct, Error>?
     private var partNumberTimeoutTask: Task<Void, Never>?
     private var firmwareVersionContinuation: CheckedContinuation<FirmwareVersion, Error>?
     private var firmwareVersionTimeoutTask: Task<Void, Never>?
@@ -319,8 +319,8 @@ final class HeadsetSession: NSObject {
     /// Matched by header (`00 1d 41 0c`, unused by config responses). One request
     /// at a time; cached after the first success.
     @discardableResult
-    func requestPartNumber(timeout: Duration = .seconds(5)) async throws -> PartNumber {
-        if let partNumber { return partNumber }
+    func requestPartNumber(timeout: Duration = .seconds(5)) async throws -> CompatibleProduct {
+        if let compatibleProduct { return compatibleProduct }
         guard state.isConnected else { throw HeadsetError.notConnected }
         guard partNumberContinuation == nil else { throw HeadsetError.partNumberRequestInFlight }
 
@@ -337,12 +337,12 @@ final class HeadsetSession: NSObject {
         }
     }
 
-    private func completePartNumberRequest(_ result: Result<PartNumber, Error>) {
+    private func completePartNumberRequest(_ result: Result<CompatibleProduct, Error>) {
         partNumberTimeoutTask?.cancel()
         partNumberTimeoutTask = nil
         guard let continuation = partNumberContinuation else { return }
         partNumberContinuation = nil
-        if case .success(let identity) = result { self.partNumber = identity }
+        if case .success(let identity) = result { self.compatibleProduct = identity }
         continuation.resume(with: result)
     }
     
@@ -420,7 +420,7 @@ final class HeadsetSession: NSObject {
         peripheral = nil
         writeCharacteristic = nil
         notifyCharacteristic = nil
-        partNumber = nil
+        compatibleProduct = nil
         firmwareVersion = nil
 
         // Stale candidates would look like "user is choosing" and block rediscovery.
@@ -610,8 +610,8 @@ extension HeadsetSession: CBPeripheralDelegate {
             appendToLog(direction: .received, bytes: data)
 
             // Identity replies go to their waiting request, not the packet handler.
-            if data.starts(with: PartNumber.responseHeader) {
-                completePartNumberRequest(Result { try PartNumber.parse(data) })
+            if data.starts(with: CompatibleProduct.responseHeader) {
+                completePartNumberRequest(Result { try CompatibleProduct.parse(data) })
                 return
             }
             else if data.starts(with: FirmwareVersion.responseHeader) {

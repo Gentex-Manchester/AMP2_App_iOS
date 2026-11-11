@@ -52,7 +52,7 @@ struct PacketConsoleView: View {
                 row("Headset", headset.name)
                 row("Found via", headset.source == .systemConnected ? "system connection" : "scan")
             }
-            if let partNumber = session.partNumber {
+            if let partNumber = session.compatibleProduct {
                 row("Part number", partNumber.partNumber)
                 row("Region lock", regionLockText(partNumber.regionLock))
             }
@@ -87,7 +87,7 @@ struct PacketConsoleView: View {
         }
     }
 
-    private func regionLockText(_ lock: PartNumber.RegionLock?) -> String {
+    private func regionLockText(_ lock: CompatibleProduct.RegionLock?) -> String {
         switch lock {
         case .northAmerica: return "North America (selector hidden)"
         case .europe: return "Europe (selector hidden)"
