@@ -96,14 +96,14 @@ struct ConnectedView: View {
 
     /// Inline per the 07/07 mock-ups.
     private var ltcModeSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading) {
             Text("LTC Mode")
-                .appTextStyle(.header3)
+                .appTextStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                .foregroundStyle(Color("OnBackground"))
+                .foregroundStyle(Color("OnSurfaceVariant"))
+                .padding(.horizontal, 16)
 
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
                 ForEach(LTCMode.allCases, id: \.self) { mode in
                     SelectionButton(
                         label: mode.displayName,
@@ -114,8 +114,12 @@ struct ConnectedView: View {
                     )
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 12)
         }
+        .padding(.vertical, 24)
+        .background(Color("SurfaceVariant"))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, 16)
     }
 
     // MARK: - Setting Links

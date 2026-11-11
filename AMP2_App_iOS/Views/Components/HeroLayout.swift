@@ -93,7 +93,7 @@ struct HeroLayout<Primary: View, Secondary: View>: View {
                             .frame(maxWidth: .infinity, alignment: .center)
 
                         Spacer()
-                            .frame(height: isCompact ? 16 : 32)
+                            .frame(height: 16)
                     }
                     .frame(width: geometry.size.width)
                     .background {
@@ -113,7 +113,7 @@ struct HeroLayout<Primary: View, Secondary: View>: View {
                     }
 
                     Spacer()
-                        .frame(height: isCompact ? 16 : 32)
+                        .frame(height: 16)
 
                     secondaryContent
                 }
@@ -149,6 +149,6 @@ private func imageContent(
             Text("Secondary Content")
         },
         primaryContentBg: mediaItem,
-        isLandscape: true
+        isLandscape: false
     )
 }
