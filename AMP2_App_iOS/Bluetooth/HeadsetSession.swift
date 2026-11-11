@@ -148,6 +148,9 @@ final class HeadsetSession: NSObject {
         discoveryMode = mode
 
         var known: [DiscoveredHeadset] = []
+        
+        // TODO: Logic issue? Why are we collecting all of these headsets when the first if statement would usually suffice?
+        // Shouldn't we only continue to the next statement if we can't connect to the known headset?
 
         if mode == .headsetsOnly, let remembered = rememberedIdentifier {
             known += centralManager
@@ -195,6 +198,8 @@ final class HeadsetSession: NSObject {
     }
 
     // MARK: - Rediscovery
+    
+    // TODO: What does rediscovery even actually do?
 
     /// Keep retrying while unconnected; otherwise one empty scan or drop left the
     /// connection screen idle until relaunch.
@@ -309,6 +314,28 @@ final class HeadsetSession: NSObject {
         }
         centralManager.cancelPeripheralConnection(peripheral)
     }
+    
+    private func cancelConnectTimeout() {
+        connectTimeoutTask?.cancel()
+        connectTimeoutTask = nil
+    }
+    
+    private func resetConnectionState() {
+        cancelConnectTimeout()
+
+        // Don't leave an identity caller suspended.
+        completePartNumberRequest(.failure(HeadsetError.notConnected))
+        completeFirmwareVersionRequest(.failure(HeadsetError.notConnected))
+
+        peripheral = nil
+        writeCharacteristic = nil
+        notifyCharacteristic = nil
+        productDetails = nil
+        firmwareDetails = nil
+
+        // Stale candidates would look like "user is choosing" and block rediscovery.
+        discoveredHeadsets.removeAll()
+    }
 
     // MARK: - Identity
 
@@ -384,9 +411,7 @@ final class HeadsetSession: NSObject {
         peripheral.writeValue(packet, for: writeCharacteristic, type: writeType)
         appendToLog(direction: .sent, bytes: packet)
     }
-
-    // MARK: - Helpers
-
+    
     private func appendToLog(direction: HeadsetPacketLogEntry.Direction, bytes: Data) {
         #if DEBUG
         // Visible from a Mac while running on device.
@@ -401,27 +426,7 @@ final class HeadsetSession: NSObject {
         }
     }
 
-    private func cancelConnectTimeout() {
-        connectTimeoutTask?.cancel()
-        connectTimeoutTask = nil
-    }
-
-    private func resetConnectionState() {
-        cancelConnectTimeout()
-
-        // Don't leave an identity caller suspended.
-        completePartNumberRequest(.failure(HeadsetError.notConnected))
-        completeFirmwareVersionRequest(.failure(HeadsetError.notConnected))
-
-        peripheral = nil
-        writeCharacteristic = nil
-        notifyCharacteristic = nil
-        productDetails = nil
-        firmwareDetails = nil
-
-        // Stale candidates would look like "user is choosing" and block rediscovery.
-        discoveredHeadsets.removeAll()
-    }
+    // MARK: - Misc
     
     func resetSavedHeadset() {
         savedHeadset = nil
