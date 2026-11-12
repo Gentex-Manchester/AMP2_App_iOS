@@ -128,6 +128,8 @@ final class HeadsetSession: NSObject {
 
     // MARK: - Discovery
 
+    // TODO: Could eventually cut off discovery when the first new eligible device is found
+    
     /// Cheapest first: remembered identifier, then system-connected by GAIA
     /// service, then an unfiltered scan shortlisted by name. The AMP 2.0 advertises
     /// no service UUIDs, so a filtered scan never finds it; non-GAIA devices fail
@@ -149,15 +151,14 @@ final class HeadsetSession: NSObject {
 
         var known: [DiscoveredHeadset] = []
         
-        // TODO: Logic issue? Why are we collecting all of these headsets when the first if statement would usually suffice?
-        // Shouldn't we only continue to the next statement if we can't connect to the known headset?
-
+        // Asks the system if it remembers the headset that was last connected to the app
         if mode == .headsetsOnly, let remembered = rememberedIdentifier {
             known += centralManager
                 .retrievePeripherals(withIdentifiers: [remembered])
                 .map { DiscoveredHeadset(peripheral: $0, source: .remembered) }
         }
 
+        // Asks the system for connected headsets
         known += centralManager
             .retrieveConnectedPeripherals(withServices: [Self.serviceUUID])
             .filter { peripheral in !known.contains { $0.id == peripheral.identifier } }
@@ -198,8 +199,6 @@ final class HeadsetSession: NSObject {
     }
 
     // MARK: - Rediscovery
-    
-    // TODO: What does rediscovery even actually do?
 
     /// Keep retrying while unconnected; otherwise one empty scan or drop left the
     /// connection screen idle until relaunch.
@@ -220,8 +219,6 @@ final class HeadsetSession: NSObject {
         // The unfiltered scan is driven by hand from the packet console.
         guard discoveryMode == .headsetsOnly else { return false }
         guard !isDiscovering else { return false }
-        // User is choosing; rescanning would replace their list.
-        guard discoveredHeadsets.count < 2 else { return false }
 
         switch state {
         case .connected, .connecting:
@@ -262,7 +259,8 @@ final class HeadsetSession: NSObject {
 
         if let remembered = discoveredHeadsets.first(where: { $0.id == rememberedIdentifier }) {
             connect(remembered)
-        } else if discoveredHeadsets.count == 1 {
+        } else if discoveredHeadsets.count >= 1 {
+            // If one or more new headsets are connected, attempt to connect to the first one
             connect(discoveredHeadsets[0])
         }
     }
@@ -300,6 +298,9 @@ final class HeadsetSession: NSObject {
 
         centralManager.cancelPeripheralConnection(target)
         state = .failed(.connectionFailed(detail: String(localized: "The headset did not answer in time.")))
+        
+        // Reset the remembered device so that a new one can be easily connected
+        rememberedIdentifier = nil
         resetConnectionState()
         scheduleRediscovery()
     }

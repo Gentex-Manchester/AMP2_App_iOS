@@ -336,7 +336,7 @@ struct HeadsetDiscoveryTests {
 
     @Test("Either brand token is enough, in any casing")
     func recognizesBrandTokens() {
-        let names = ["Gentex_AMP2.0_PROTO-123456", "AMP 2.0", "amp2.0", "GENTEX AMP"]
+        let names = ["Gentex_AMP2.0_PROTO-123456", "AMP2.0", "amp2.0"]
         for name in names {
             let headset = DiscoveredHeadset(id: UUID(), name: name, source: .advertised)
             #expect(headset.looksLikeGentexHeadset, "expected \(name) to match")

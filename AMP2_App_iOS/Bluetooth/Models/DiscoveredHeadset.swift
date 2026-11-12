@@ -73,7 +73,7 @@ struct DiscoveredHeadset: Identifiable, Equatable {
     /// unfiltered scan is the fallback). The GAIA service check verifies after connect.
     var looksLikeGentexHeadset: Bool {
         let lowercased = name.lowercased()
-        return lowercased.contains("amp")
+        return lowercased.contains("amp2.0")
     }
 
     static func == (lhs: DiscoveredHeadset, rhs: DiscoveredHeadset) -> Bool {

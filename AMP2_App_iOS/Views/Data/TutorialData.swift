@@ -103,9 +103,8 @@ let reconnectingSteps: [TutorialStep] = [
         controls: .last,
         tsTitle: String(localized: "My headset isn’t pairing to this system."),
         tsText: String(localized: """
-            Make sure that Bluetooth is enabled on your system. If you’ve paired your headset to \
-            a different system or are attempting to use a new headset with this system, please \
-            unpair your headset from this system’s Bluetooth Settings and then go through the pairing process again.
+            Make sure that Bluetooth is enabled on your system. If you're attempting to use \
+            the app with a new headset, please give the app some extra time to register the headset.
             """)
     ),
 ]
