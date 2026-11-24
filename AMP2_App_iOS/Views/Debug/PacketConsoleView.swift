@@ -119,48 +119,14 @@ struct PacketConsoleView: View {
             }
 
             ForEach(session.discoveredHeadsets) { headset in
-                Button {
-                    lastError = nil
-                    session.connect(headset)
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(headset.name)
-                                .font(.system(size: 14, design: .monospaced))
-                            Text(headset.id.uuidString)
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(.secondary)
-                            if let rssi = headset.rssi {
-                                Text("RSSI \(rssi) dBm")
-                                    .font(.system(size: 11, design: .monospaced))
-                                    .foregroundColor(.secondary)
-                            }
-
-                            // AccessorySetupKit needs a company ID or service
-                            // UUID. No manufacturer data means ASK can't find it.
-                            Text(manufacturerText(headset))
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(headset.companyIdentifier == nil ? .red : .green)
-                            Text(headset.advertisedServices.isEmpty
-                                 ? "advertises: (none)"
-                                 : "advertises: " + headset.advertisedServices
-                                     .map(\.uuidString).joined(separator: ", "))
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(
-                                    headset.advertisedServices.contains(HeadsetSession.serviceUUID)
-                                        ? .green : .secondary
-                                )
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                    }
-                    .foregroundColor(.primary)
-                    .padding(12)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.systemGray5))
-                    .cornerRadius(16)
-                }
+                DiscoveredHeadsetButton(
+                    discoveredHeadset: headset,
+                    action: {
+                        lastError = nil
+                        session.connect(headset)
+                    },
+                    debug: true
+                )
             }
         }
     }
@@ -233,17 +199,6 @@ struct PacketConsoleView: View {
             }
             .padding(.top, 6)
         }
-    }
-
-    /// Advertised company ID (what AccessorySetupKit matches on) and raw bytes.
-    private func manufacturerText(_ headset: DiscoveredHeadset) -> String {
-        guard let data = headset.manufacturerData, !data.isEmpty else {
-            return "mfr data: (none) — ASK cannot match"
-        }
-        guard let company = headset.companyIdentifier else {
-            return "mfr data: \(data.ltcHexString) (too short for a company ID)"
-        }
-        return String(format: "company 0x%04X — %@", company, data.ltcHexString)
     }
 
     /// Distinguishes "not read yet" from an undocumented byte, which the headset does send.
