@@ -1,5 +1,5 @@
 //
-//  PairiutorialView.swift
+//  PairingTutorialView.swift
 //  AMP2_App_iOS
 //
 
@@ -9,8 +9,9 @@ struct PairingTutorialView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(HeadsetSession.self) private var session
-
+    
     @State private var currentStep = 0
+    @State private var showPairingScreen = false
 
     private var isLandscape: Bool { verticalSizeClass == .compact }
     private var steps: [TutorialStep] { pairingSteps }
@@ -24,7 +25,13 @@ struct PairingTutorialView: View {
             BottomControls(
                 type: steps[currentStep].controls,
                 goBack: goBack,
-                goForward: { currentStep += 1 }
+                goForward: {
+                    if (currentStep < pairingSteps.count - 1) {
+                        currentStep += 1
+                    } else { // Last step
+                        showPairingScreen = true
+                    }
+                }
             )
             .padding(.horizontal, 26)
         }
@@ -46,6 +53,11 @@ struct PairingTutorialView: View {
                         .font(.title2)
                         .foregroundColor(.primary)
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $showPairingScreen) {
+            NavigationStack {
+                PairingView()
             }
         }
         .navigationTitle("Bluetooth Pairing")

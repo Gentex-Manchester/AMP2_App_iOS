@@ -75,9 +75,9 @@ let pairingSteps: [TutorialStep] = [
         title: String(localized: "Go to Settings"),
         description: String(localized: """
             Leave this app open, then open Settings › Bluetooth on your iPhone and \
-            click on the headset with your serial number. Once it has connected, return to this app.
+            click on the headset with your serial number. Once it has connected, continue to the next step.
             """),
-        controls: .last
+        controls: .standard // Jumps to next screen
     ),
 ]
 

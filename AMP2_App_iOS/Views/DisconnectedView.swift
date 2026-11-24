@@ -86,14 +86,14 @@ struct DisconnectedView: View {
         }
         .fullScreenCover(isPresented: $showTutorial) {
             NavigationStack {
-                if session.savedHeadset != nil {
-                    // If a headset has been connected to the app before
-                    // May not necessarily still be paired with the phone
-                    // TODO: Need to rework to fix flashing issue when connecting
-                    ReconnectingTutorialView()
-                } else {
-                    PairingTutorialView()
-                }
+                PairingTutorialView()
+                
+                /// Not clear if the ReconnectingTutorialView can work on iOS due to BLE sensitivities
+//                if session.savedHeadset != nil {
+//                    ReconnectingTutorialView()
+//                } else {
+//                    PairingTutorialView()
+//                }
             }
         }
         .alert("Unable to connect", isPresented: $showConnectionIssuePopup) {
