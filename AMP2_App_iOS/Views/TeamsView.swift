@@ -11,40 +11,51 @@ struct TeamsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                SelectionButtonRow(
-                    options: Team.allCases,
-                    selection: Binding(
-                            get: {
-                                headsetSettings.settings.team ?? Team.jointOps
-                            },
-                            set: { selection in
-                                headsetSettings.write(
-                                    LTCSetting.team,
-                                    value: selection.rawValue
-                                )
-                            }
-                        ),
-                    onSelection: { selection in
-                        headsetSettings.write(LTCSetting.team, value: selection.rawValue)
-                    },
-                    label: { option in option.displayName },
-                    description: String(localized: "Determines who you can talk to with Local Teams Comms (LTC).")
-                )
-                .frame(maxWidth: .infinity)
-                
-                Spacer(minLength: -8) // Visually improves spacing on this screen
-                
-                regionView
+            if (session.isConnected()) {
+                VStack(spacing: 16) {
+                    SelectionButtonRow(
+                        options: Team.allCases,
+                        selection: Binding(
+                                get: {
+                                    headsetSettings.settings.team ?? Team.jointOps
+                                },
+                                set: { selection in
+                                    headsetSettings.write(
+                                        LTCSetting.team,
+                                        value: selection.rawValue
+                                    )
+                                }
+                            ),
+                        onSelection: { selection in
+                            headsetSettings.write(LTCSetting.team, value: selection.rawValue)
+                        },
+                        label: { option in option.displayName },
+                        description: String(localized: "Determines who you can talk to with Local Teams Comms (LTC).")
+                    )
+                    .frame(maxWidth: .infinity)
+                    
+                    Spacer(minLength: -8) // Visually improves spacing on this screen
+                    
+                    regionView
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    TroubleshootingPopup(
+                        title: String(localized: "I’m on the same team as another user, but can’t hear them."),
+                        text: String(localized: "Make sure that your LTC Key and Region settings match. These settings must match between users who want to talk using LTC. Note that commercial headsets cannot adjust the LTC Region setting.")
+                    )
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
-                TroubleshootingPopup(
-                    title: String(localized: "I’m on the same team as another user, but can’t hear them."),
-                    text: String(localized: "Make sure that your LTC Key and Region settings match. These settings must match between users who want to talk using LTC. Note that commercial headsets cannot adjust the LTC Region setting.")
-                )
-                .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.horizontal, 16)
+            } else {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
             }
-            .padding(.horizontal, 16)
         }
         .navigationTitle("Teams")
         .navigationBarTitleDisplayMode(.inline)

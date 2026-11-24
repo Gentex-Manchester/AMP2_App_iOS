@@ -12,6 +12,7 @@ import SwiftUI
 
 struct TxPowerView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
+    @Environment(HeadsetSession.self) private var session
 
     /// Local while dragging so the poll loop doesn't fight the slider; written on release.
     @State private var draftIndex: Double?
@@ -24,26 +25,37 @@ struct TxPowerView: View {
 
     var body: some View {
         ScrollView {
-            SelectionSlider(
-                level: index,
-                range: 0...Double(TxPower.allCases.count - 1),
-                onSelection: { selection in
-                    settings.write(.txPower, value: TxPower.allCases[Int(selection)].rawValue)
-                },
-                label: { selection in
-                    settings.settings.txPower?.displayName ?? "—"
-                },
-                description: String(localized: "Determines how much power the headset gives to LTC, which impacts transmission range."),
-                lowLabel: TxPower.minus18.displayName,
-                highLabel: TxPower.plus10.displayName
-            )
-            .frame(
-                maxWidth: .infinity,
-                alignment: .top
-            )
-            .padding(
-                .horizontal, 16
-            )
+            if (session.isConnected()) {
+                SelectionSlider(
+                    level: index,
+                    range: 0...Double(TxPower.allCases.count - 1),
+                    onSelection: { selection in
+                        settings.write(.txPower, value: TxPower.allCases[Int(selection)].rawValue)
+                    },
+                    label: { selection in
+                        settings.settings.txPower?.displayName ?? "—"
+                    },
+                    description: String(localized: "Determines how much power the headset gives to LTC, which impacts transmission range."),
+                    lowLabel: TxPower.minus18.displayName,
+                    highLabel: TxPower.plus10.displayName
+                )
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
+            } else {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+            }
         }
         .navigationTitle("LTC Power")
         .navigationBarTitleDisplayMode(.inline)

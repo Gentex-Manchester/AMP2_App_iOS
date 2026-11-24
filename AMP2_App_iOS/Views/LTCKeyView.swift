@@ -11,34 +11,45 @@ struct LTCKeyView: View {
     
     var body: some View {
         ScrollView {
-            SelectionButtonRow(
-                options: SecurityKey.allCases,
-                selection: Binding(
-                        get: {
-                            headsetSettings.settings.securityKey ?? SecurityKey.MIKE
-                        },
-                        set: { selection in
-                            headsetSettings.write(
-                                LTCSetting.securityKey,
-                                value: selection.ltcByte
-                            )
-                        }
-                    ),
-                onSelection: { selection in
-                    headsetSettings.write(LTCSetting.securityKey, value: selection.ltcByte)
-                },
-                label: { option in
-                    option.rawValue
-                },
-                description: String(localized: "Determines how LTC communications are encrypted.")
-            )
-            .frame(
-                maxWidth: .infinity,
-                alignment: .top
-            )
-            .padding(
-                .horizontal, 16
-            )
+            if (session.isConnected()) {
+                SelectionButtonRow(
+                    options: SecurityKey.allCases,
+                    selection: Binding(
+                            get: {
+                                headsetSettings.settings.securityKey ?? SecurityKey.MIKE
+                            },
+                            set: { selection in
+                                headsetSettings.write(
+                                    LTCSetting.securityKey,
+                                    value: selection.ltcByte
+                                )
+                            }
+                        ),
+                    onSelection: { selection in
+                        headsetSettings.write(LTCSetting.securityKey, value: selection.ltcByte)
+                    },
+                    label: { option in
+                        option.rawValue
+                    },
+                    description: String(localized: "Determines how LTC communications are encrypted.")
+                )
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
+            } else {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+            }
         }
         .navigationTitle("LTC Key")
         .navigationBarTitleDisplayMode(.inline)

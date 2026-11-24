@@ -1,11 +1,11 @@
 //
-//  PairingView.swift
+//  SelectDeviceView.swift
 //  AMP2_App_iOS
 //
 
 import SwiftUI
 
-struct PairingView: View {
+struct SelectDeviceView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(HeadsetSession.self) private var session
@@ -20,21 +20,24 @@ struct PairingView: View {
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(Color("OnBackground"))
             
-            ForEach(session.discoveredHeadsets) { headset in
-                DiscoveredHeadsetButton(
-                    discoveredHeadset: headset,
-                    action: {
-                        session.connect(headset)
-                    }
-                )
+            if (session.discoveredHeadsets.isEmpty == false) {
+                ForEach(session.discoveredHeadsets) { headset in
+                    DiscoveredHeadsetButton(
+                        discoveredHeadset: headset,
+                        action: {
+                            session.connect(headset)
+                        }
+                    )
+                }
             }
+            
+            ProgressView()
+                .scaleEffect(1.5)
+            
             Spacer(minLength: 0)
         }
         .padding(.horizontal)
-        // Connecting closes this screen
-        // .onChange(of: session.state) { _, newState in
-            // if newState.isConnected { dismiss() }
-        // }
+        .padding(.vertical, 8)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("Select Device")
@@ -58,7 +61,7 @@ struct PairingView: View {
 
 #Preview {
     NavigationStack {
-        PairingView()
+        SelectDeviceView()
             .environment(HeadsetSession())
     }
 }

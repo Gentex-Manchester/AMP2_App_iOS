@@ -12,6 +12,7 @@ import SwiftUI
 
 struct VADThresholdView: View {
     @Environment(HeadsetSettingsSync.self) private var settings
+    @Environment(HeadsetSession.self) private var session
 
     /// Local while dragging so the poll loop doesn't fight the slider; written on release.
     @State private var draftLevel: Double?
@@ -22,28 +23,39 @@ struct VADThresholdView: View {
 
     var body: some View {
         ScrollView {
-            SelectionSlider(
-                level: level,
-                range: 0...10,
-                onSelection: { selection in
-                    if let byte = LTCLevel.byte(for: Int(selection)) {
-                        settings.write(.vadThreshold, value: byte)
-                    }
-                },
-                label: { selection in
-                    settings.settings.vadThreshold.map(String.init) ?? "—"
-                },
-                description: String(localized: "Determines the sensitivity of the microphone when VAD mode is enabled."),
-                lowLabel: String(localized: "Low"),
-                highLabel: String(localized: "High")
-            )
-            .frame(
-                maxWidth: .infinity,
-                alignment: .top
-            )
-            .padding(
-                .horizontal, 16
-            )
+            if (session.isConnected()) {
+                SelectionSlider(
+                    level: level,
+                    range: 0...10,
+                    onSelection: { selection in
+                        if let byte = LTCLevel.byte(for: Int(selection)) {
+                            settings.write(.vadThreshold, value: byte)
+                        }
+                    },
+                    label: { selection in
+                        settings.settings.vadThreshold.map(String.init) ?? "—"
+                    },
+                    description: String(localized: "Determines the sensitivity of the microphone when VAD mode is enabled."),
+                    lowLabel: String(localized: "Low"),
+                    highLabel: String(localized: "High")
+                )
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
+            } else {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+            }
         }
         .navigationTitle("VAD Threshold")
         .navigationBarTitleDisplayMode(.inline)

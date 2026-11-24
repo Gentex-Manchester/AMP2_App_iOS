@@ -57,7 +57,7 @@ struct PairingTutorialView: View {
         }
         .fullScreenCover(isPresented: $showPairingScreen) {
             NavigationStack {
-                PairingView()
+                SelectDeviceView()
             }
         }
         .navigationTitle("Bluetooth Pairing")

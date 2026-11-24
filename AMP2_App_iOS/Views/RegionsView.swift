@@ -16,32 +16,43 @@ struct RegionsView: View {
 
     var body: some View {
         ScrollView {
-            SelectionButtonRow(
-                options: Region.allCases,
-                selection: Binding(
-                        get: {
-                            headsetSettings.settings.zone ?? Region.americas
-                        },
-                        set: { selection in
-                            headsetSettings.write(
-                                LTCSetting.zone,
-                                value: selection.ltcByte
-                            )
-                        }
-                    ),
-                onSelection: { selection in
-                    headsetSettings.write(LTCSetting.zone, value: selection.ltcByte)
-                },
-                label: { option in option.displayName },
-                description: String(localized: "Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
-            )
-            .frame(
-                maxWidth: .infinity,
-                alignment: .top
-            )
-            .padding(
-                .horizontal, 16
-            )
+            if (session.isConnected()) {
+                SelectionButtonRow(
+                    options: Region.allCases,
+                    selection: Binding(
+                            get: {
+                                headsetSettings.settings.zone ?? Region.americas
+                            },
+                            set: { selection in
+                                headsetSettings.write(
+                                    LTCSetting.zone,
+                                    value: selection.ltcByte
+                                )
+                            }
+                        ),
+                    onSelection: { selection in
+                        headsetSettings.write(LTCSetting.zone, value: selection.ltcByte)
+                    },
+                    label: { option in option.displayName },
+                    description: String(localized: "Determines the radio frequency band used for LTC Teams. Users in different zones cannot communicate.")
+                )
+                .frame(
+                    maxWidth: .infinity,
+                    alignment: .top
+                )
+                .padding(
+                    .horizontal, 16
+                )
+            } else {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+            }
         }
         .navigationTitle("LTC Zone")
         .navigationBarTitleDisplayMode(.inline)

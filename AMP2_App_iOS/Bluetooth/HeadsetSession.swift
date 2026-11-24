@@ -429,6 +429,10 @@ final class HeadsetSession: NSObject {
 
     // MARK: - Misc
     
+    func isConnected() -> Bool {
+        return connectionState == HeadsetConnectionState.connected
+    }
+    
     func resetSavedHeadset() {
         savedHeadset = nil
         rememberedIdentifier = nil
